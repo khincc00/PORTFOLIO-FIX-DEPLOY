@@ -1,0 +1,16 @@
+export const portfolioSeed = [
+  {title:"WYVERN PRO IEM Gaming",likes:18,reel_id:"DVQrHReEkg3",category:"Gaming Audio",description:"Top performer, hook step musuh"},
+  {title:"Secondwave e1",likes:11,reel_id:"DVw6WtMk8-8",category:"Audio Review",description:"Budget high-end storytelling"},
+  {title:"Fantech Groove ANC Zoro",likes:8,reel_id:"DbVXyg1JH2J",category:"Earbuds ANC",description:"One Piece + ANC demo"},
+  {title:"Fantech Tanto Mouse Dock",likes:7,reel_id:"DbILo_CJg0i",category:"Gaming Mouse",description:"Triple-mode kompleks jadi simple"},
+  {title:"Secondwave/KZ Audio Lanjutan",likes:7,reel_id:"DVRlxm-EzEw",category:"Audio",description:"Konsistensi niche"},
+  {title:"Affordable Streaming Gear",likes:6,reel_id:"DYhtuV0PbHu",category:"Setup",description:"Personal proof"},
+  {title:"KZ Castor Starter Guide",likes:4,reel_id:"DVXWNrekt6i",category:"Starter",description:"CTA TikTok Shop"},
+  {title:"Dynamic Mic Filter Limiter",likes:4,reel_id:"DYyi95pSL3u",category:"Educational",description:"Depth knowledge"},
+  {title:"Streaming Mic Setup",likes:4,reel_id:"DYjRUUEpzw8",category:"Educational",description:"Technique"},
+  {title:"Budget Setup Under 500k",likes:4,reel_id:"DZw_Sc5JGAP",category:"Budget Guide",description:"Harga = keyword"},
+  {title:"PHOTOOLEX RGB Tube Light",likes:2,reel_id:"DW1qrfEvgvS",category:"Lighting",description:"Visual quality"},
+  {title:"Fantech Groove Luffy",likes:2,reel_id:"DbJc1-5TAwx",category:"Earbuds",description:"Series One Piece"},
+  {title:"2K Webcam Streaming",likes:1,reel_id:"DWKG07fzceT",category:"Webcam",description:"Streaming gear"},
+  {title:"Fantech WGP-13S Gamepad",likes:1,reel_id:"DVEGq4SEshJ",category:"Gamepad Promo",description:"Sales urgency copy"},
+]
