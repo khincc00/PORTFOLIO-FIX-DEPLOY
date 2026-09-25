@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           name,
           email,
           project_type: project_type || 'Branding',
-          budget: budget || '<500k',
+          budget: budget || '<$500',
           message,
           created_at: new Date().toISOString(),
         },
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         name,
         email,
         project_type: project_type || 'Branding',
-        budget: budget || '<500k',
+        budget: budget || '<$500',
         message,
       })
       .select()

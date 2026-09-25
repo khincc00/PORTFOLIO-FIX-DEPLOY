@@ -8,7 +8,7 @@ export const portfolioSeed = [
   {title:"KZ Castor Starter Guide",likes:4,reel_id:"DVXWNrekt6i",category:"Starter",description:"CTA TikTok Shop"},
   {title:"Dynamic Mic Filter Limiter",likes:4,reel_id:"DYyi95pSL3u",category:"Educational",description:"Depth knowledge"},
   {title:"Streaming Mic Setup",likes:4,reel_id:"DYjRUUEpzw8",category:"Educational",description:"Technique"},
-  {title:"Budget Setup Under 500k",likes:4,reel_id:"DZw_Sc5JGAP",category:"Budget Guide",description:"Harga = keyword"},
+  {title:"Budget Setup Under $50",likes:4,reel_id:"DZw_Sc5JGAP",category:"Budget Guide",description:"Affordable streaming setup guide"},
   {title:"PHOTOOLEX RGB Tube Light",likes:2,reel_id:"DW1qrfEvgvS",category:"Lighting",description:"Visual quality"},
   {title:"Fantech Groove Luffy",likes:2,reel_id:"DbJc1-5TAwx",category:"Earbuds",description:"Series One Piece"},
   {title:"2K Webcam Streaming",likes:1,reel_id:"DWKG07fzceT",category:"Webcam",description:"Streaming gear"},

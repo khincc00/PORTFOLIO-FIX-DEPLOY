@@ -22,7 +22,7 @@ create table if not exists public.contacts (
   name text not null,
   email text not null,
   project_type text default 'Branding',
-  budget text default '<500k',
+  budget text default '<$500',
   message text not null,
   status text default 'new',
   created_at timestamp with time zone default now()
@@ -73,7 +73,7 @@ insert into public.portfolio (title, likes, reel_id, category, description) valu
 ('KZ Castor Starter Guide', 4, 'DVXWNrekt6i', 'Starter', 'CTA TikTok Shop'),
 ('Dynamic Mic Filter Limiter', 4, 'DYyi95pSL3u', 'Educational', 'Depth knowledge'),
 ('Streaming Mic Setup', 4, 'DYjRUUEpzw8', 'Educational', 'Technique'),
-('Budget Setup Under 500k', 4, 'DZw_Sc5JGAP', 'Budget Guide', 'Harga = keyword'),
+('Budget Setup Under $50', 4, 'DZw_Sc5JGAP', 'Budget Guide', 'Affordable streaming setup guide'),
 ('PHOTOOLEX RGB Tube Light', 2, 'DW1qrfEvgvS', 'Lighting', 'Visual quality'),
 ('Fantech Groove Luffy', 2, 'DbJc1-5TAwx', 'Earbuds', 'Series One Piece'),
 ('2K Webcam Streaming', 1, 'DWKG07fzceT', 'Webcam', 'Streaming gear'),
