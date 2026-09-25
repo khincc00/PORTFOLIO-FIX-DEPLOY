@@ -1,12 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  ''
 
 // Check whether Supabase environment variables are properly provided
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
-  supabaseAnonKey &&
+  supabaseKey &&
   !supabaseUrl.includes('your-project') &&
   supabaseUrl.startsWith('http')
 )
@@ -14,7 +17,7 @@ export const isSupabaseConfigured = Boolean(
 // Prevent createClient from crashing during build if env vars are not set
 export const supabase = createClient(
   isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co',
-  isSupabaseConfigured ? supabaseAnonKey : 'placeholder-anon-key'
+  isSupabaseConfigured ? supabaseKey : 'placeholder-anon-key'
 )
 
 export { createClient }
