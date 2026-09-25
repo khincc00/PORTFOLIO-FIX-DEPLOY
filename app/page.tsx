@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, FormEvent } from 'react'
-import Link from 'next/link'
 import { portfolioSeed } from '@/lib/portfolio-data'
 
 interface WorkItem {
@@ -97,9 +96,6 @@ export default function Page() {
           <a href="#contact" className="hover:text-black transition">
             Contact
           </a>
-          <Link href="/admin" className="hover:text-black transition text-neutral-400">
-            Admin
-          </Link>
         </div>
         <a
           href="#contact"
@@ -322,9 +318,6 @@ export default function Page() {
           Taufiq Sholikhin - Remote Designer & Video Editor | Khinccofficial • 50+ assets TNI AL • 32+ clients • © 2026 Khincc
         </div>
         <div className="mt-2 flex justify-center gap-4">
-          <Link href="/admin" className="hover:text-black transition underline">
-            Dashboard Admin
-          </Link>
           <a
             href="https://github.com/khincc00"
             target="_blank"
