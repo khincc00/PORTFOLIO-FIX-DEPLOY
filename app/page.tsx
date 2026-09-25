@@ -75,7 +75,7 @@ export default function Page(){
       </section>
 
 {/* YOUTUBE GRID - NEW from old web 10 videos */}
-      <section id="youtube" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16 bg-black text-white rounded-[32px]">
+      <section id="youtube" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16 bg-white text-black rounded-[32px]">
         <div className="flex justify-between items-end">
           <div><p className="text-[11px] tracking-[0.15em] text-white/50 uppercase">Moving image / YouTube (NEW - 10 videos from old web)</p><h2 className="mt-3 text-[32px] md:text-[48px] font-semibold">More work, in motion.</h2></div>
           <a href="https://www.youtube.com/@khinccofficial" target="_blank" className="hidden md:inline-block bg-white text-black rounded-full px-5 py-2 text-[13px]">Visit YouTube ↗</a>
@@ -88,7 +88,7 @@ export default function Page(){
           </a>)}
         </div>
       </section>
-      
+
       {/* SELECTED WORKS - existing 14 reels */}
       <section id="works" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16">
         <div className="text-[11px] tracking-[0.15em] text-[#86868B] uppercase">03 / SELECTED WORKS • 14 CURATED (existing)</div>
@@ -150,11 +150,11 @@ export default function Page(){
               <div className="grid gap-1"><label className="text-[12px]">Email</label><input value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="Email" className="rounded-full border px-4 py-3 text-sm" required/></div>
               <div className="grid grid-cols-2 gap-3">
                 <select value={form.project_type} onChange={e=>setForm({...form,project_type:e.target.value})} className="rounded-full border px-4 py-3 text-sm"><option>Branding</option><option>Product Video</option><option>Campaign design</option><option>Other</option></select>
-                <select value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})} className="rounded-full border px-4 py-3 text-sm"><option>&lt;500k</option><option>500k-2jt</option><option>2jt+</option></select>
+                <select value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})} className="rounded-full border px-4 py-3 text-sm"><option>&lt;$300</option><option>$300-$1000</option><option>$1000+</option></select>
               </div>
               <div className="grid gap-1"><label className="text-[12px]">Tell me about your project</label><textarea value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Share the goal, the timeline, and anything you already have." className="rounded-[16px] border px-4 py-3 text-sm h-28" required/></div>
               <button className="bg-black text-white rounded-full py-3 text-sm">{sent?'Terkirim ✓':'Send message ↗'}</button>
-              <div className="text-center text-[11px] text-[#86868B]">Replies in 2–3 days • Response &lt;24h async • taufiqsholikhin@gmail.com • 0822-5131-4149</div>
+              <div className="text-center text-[11px] text-[#86868B]">Replies in 2–3 days • Response &lt;24h async • taufiqsholikhin@gmail.com • (+62) 812 1615 2280</div>
             </form>
           </div>
         </div>
