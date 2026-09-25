@@ -74,6 +74,21 @@ export default function Page(){
         </div>
       </section>
 
+{/* YOUTUBE GRID - NEW from old web 10 videos */}
+      <section id="youtube" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16 bg-black text-white rounded-[32px]">
+        <div className="flex justify-between items-end">
+          <div><p className="text-[11px] tracking-[0.15em] text-white/50 uppercase">Moving image / YouTube (NEW - 10 videos from old web)</p><h2 className="mt-3 text-[32px] md:text-[48px] font-semibold">More work, in motion.</h2></div>
+          <a href="https://www.youtube.com/@khinccofficial" target="_blank" className="hidden md:inline-block bg-white text-black rounded-full px-5 py-2 text-[13px]">Visit YouTube ↗</a>
+        </div>
+        <div className="mt-8 grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {youtubePortfolio.map((y,i)=><a key={i} href={y.link} target="_blank" className="bg-white/10 rounded-[16px] p-3 hover:bg-white/20 transition">
+            <img src={y.thumb} alt={y.title} className="rounded-[12px] w-full aspect-video object-cover"/>
+            <h3 className="mt-3 text-[13px] font-medium leading-tight">{y.title}</h3>
+            <span className="text-[11px] text-white/50">{y.type}</span>
+          </a>)}
+        </div>
+      </section>
+      
       {/* SELECTED WORKS - existing 14 reels */}
       <section id="works" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16">
         <div className="text-[11px] tracking-[0.15em] text-[#86868B] uppercase">03 / SELECTED WORKS • 14 CURATED (existing)</div>
@@ -107,20 +122,6 @@ export default function Page(){
         </div>
       </section>
 
-      {/* YOUTUBE GRID - NEW from old web 10 videos */}
-      <section id="youtube" className="max-w-[1280px] mx-auto px-6 md:px-10 py-16 bg-black text-white rounded-[32px]">
-        <div className="flex justify-between items-end">
-          <div><p className="text-[11px] tracking-[0.15em] text-white/50 uppercase">Moving image / YouTube (NEW - 10 videos from old web)</p><h2 className="mt-3 text-[32px] md:text-[48px] font-semibold">More work, in motion.</h2></div>
-          <a href="https://www.youtube.com/@khinccofficial" target="_blank" className="hidden md:inline-block bg-white text-black rounded-full px-5 py-2 text-[13px]">Visit YouTube ↗</a>
-        </div>
-        <div className="mt-8 grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {youtubePortfolio.map((y,i)=><a key={i} href={y.link} target="_blank" className="bg-white/10 rounded-[16px] p-3 hover:bg-white/20 transition">
-            <img src={y.thumb} alt={y.title} className="rounded-[12px] w-full aspect-video object-cover"/>
-            <h3 className="mt-3 text-[13px] font-medium leading-tight">{y.title}</h3>
-            <span className="text-[11px] text-white/50">{y.type}</span>
-          </a>)}
-        </div>
-      </section>
 
       {/* APPROACH statement from old web - NEW */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-10 py-16 grid md:grid-cols-2 gap-10">
