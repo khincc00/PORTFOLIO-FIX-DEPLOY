@@ -11,7 +11,7 @@ const sessionSecret = process.env.ADMIN_SESSION_SECRET || adminPassword
 
 export const isAdminAuthConfigured = Boolean(adminUsername && adminPassword)
 
-const safeEqual = (a: string, b: string) => {
+export const safeEqual = (a: string, b: string) => {
   const bufA = Buffer.from(a)
   const bufB = Buffer.from(b)
   return bufA.length === bufB.length && timingSafeEqual(bufA, bufB)

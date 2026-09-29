@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { NewsPost } from '@/lib/news'
 import NewsList from './NewsList'
 import NewsEditor from './NewsEditor'
+import CommentsList from './CommentsList'
 
 interface PortfolioItem {
   id?: number
@@ -28,7 +29,7 @@ interface ContactItem {
   created_at: string
 }
 
-type View = 'dashboard' | 'news' | 'editor'
+type View = 'dashboard' | 'news' | 'editor' | 'comments'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -249,10 +250,11 @@ export default function AdminPage() {
         </div>
 
         {/* Menu */}
-        <div className="flex gap-1 text-sm -mt-4">
+        <div className="flex flex-wrap gap-1 text-sm -mt-4">
           {([
             ['dashboard', 'Dashboard'],
             ['news', `Berita (${newsList.length})`],
+            ['comments', 'Komentar'],
           ] as [View, string][]).map(([key, label]) => (
             <button
               key={key}
@@ -290,6 +292,8 @@ export default function AdminPage() {
             onDeleted={(id) => setNewsList((list) => list.filter((p) => p.id !== id))}
           />
         )}
+
+        {view === 'comments' && <CommentsList />}
 
         {view === 'editor' && (
           <NewsEditor

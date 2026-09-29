@@ -1,0 +1,43 @@
+import { NextResponse } from 'next/server'
+import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
+import { findPublishedNewsId, getViewer, toPublicComment } from '@/lib/interactions-server'
+import type { InteractionsPayload } from '@/lib/interactions'
+
+export const dynamic = 'force-dynamic'
+
+type Params = { params: { slug: string } }
+
+// Komentar + jumlah reaksi + status login pengunjung untuk satu berita
+export async function GET(_req: Request, { params }: Params) {
+  if (!isAdminDbConfigured) return NextResponse.json({ error: 'Fitur komentar belum aktif.' }, { status: 503 })
+
+  const newsId = await findPublishedNewsId(params.slug)
+  if (!newsId) return NextResponse.json({ error: 'Berita tidak ditemukan.' }, { status: 404 })
+
+  const viewer = await getViewer()
+  const [commentsRes, reactionsRes] = await Promise.all([
+    supabaseAdmin
+      .from('news_comments')
+      .select('id,author_name,author_type,body,created_at,user_id,visitor_key')
+      .eq('news_id', newsId)
+      .order('created_at', { ascending: true })
+      .limit(500),
+    supabaseAdmin.from('news_reactions').select('emoji,visitor_key').eq('news_id', newsId),
+  ])
+
+  const reactions: Record<string, number> = {}
+  const mine: string[] = []
+  for (const r of reactionsRes.data || []) {
+    reactions[r.emoji] = (reactions[r.emoji] || 0) + 1
+    if (r.visitor_key === viewer.reactionKey) mine.push(r.emoji)
+  }
+
+  const payload: InteractionsPayload = {
+    comments: (commentsRes.data || []).map((row) => toPublicComment(row, viewer)),
+    reactions,
+    mine,
+    user: viewer.user,
+    isAdmin: viewer.isAdmin,
+  }
+  return NextResponse.json(payload)
+}

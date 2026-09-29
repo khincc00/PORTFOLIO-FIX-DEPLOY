@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { getNewsBySlug } from '@/lib/news-public'
 import { formatNewsDate, readingTime } from '@/lib/news'
 import { siteConfig } from '@/lib/site'
+import NewsInteractions from './NewsInteractions'
 
 export const revalidate = 60
 
@@ -68,6 +69,7 @@ export default async function NewsDetailPage({ params }: Props) {
         {post.tags && post.tags.length > 0 && (
           <div className="news-tags">{post.tags.map((t) => <span key={t}>#{t}</span>)}</div>
         )}
+        <NewsInteractions slug={post.slug} />
       </article>
 
       <footer className="studio-footer"><span>© 2026 Khincc Studio • Indonesia • Made with intention.</span></footer>

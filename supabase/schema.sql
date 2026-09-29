@@ -119,3 +119,43 @@ create policy "Allow service role full access to news"
 insert into storage.buckets (id, name, public)
 values ('news-images', 'news-images', true)
 on conflict (id) do nothing;
+
+-- 9. Akun Pengunjung (untuk komentar; tanpa email, username + password)
+create table if not exists public.site_users (
+  id serial primary key,
+  username text not null,
+  display_name text not null,
+  password_hash text not null,
+  ip_hash text,
+  created_at timestamp with time zone default now()
+);
+create unique index if not exists site_users_username_key on public.site_users (lower(username));
+
+-- 10. Komentar Berita (dari akun atau tamu dengan nama bebas)
+create table if not exists public.news_comments (
+  id serial primary key,
+  news_id int not null references public.news (id) on delete cascade,
+  user_id int references public.site_users (id) on delete set null,
+  author_name text not null,
+  author_type text not null default 'guest' check (author_type in ('guest', 'member', 'admin')),
+  body text not null,
+  visitor_key text,
+  ip_hash text,
+  created_at timestamp with time zone default now()
+);
+create index if not exists news_comments_news_id_idx on public.news_comments (news_id, created_at);
+create index if not exists news_comments_ip_hash_idx on public.news_comments (ip_hash, created_at);
+
+-- 11. Reaksi Berita (satu reaksi per emoji per pengunjung)
+create table if not exists public.news_reactions (
+  news_id int not null references public.news (id) on delete cascade,
+  emoji text not null,
+  visitor_key text not null,
+  created_at timestamp with time zone default now(),
+  primary key (news_id, emoji, visitor_key)
+);
+
+-- Semua akses lewat API server (service role); tidak ada akses langsung dari publik
+alter table public.site_users enable row level security;
+alter table public.news_comments enable row level security;
+alter table public.news_reactions enable row level security;
