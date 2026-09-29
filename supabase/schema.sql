@@ -159,3 +159,76 @@ create table if not exists public.news_reactions (
 alter table public.site_users enable row level security;
 alter table public.news_comments enable row level security;
 alter table public.news_reactions enable row level security;
+
+-- 12. Portfolio Items (dikelola dari /admin → Portfolio: Design, Video, Web)
+create table if not exists public.portfolio_items (
+  id serial primary key,
+  kind text not null check (kind in ('design', 'video', 'web')),
+  title text not null,
+  title_id text,
+  subtitle text,
+  description text,
+  description_id text,
+  tag text,
+  tag_id text,
+  year text,
+  platform text check (platform in ('instagram', 'tiktok', 'youtube')),
+  image text,
+  image_alt text,
+  link text,
+  extra_links jsonb not null default '[]',
+  position int not null default 0,
+  is_published boolean not null default true,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+create index if not exists portfolio_items_kind_position_idx on public.portfolio_items (kind, position);
+
+alter table public.portfolio_items enable row level security;
+
+drop policy if exists "Allow public read access to published portfolio items" on public.portfolio_items;
+create policy "Allow public read access to published portfolio items"
+  on public.portfolio_items
+  for select
+  using (is_published = true);
+
+-- Isi awal (hanya jika tabel masih kosong): karya yang sebelumnya tertanam di kode
+insert into public.portfolio_items (kind, title, title_id, subtitle, description, description_id, tag, tag_id, year, platform, image, image_alt, link, extra_links, position, is_published)
+select * from (values
+  ('design', 'Online Loan Awareness', null, 'Campaign design / Social media', 'Campaign for Penerangan Lanal Sangatta — raising awareness of illegal online loans', 'Kampanye untuk Penerangan Lanal Sangatta — edukasi bahaya pinjol', null, null, '2026', null, null, 'Poster design about avoiding online loan scams for Penerangan Lanal Sangatta', null, '[]'::jsonb, 0, true),
+  ('design', 'Digital Safety Campaign', null, 'Public information / Illustration', 'Educating the public on preventing fraud and exploitation on social media', 'Edukasi pencegahan penipuan dan eksploitasi di media sosial', null, null, '2026', null, null, 'Poster design about preventing fraud and exploitation on social media', null, '[]'::jsonb, 1, true),
+  ('design', 'Responsible Conduct', null, 'Campaign design / Art direction', 'Campaign promoting responsible conduct and avoiding alcohol', 'Kampanye perilaku bertanggung jawab dan menghindari alkohol', null, null, '2026', null, null, 'Poster design promoting responsible behaviour and avoiding alcohol', null, '[]'::jsonb, 2, true),
+  ('design', 'Fluent English', null, 'Education campaign / Poster design', 'Poster series for an English language course', 'Seri poster untuk kursus bahasa Inggris', null, null, '2026', null, null, 'Promotional poster design for Fluent English language courses', null, '[]'::jsonb, 3, true),
+  ('design', 'Down Under Brew', null, 'Editorial infographic / Information design', 'Editorial infographic on Australian coffee production', 'Infografis editorial tentang produksi kopi Australia', null, null, '2026', null, null, 'Editorial infographic design about Australian coffee production', null, '[]'::jsonb, 4, true),
+  ('video', 'WYVERN PRO IEM Gaming', null, null, 'Gaming IEM review with a hook-first edit for Reels', 'Review IEM gaming dengan editing hook-first untuk Reels', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DVQrHReEkg3/', '[]'::jsonb, 0, true),
+  ('video', 'Secondwave e1', null, null, 'Budget earphone review told as a short story', 'Review earphone budget yang dikemas sebagai cerita singkat', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DVw6WtMk8-8/', '[]'::jsonb, 1, true),
+  ('video', 'Fantech Groove ANC Zoro', null, null, 'One Piece edition earbuds for Fantech — ANC demo', 'Earbuds edisi One Piece dari Fantech — demo ANC', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DbVXyg1JH2J/', '[]'::jsonb, 2, true),
+  ('video', 'Fantech Tanto Mouse Dock', null, null, 'A triple-mode wireless mouse explained in under a minute', 'Mouse wireless tiga mode dijelaskan dalam kurang dari semenit', 'Gaming gear', 'Gear gaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DbILo_CJg0i/', '[]'::jsonb, 3, true),
+  ('video', 'Secondwave × KZ Follow-up', null, null, 'Follow-up audio review for Secondwave and KZ', 'Review audio lanjutan untuk Secondwave dan KZ', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DVRlxm-EzEw/', '[]'::jsonb, 4, true),
+  ('video', 'Affordable Streaming Gear', null, null, 'My own streaming setup built from affordable gear', 'Setup streaming pribadi dari gear terjangkau', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DYhtuV0PbHu/', '[]'::jsonb, 5, true),
+  ('video', 'KZ Castor Starter Guide', null, null, 'Starter guide for KZ Castor IEMs with a TikTok Shop call-to-action', 'Panduan pemula KZ Castor dengan ajakan belanja di TikTok Shop', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DVXWNrekt6i/', '[]'::jsonb, 6, true),
+  ('video', 'Dynamic Mic Filter Limiter', null, null, 'Tutorial: taming a dynamic mic with filters and a limiter', 'Tutorial: mengatur mic dinamis dengan filter dan limiter', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DYyi95pSL3u/', '[]'::jsonb, 7, true),
+  ('video', 'Streaming Mic Setup', null, null, 'Mic technique tips for streamers', 'Tips teknik mic untuk streamer', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DYjRUUEpzw8/', '[]'::jsonb, 8, true),
+  ('video', 'Budget Setup Under Rp500k', null, null, 'A complete streaming setup for under Rp500k', 'Setup streaming lengkap di bawah Rp500 ribu', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DZw_Sc5JGAP/', '[]'::jsonb, 9, true),
+  ('video', 'PHOTOOLEX RGB Tube Light', null, null, 'RGB tube light review focused on picture quality', 'Review lampu tube RGB dengan fokus kualitas gambar', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DW1qrfEvgvS/', '[]'::jsonb, 10, true),
+  ('video', 'Fantech Groove Luffy', null, null, 'Luffy edition earbuds from the Fantech × One Piece series', 'Earbuds edisi Luffy dari seri Fantech × One Piece', 'Audio', 'Audio', null, 'instagram', null, null, 'https://www.instagram.com/reel/DbJc1-5TAwx/', '[]'::jsonb, 11, true),
+  ('video', '2K Webcam Streaming', null, null, '2K webcam test for streaming', 'Uji webcam 2K untuk streaming', 'Streaming setup', 'Setup streaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DWKG07fzceT/', '[]'::jsonb, 12, true),
+  ('video', 'Fantech WGP-13S Gamepad', null, null, 'Promo edit for the WGP-13S gamepad with urgency-led copy', 'Video promo gamepad WGP-13S dengan copy yang mendorong beli sekarang', 'Gaming gear', 'Gear gaming', null, 'instagram', null, null, 'https://www.instagram.com/reel/DVEGq4SEshJ/', '[]'::jsonb, 13, true),
+  ('video', 'Short film for the 2023 Indonesian National Police anniversary', 'Film pendek untuk HUT Bhayangkara RI 2023', 'Short Movie "Scammer" HUT Bhayangkara RI 2023', null, null, 'Short film', 'Film pendek', null, 'youtube', null, 'Short film for the 2023 Indonesian National Police anniversary', 'https://www.youtube.com/watch?v=KrK69_zt3RM', '[]'::jsonb, 14, true),
+  ('video', 'Documentary of the 2024 beret ceremony at SMK Negeri 2 Sangatta', 'Dokumentasi pembaretan SMK Negeri 2 Sangatta 2024', 'PEMBARETAN SMK NEGERI 2 SANGATTA URATA 2024', null, null, 'Documentary', 'Dokumenter', null, 'youtube', null, 'Documentary of the 2024 beret ceremony at SMK Negeri 2 Sangatta', 'https://www.youtube.com/watch?v=WXcYyiH0XIU', '[]'::jsonb, 15, true),
+  ('video', 'Documentary of a mental & physical training course for PT KPC', 'Dokumenter kursus pembinaan mental & fisik PT KPC', 'SUS BINTALSIK PT. KPC', null, null, 'Documentary', 'Dokumenter', null, 'youtube', null, 'Documentary of a mental & physical training course for PT KPC', 'https://www.youtube.com/watch?v=xndoErqA96Y', '[]'::jsonb, 16, true),
+  ('video', 'Budget webcam review', 'Review webcam murah', 'WEBCAM MURAH TAPI KEREN!', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'Budget webcam review', 'https://www.youtube.com/watch?v=N7fxwxRU23g', '[]'::jsonb, 17, true),
+  ('video', '2K webcam review', 'Review webcam 2K', 'Webcam Eyd 2k Nih guys', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, '2K webcam review', 'https://www.youtube.com/watch?v=ua-SsfsolFQ', '[]'::jsonb, 18, true),
+  ('video', 'Fantech Groove ANC earbuds review', 'Review earbuds Fantech Groove ANC', 'Fantech Groove ANC', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'Fantech Groove ANC earbuds review', 'https://www.youtube.com/watch?v=AN3x89Lz0EI', '[]'::jsonb, 19, true),
+  ('video', 'Budget gamepad review', 'Review gamepad harga pelajar', 'Gamepad harga pelajar tapi speknya merusak pasar', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'Budget gamepad review', 'https://www.youtube.com/watch?v=B4l6aEvbMhg', '[]'::jsonb, 20, true),
+  ('video', 'IEM picks for gaming', 'Rekomendasi IEM untuk gaming', 'Rekomendasi IEM buat gaming', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'IEM picks for gaming', 'https://www.youtube.com/watch?v=eRDN0xjid0w', '[]'::jsonb, 21, true),
+  ('video', 'Best value-for-money lighting for creators', 'Lighting paling worth it untuk kreator', 'Lighting "Value for Money" Terbaik!', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'Best value-for-money lighting for creators', 'https://www.youtube.com/watch?v=hGFK8njoAhY', '[]'::jsonb, 22, true),
+  ('video', 'HDMI capture card review', 'Review HDMI capture card', 'HDMI CAPTURE CARD', null, null, 'Gear review', 'Review perangkat', null, 'youtube', null, 'HDMI capture card review', 'https://www.youtube.com/watch?v=76VSMpFZWS0', '[]'::jsonb, 23, true),
+  ('video', 'Fantech Groove ANC', null, null, 'Device review / Short-form editing', null, 'TikTok', null, null, 'tiktok', null, null, 'https://www.tiktok.com/@khinccofficial/video/7667530077298576660', '[]'::jsonb, 24, true),
+  ('video', 'Fantech Tanto Mouse', null, null, 'Device review / Product editing', null, 'TikTok', null, null, 'tiktok', null, null, 'https://www.tiktok.com/@khinccofficial/video/7665426475558046997', '[]'::jsonb, 25, true),
+  ('video', 'Plug and Play Microphone', null, null, 'Device review / Product editing', null, 'TikTok', null, null, 'tiktok', null, null, 'https://www.tiktok.com/@khinccofficial/video/7644066982530436372', '[]'::jsonb, 26, true),
+  ('video', 'OBS Filter Setup', null, null, 'Streaming tutorial / Editing', null, 'TikTok', null, null, 'tiktok', null, null, 'https://www.tiktok.com/@khinccofficial/video/7631625360802712853', '[]'::jsonb, 27, true),
+  ('web', 'CodeQuest — Small Studio', null, 'HTML · CSS · JavaScript', 'A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built — no quizzes.', 'Game browser untuk belajar HTML, CSS, dan JavaScript lewat brief klien sungguhan. Game menjalankan kodemu dan memeriksa website yang kamu buat — tanpa kuis.', null, null, null, null, '/work/codequest.jpg', 'CodeQuest game scene: a cozy studio desk with a laptop showing code, a cat asleep by the lamp', 'https://main.codequest.gamer.free/', '[{"label":"itch.io","href":"https://khincc.itch.io/codequest-small-studio"},{"label":"GitHub","href":"https://github.com/khincc00/CodeQuest"}]'::jsonb, 0, true),
+  ('web', 'khincreator.com', null, 'Next.js · TypeScript · Supabase', 'This portfolio: bilingual EN/ID, day/night mode, a news CMS with comments and reactions, and SEO — designed and built by me.', 'Portofolio ini: dua bahasa EN/ID, mode siang/malam, CMS berita dengan komentar dan reaksi, serta SEO — didesain dan dibangun sendiri.', null, null, null, null, '/work/khincreator.jpg', 'Homepage of khincreator.com in day mode', 'https://khincreator.com', '[{"label":"GitHub","href":"https://github.com/khincc00/PORTFOLIO-FIX-DEPLOY"}]'::jsonb, 1, true)
+) as seed(kind, title, title_id, subtitle, description, description_id, tag, tag_id, year, platform, image, image_alt, link, extra_links, position, is_published)
+where not exists (select 1 from public.portfolio_items);

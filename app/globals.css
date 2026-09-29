@@ -211,3 +211,10 @@ html[data-theme="dark"] .admin-root .news-body{color:#2b2d2b}html[data-theme="da
 .exp-item ul{margin:14px 0 0;padding-left:18px;display:grid;gap:6px;max-width:720px}
 .exp-item ul li{font-size:14px;line-height:1.65;color:var(--muted)}
 @media(max-width:760px){.exp-section{padding-top:80px}.exp-item{grid-template-columns:1fr;gap:8px;padding:22px 0}.exp-period{padding-top:0}.exp-item h3{font-size:19px}}
+
+/* Portfolio items with real images (managed from admin) */
+.campaign-thumb{object-fit:cover;display:block;width:100%;background:var(--line)}
+a.campaign-row{transition:background .2s ease}a.campaign-row:hover h3{color:var(--accent)}
+.work-art.has-cover{padding:0}
+.work-art.has-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.work-art.has-cover span{position:absolute;top:17px;left:17px;z-index:1;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.4)}

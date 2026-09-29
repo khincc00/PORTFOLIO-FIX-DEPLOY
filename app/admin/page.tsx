@@ -6,6 +6,7 @@ import type { NewsPost } from '@/lib/news'
 import NewsList from './NewsList'
 import NewsEditor from './NewsEditor'
 import CommentsList from './CommentsList'
+import PortfolioManager from './PortfolioManager'
 
 interface PortfolioItem {
   id?: number
@@ -29,7 +30,7 @@ interface ContactItem {
   created_at: string
 }
 
-type View = 'dashboard' | 'news' | 'editor' | 'comments'
+type View = 'dashboard' | 'portfolio' | 'news' | 'editor' | 'comments'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -253,6 +254,7 @@ export default function AdminPage() {
         <div className="flex flex-wrap gap-1 text-sm -mt-4">
           {([
             ['dashboard', 'Dashboard'],
+            ['portfolio', 'Portfolio'],
             ['news', `Berita (${newsList.length})`],
             ['comments', 'Komentar'],
           ] as [View, string][]).map(([key, label]) => (
@@ -294,6 +296,8 @@ export default function AdminPage() {
         )}
 
         {view === 'comments' && <CommentsList />}
+
+        {view === 'portfolio' && <PortfolioManager />}
 
         {view === 'editor' && (
           <NewsEditor
