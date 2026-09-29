@@ -6,8 +6,10 @@ import { formatNewsDate } from '@/lib/news'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Berita & Kabar Terbaru | Khincc Studio',
+  title: 'Berita & Kabar Terbaru',
   description: 'Update terbaru, project, dan cerita di balik layar dari Khincc Studio.',
+  alternates: { canonical: '/berita' },
+  openGraph: { title: 'Berita & Kabar Terbaru | Khincc Studio', url: '/berita' },
 }
 
 export default async function NewsIndexPage() {

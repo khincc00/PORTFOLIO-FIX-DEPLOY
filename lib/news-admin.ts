@@ -48,5 +48,6 @@ export async function uniqueSlug(base: string, excludeId?: number) {
 
 export function revalidateNews(slug?: string) {
   revalidatePath('/berita')
+  revalidatePath('/sitemap.xml')
   if (slug) revalidatePath(`/berita/${slug}`)
 }

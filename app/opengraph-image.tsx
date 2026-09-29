@@ -1,0 +1,42 @@
+import { ImageResponse } from 'next/og'
+
+// Preview image shown when the site link is shared (WhatsApp, Instagram, X, LinkedIn, ...)
+export const alt = 'Taufiq Sholikhin — Remote Designer & Video Editor | Khincc Studio'
+export const size = { width: 1200, height: 630 }
+export const contentType = 'image/png'
+
+export default function OpengraphImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          background: '#f8f8f6',
+          color: '#171817',
+          padding: '64px 80px',
+          borderTop: '12px solid #e65c3a',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 26, fontWeight: 700, letterSpacing: 1 }}>
+          <span>KHINCC® / Studio</span>
+          <span style={{ color: '#777b78', fontWeight: 500 }}>Indonesia • Fully Remote</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontSize: 92, fontWeight: 600, letterSpacing: -4, lineHeight: 1 }}>Taufiq Sholikhin</div>
+          <div style={{ fontSize: 44, color: '#555a56', marginTop: 20, letterSpacing: -1 }}>
+            Remote Designer & Video Editor — 6+ years
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 28, color: '#e65c3a', fontWeight: 600 }}>
+          <div style={{ width: 14, height: 14, borderRadius: 7, background: '#e65c3a' }} />
+          khincreator.com · @khinccofficial
+        </div>
+      </div>
+    ),
+    size
+  )
+}
