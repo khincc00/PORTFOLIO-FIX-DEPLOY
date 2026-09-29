@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { st } from '@/lib/i18n-server'
 import { isNameTakenByAccount } from '@/lib/account'
 import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib/supabase-admin'
 import {
@@ -26,20 +27,20 @@ export async function POST(req: Request) {
     const displayName = normalizeName(String(body.display_name || '')) || username
 
     if (!USERNAME_PATTERN.test(username)) {
-      return NextResponse.json({ error: 'Username 3–20 karakter: huruf, angka, titik, atau garis bawah.' }, { status: 400 })
+      return NextResponse.json({ error: st('err.usernameFormat') }, { status: 400 })
     }
     if (password.length < 8 || password.length > 100) {
-      return NextResponse.json({ error: 'Password minimal 8 karakter.' }, { status: 400 })
+      return NextResponse.json({ error: st('err.passwordLength') }, { status: 400 })
     }
     if (displayName.length < 2 || displayName.length > 40) {
-      return NextResponse.json({ error: 'Nama tampilan 2–40 karakter.' }, { status: 400 })
+      return NextResponse.json({ error: st('err.displayNameLength') }, { status: 400 })
     }
     if (isReservedName(username) || isReservedName(displayName)) {
-      return NextResponse.json({ error: 'Nama tersebut tidak bisa dipakai.' }, { status: 400 })
+      return NextResponse.json({ error: st('err.nameReserved') }, { status: 400 })
     }
 
     if ((await isNameTakenByAccount(displayName)) || (displayName !== username && (await isNameTakenByAccount(username)))) {
-      return NextResponse.json({ error: 'Username atau nama tampilan sudah dipakai akun lain.' }, { status: 409 })
+      return NextResponse.json({ error: st('err.accountNameTaken') }, { status: 409 })
     }
 
     const ipHash = getIpHash()
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
       .eq('ip_hash', ipHash)
       .gte('created_at', since)
     if ((count || 0) >= MAX_ACCOUNTS_PER_IP_PER_DAY) {
-      return NextResponse.json({ error: 'Terlalu banyak pendaftaran. Coba lagi besok.' }, { status: 429 })
+      return NextResponse.json({ error: st('err.tooManySignups') }, { status: 429 })
     }
 
     const { data, error } = await supabaseAdmin
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
     if (error) {
       const taken = error.code === '23505'
       return NextResponse.json(
-        { error: taken ? 'Username sudah dipakai. Coba yang lain.' : error.message },
+        { error: taken ? st('err.usernameTaken') : error.message },
         { status: taken ? 409 : 500 }
       )
     }
@@ -71,6 +72,6 @@ export async function POST(req: Request) {
     res.cookies.set(USER_COOKIE, createUserToken(data.id), userCookieOptions)
     return res
   } catch {
-    return NextResponse.json({ error: 'Terjadi kesalahan sistem' }, { status: 500 })
+    return NextResponse.json({ error: st('err.server') }, { status: 500 })
   }
 }

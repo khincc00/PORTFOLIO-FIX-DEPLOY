@@ -6,7 +6,7 @@ export const siteConfig = {
   author: 'Taufiq Sholikhin',
   title: 'Taufiq Sholikhin — Remote Designer & Video Editor | Khincc Studio',
   description:
-    'Taufiq Sholikhin (@khinccofficial) — multimedia creator, remote graphic designer & video editor dari Indonesia. 6+ tahun brand identity, campaign design, dan short-form product video.',
+    'Taufiq Sholikhin (@khinccofficial) — multimedia creator, remote graphic designer & video editor from Indonesia. 6+ years of brand identity, campaign design, and short-form product video.',
   keywords: [
     'Taufiq Sholikhin',
     'khinccofficial',

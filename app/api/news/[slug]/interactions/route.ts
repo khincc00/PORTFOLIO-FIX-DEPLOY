@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { st } from '@/lib/i18n-server'
 import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
 import { findPublishedNewsId, getViewer, toPublicComment } from '@/lib/interactions-server'
 import type { InteractionsPayload } from '@/lib/interactions'
@@ -9,10 +10,10 @@ type Params = { params: { slug: string } }
 
 // Komentar + jumlah reaksi + status login pengunjung untuk satu berita
 export async function GET(_req: Request, { params }: Params) {
-  if (!isAdminDbConfigured) return NextResponse.json({ error: 'Fitur komentar belum aktif.' }, { status: 503 })
+  if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
 
   const newsId = await findPublishedNewsId(params.slug)
-  if (!newsId) return NextResponse.json({ error: 'Berita tidak ditemukan.' }, { status: 404 })
+  if (!newsId) return NextResponse.json({ error: st('err.newsNotFound') }, { status: 404 })
 
   const viewer = await getViewer()
   const [commentsRes, reactionsRes] = await Promise.all([

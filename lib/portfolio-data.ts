@@ -19,11 +19,11 @@ export const portfolioSeed = [
 // === DATA BARU DARI HTML LAMA YANG BELUM ADA ===
 
 export const campaignPosters = [
-  { id:"atlas", title:"Online Loan Awareness", category:"Campaign design / Social media", year:"2026", image:"CONTENT/Institution1.jpg", alt:"Poster design about avoiding online loan scams for Penerangan Lanal Sangatta", description:"Campaign untuk Penerangan Lanal Sangatta - edukasi bahaya pinjol" },
-  { id:"ruang", title:"Digital Safety Campaign", category:"Public information / Illustration", year:"2026", image:"CONTENT/Institution2.jpg", alt:"Poster design about preventing fraud and exploitation on social media", description:"Edukasi pencegahan penipuan dan eksploitasi di sosial media" },
-  { title:"Responsible Conduct", category:"Campaign design / Art direction", year:"2026", image:"CONTENT/Institution3.jpg", alt:"Poster design promoting responsible behaviour and avoiding alcohol", description:"Campaign perilaku bertanggung jawab dan menghindari alkohol" },
-  { title:"Fluent English", category:"Education campaign / Poster design", year:"2026", image:"CONTENT/LPK English.jpg", alt:"Promotional poster design for Fluent English language courses", description:"Poster series untuk kursus bahasa Inggris - dipakai di hero index.html" },
-  { title:"Down Under Brew", category:"Editorial infographic / Information design", year:"2026", image:"CONTENT/Under brew.jpg", alt:"Editorial infographic design about Australian coffee production", description:"Infografis editorial tentang produksi kopi Australia" },
+  { id:"atlas", title:"Online Loan Awareness", category:"Campaign design / Social media", year:"2026", image:"CONTENT/Institution1.jpg", alt:"Poster design about avoiding online loan scams for Penerangan Lanal Sangatta", description:{en:"Campaign for Penerangan Lanal Sangatta — raising awareness of illegal online loans",id:"Kampanye untuk Penerangan Lanal Sangatta — edukasi bahaya pinjol"} },
+  { id:"ruang", title:"Digital Safety Campaign", category:"Public information / Illustration", year:"2026", image:"CONTENT/Institution2.jpg", alt:"Poster design about preventing fraud and exploitation on social media", description:{en:"Educating the public on preventing fraud and exploitation on social media",id:"Edukasi pencegahan penipuan dan eksploitasi di media sosial"} },
+  { title:"Responsible Conduct", category:"Campaign design / Art direction", year:"2026", image:"CONTENT/Institution3.jpg", alt:"Poster design promoting responsible behaviour and avoiding alcohol", description:{en:"Campaign promoting responsible conduct and avoiding alcohol",id:"Kampanye perilaku bertanggung jawab dan menghindari alkohol"} },
+  { title:"Fluent English", category:"Education campaign / Poster design", year:"2026", image:"CONTENT/LPK English.jpg", alt:"Promotional poster design for Fluent English language courses", description:{en:"Poster series for an English language course",id:"Seri poster untuk kursus bahasa Inggris"} },
+  { title:"Down Under Brew", category:"Editorial infographic / Information design", year:"2026", image:"CONTENT/Under brew.jpg", alt:"Editorial infographic design about Australian coffee production", description:{en:"Editorial infographic on Australian coffee production",id:"Infografis editorial tentang produksi kopi Australia"} },
 ];
 
 export const tiktokReviews = [
@@ -47,19 +47,18 @@ export const youtubePortfolio = [
 ];
 
 export const capabilities = [
-  { index:"01", title:"Campaign & poster design", desc:"Public-information campaigns, poster series, and key visuals for institutions and brands.", tags:"Art direction / Print" },
-  { index:"02", title:"Editorial & infographic", desc:"Information design that turns dense material into something easy to read and share.", tags:"Layout / Data" },
-  { index:"03", title:"Short-form video editing", desc:"Reels, TikToks, and review edits with pacing and sound built for the feed.", tags:"Motion / Sound" },
-  { index:"04", title:"Social content systems", desc:"Repeatable visual templates so every post still feels considered and on-brand.", tags:"Systems / Templates" },
+  { index:"01", title:{en:"Campaign & poster design",id:"Desain kampanye & poster"}, desc:{en:"Public-information campaigns, poster series, and key visuals for institutions and brands.",id:"Kampanye informasi publik, seri poster, dan key visual untuk instansi dan brand."}, tags:{en:"Art direction / Print",id:"Art direction / Cetak"} },
+  { index:"02", title:{en:"Editorial & infographic",id:"Editorial & infografis"}, desc:{en:"Information design that turns dense material into something easy to read and share.",id:"Desain informasi yang mengubah materi padat jadi mudah dibaca dan dibagikan."}, tags:{en:"Layout / Data",id:"Layout / Data"} },
+  { index:"03", title:{en:"Short-form video editing",id:"Editing video pendek"}, desc:{en:"Reels, TikToks, and review edits with pacing and sound built for the feed.",id:"Reels, TikTok, dan video review dengan ritme dan audio yang pas untuk feed."}, tags:{en:"Motion / Sound",id:"Motion / Audio"} },
+  { index:"04", title:{en:"Social content systems",id:"Sistem konten sosial"}, desc:{en:"Repeatable visual templates so every post still feels considered and on-brand.",id:"Template visual yang bisa dipakai ulang agar setiap posting tetap rapi dan sesuai brand."}, tags:{en:"Systems / Templates",id:"Sistem / Template"} },
 ];
 
-export const marqueeItems = ["Campaign design","Editorial & infographic","Short-form video","Social content","Art direction","Motion graphics"];
+export const marqueeItems = [
+  {en:"Campaign design",id:"Desain kampanye"},{en:"Editorial & infographic",id:"Editorial & infografis"},{en:"Short-form video",id:"Video pendek"},
+  {en:"Social content",id:"Konten sosial"},{en:"Art direction",id:"Art direction"},{en:"Motion graphics",id:"Motion graphics"},
+];
 
 export const contactInfo = {
-  eyebrow:"Let's make something",
-  title:"Tell me what you're thinking.",
-  lede:"Campaign design, editorial layout, or short-form edits — bring the idea and we will shape it together.",
-  meta:["Reply in 2–3 business days","Indonesia / GMT+8","Remote friendly"],
   email:"taufiqsholikhin@gmail.com",
   instagram:"@khinccofficial",
   tiktok:"@khinccofficial",

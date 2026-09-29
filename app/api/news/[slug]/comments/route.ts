@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { st } from '@/lib/i18n-server'
 import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
 import { findPublishedNewsId, getViewer, toPublicComment, withVisitorCookie } from '@/lib/interactions-server'
 import { isNameTakenByAccount } from '@/lib/account'
@@ -14,7 +15,7 @@ const MAX_COMMENTS_PER_HOUR = 15
 
 // Kirim komentar (akun, tamu dengan nama bebas, atau admin sebagai penulis)
 export async function POST(req: Request, { params }: Params) {
-  if (!isAdminDbConfigured) return NextResponse.json({ error: 'Fitur komentar belum aktif.' }, { status: 503 })
+  if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
 
   try {
     const body = await req.json()
@@ -25,10 +26,10 @@ export async function POST(req: Request, { params }: Params) {
 
     const text = String(body.body || '').replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
     if (text.length < COMMENT_LIMITS.bodyMin || text.length > COMMENT_LIMITS.bodyMax) {
-      return NextResponse.json({ error: `Komentar ${COMMENT_LIMITS.bodyMin}–${COMMENT_LIMITS.bodyMax} karakter.` }, { status: 400 })
+      return NextResponse.json({ error: st('err.bodyLength', { min: COMMENT_LIMITS.bodyMin, max: COMMENT_LIMITS.bodyMax }) }, { status: 400 })
     }
     if ((text.match(/https?:\/\/|www\./gi) || []).length > COMMENT_LIMITS.maxLinks) {
-      return NextResponse.json({ error: `Maksimal ${COMMENT_LIMITS.maxLinks} tautan per komentar.` }, { status: 400 })
+      return NextResponse.json({ error: st('err.tooManyLinks', { max: COMMENT_LIMITS.maxLinks }) }, { status: 400 })
     }
 
     let author: { author_name: string; author_type: 'guest' | 'member' | 'admin'; user_id: number | null }
@@ -39,20 +40,20 @@ export async function POST(req: Request, { params }: Params) {
     } else {
       const name = normalizeName(String(body.name || ''))
       if (name.length < COMMENT_LIMITS.nameMin || name.length > COMMENT_LIMITS.nameMax) {
-        return NextResponse.json({ error: `Nama ${COMMENT_LIMITS.nameMin}–${COMMENT_LIMITS.nameMax} karakter.` }, { status: 400 })
+        return NextResponse.json({ error: st('err.nameLength', { min: COMMENT_LIMITS.nameMin, max: COMMENT_LIMITS.nameMax }) }, { status: 400 })
       }
       if (isReservedName(name)) {
-        return NextResponse.json({ error: 'Nama tersebut tidak bisa dipakai. Silakan pilih nama lain.' }, { status: 400 })
+        return NextResponse.json({ error: st('err.nameReserved') }, { status: 400 })
       }
       // Guests can't borrow a name that belongs to a registered account
       if (await isNameTakenByAccount(name)) {
-        return NextResponse.json({ error: 'Nama ini dipakai oleh akun terdaftar. Masuk ke akun tersebut atau pilih nama lain.' }, { status: 409 })
+        return NextResponse.json({ error: st('err.nameTaken') }, { status: 409 })
       }
       author = { author_name: name, author_type: 'guest', user_id: null }
     }
 
     const newsId = await findPublishedNewsId(params.slug)
-    if (!newsId) return NextResponse.json({ error: 'Berita tidak ditemukan.' }, { status: 404 })
+    if (!newsId) return NextResponse.json({ error: st('err.newsNotFound') }, { status: 404 })
 
     const ipHash = getIpHash()
     if (!viewer.isAdmin) {
@@ -63,10 +64,10 @@ export async function POST(req: Request, { params }: Params) {
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString())
         .order('created_at', { ascending: false })
       if (recent && recent.length >= MAX_COMMENTS_PER_HOUR) {
-        return NextResponse.json({ error: 'Terlalu banyak komentar. Coba lagi nanti.' }, { status: 429 })
+        return NextResponse.json({ error: st('err.tooManyComments') }, { status: 429 })
       }
       if (recent?.[0] && Date.now() - new Date(recent[0].created_at).getTime() < MIN_SECONDS_BETWEEN_COMMENTS * 1000) {
-        return NextResponse.json({ error: 'Tunggu sebentar sebelum mengirim komentar lagi.' }, { status: 429 })
+        return NextResponse.json({ error: st('err.slowDown') }, { status: 429 })
       }
     }
 
@@ -79,17 +80,17 @@ export async function POST(req: Request, { params }: Params) {
 
     return withVisitorCookie(NextResponse.json({ comment: toPublicComment(data, viewer) }), viewer.visitor)
   } catch {
-    return NextResponse.json({ error: 'Terjadi kesalahan sistem' }, { status: 500 })
+    return NextResponse.json({ error: st('err.server') }, { status: 500 })
   }
 }
 
 // Hapus komentar sendiri (admin bisa menghapus semua)
 export async function DELETE(req: Request, { params }: Params) {
-  if (!isAdminDbConfigured) return NextResponse.json({ error: 'Fitur komentar belum aktif.' }, { status: 503 })
+  if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
 
   const id = Number(new URL(req.url).searchParams.get('id'))
   const newsId = await findPublishedNewsId(params.slug)
-  if (!id || !newsId) return NextResponse.json({ error: 'Komentar tidak ditemukan.' }, { status: 404 })
+  if (!id || !newsId) return NextResponse.json({ error: st('err.commentNotFound') }, { status: 404 })
 
   const viewer = await getViewer()
   const { data: row } = await supabaseAdmin
@@ -99,7 +100,7 @@ export async function DELETE(req: Request, { params }: Params) {
     .eq('news_id', newsId)
     .maybeSingle()
   if (!row || !toPublicComment(row, viewer).can_delete) {
-    return NextResponse.json({ error: 'Kamu tidak bisa menghapus komentar ini.' }, { status: 403 })
+    return NextResponse.json({ error: st('err.cannotDelete') }, { status: 403 })
   }
 
   const { error } = await supabaseAdmin.from('news_comments').delete().eq('id', id)

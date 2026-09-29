@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { siteConfig } from '@/lib/site'
+import { PreferencesProvider, preferencesScript } from '@/components/Preferences'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
-    locale: 'id_ID',
+    locale: 'en_US',
+    alternateLocale: ['id_ID'],
     url: '/',
     siteName: siteConfig.name,
     title: siteConfig.title,
@@ -32,7 +34,7 @@ const jsonLd = {
       url: siteConfig.url,
       name: siteConfig.name,
       alternateName: ['Khincc', 'khinccofficial', 'Khincreator'],
-      inLanguage: 'id-ID',
+      inLanguage: ['en', 'id'],
     },
     {
       '@type': 'Person',
@@ -50,10 +52,14 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id">
+    // The head script sets data-theme / data-lang before hydration
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: preferencesScript }} />
+      </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        {children}
+        <PreferencesProvider>{children}</PreferencesProvider>
       </body>
     </html>
   )

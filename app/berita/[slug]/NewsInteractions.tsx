@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import { COMMENT_LIMITS, REACTIONS, type InteractionsPayload, type PublicComment } from '@/lib/interactions'
+import { usePrefs } from '@/components/Preferences'
+import type { DictKey, Lang } from '@/lib/i18n'
 
 type Mode = 'guest' | 'login' | 'register'
 
@@ -14,20 +16,19 @@ const writeStorage = (key: string, value: string) => {
   try { localStorage.setItem(key, value) } catch {}
 }
 
-const timeAgo = (iso: string) => {
+const timeAgo = (iso: string, lang: Lang, t: (k: DictKey) => string) => {
   const s = Math.max(1, Math.floor((Date.now() - new Date(iso).getTime()) / 1000))
-  if (s < 60) return 'baru saja'
-  if (s < 3600) return `${Math.floor(s / 60)} menit lalu`
-  if (s < 86400) return `${Math.floor(s / 3600)} jam lalu`
-  if (s < 86400 * 7) return `${Math.floor(s / 86400)} hari lalu`
-  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+  if (s < 60) return t('ni.justNow')
+  if (s < 3600) return `${Math.floor(s / 60)} ${t('ni.minAgo')}`
+  if (s < 86400) return `${Math.floor(s / 3600)} ${t('ni.hourAgo')}`
+  if (s < 86400 * 7) return `${Math.floor(s / 86400)} ${t('ni.dayAgo')}`
+  return new Date(iso).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 const avatarHue = (name: string) => Array.from(name).reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7)
 
-const badges = { admin: 'Penulis', member: 'Member', guest: 'Tamu' }
-
 export default function NewsInteractions({ slug }: { slug: string }) {
+  const { t, lang } = usePrefs()
   const [data, setData] = useState<InteractionsPayload | null>(null)
   const [loadError, setLoadError] = useState('')
   const [mode, setMode] = useState<Mode>('guest')
@@ -45,7 +46,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
     fetch(`${api}/interactions`)
       .then(async (r) => {
         const d = await r.json()
-        if (!r.ok) throw new Error(d.error || 'Gagal memuat komentar')
+        if (!r.ok) throw new Error(d.error || t('ni.loadFailed'))
         setData(d)
       })
       .catch((e) => setLoadError(e.message))
@@ -89,7 +90,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
         body: JSON.stringify({ name, body, website: honeypot, as_admin: data?.isAdmin && asAdmin }),
       })
       const r = await res.json()
-      if (!res.ok) throw new Error(r.error || 'Gagal mengirim komentar')
+      if (!res.ok) throw new Error(r.error || t('ni.sendFailed'))
       if (r.comment) setData((d) => d && { ...d, comments: [...d.comments, r.comment] })
       if (!data?.user) writeStorage(GUEST_NAME_KEY, name)
       setBody('')
@@ -111,7 +112,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
         body: JSON.stringify(account),
       })
       const r = await res.json()
-      if (!res.ok) throw new Error(r.error || 'Gagal masuk')
+      if (!res.ok) throw new Error(r.error || t('ni.loginFailed'))
       setAccount({ username: '', password: '', display_name: '' })
       setMode('guest')
       // Reload so "can delete" flags and reactions reflect the account
@@ -131,10 +132,10 @@ export default function NewsInteractions({ slug }: { slug: string }) {
   }
 
   const remove = async (comment: PublicComment) => {
-    if (!confirm('Hapus komentar ini?')) return
+    if (!confirm(t('ni.confirmDelete'))) return
     const res = await fetch(`${api}/comments?id=${comment.id}`, { method: 'DELETE' })
     if (res.ok) setData((d) => d && { ...d, comments: d.comments.filter((c) => c.id !== comment.id) })
-    else alert((await res.json()).error || 'Gagal menghapus komentar')
+    else alert((await res.json()).error || t('ni.deleteFailed'))
   }
 
   if (loadError) return null
@@ -144,9 +145,9 @@ export default function NewsInteractions({ slug }: { slug: string }) {
   const totalReactions = data ? Object.values(data.reactions).reduce((a, b) => a + b, 0) : 0
 
   return (
-    <section className="ni" id="komentar" aria-label="Reaksi dan komentar">
+    <section className="ni" id="komentar" aria-label={t('ni.comments')}>
       <div className="ni-reactions">
-        <p className="eyebrow">Bagaimana menurutmu? {totalReactions > 0 && <span>· {totalReactions} reaksi</span>}</p>
+        <p className="eyebrow">{t('ni.prompt')} {totalReactions > 0 && <span>· {totalReactions} {t('ni.reactions')}</span>}</p>
         <div className="ni-reaction-row">
           {REACTIONS.map((emoji) => {
             const active = data?.mine.includes(emoji)
@@ -158,7 +159,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
                 onClick={() => react(emoji)}
                 className={active ? 'is-active' : ''}
                 aria-pressed={!!active}
-                aria-label={`Reaksi ${emoji}`}
+                aria-label={`${t('ni.react')} ${emoji}`}
               >
                 <span>{emoji}</span>
                 {!!data?.reactions[emoji] && <b>{data.reactions[emoji]}</b>}
@@ -169,7 +170,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
       </div>
 
       <div className="ni-head">
-        <h2>Komentar {data && <span>{data.comments.length}</span>}</h2>
+        <h2>{t('ni.comments')} {data && <span>{data.comments.length}</span>}</h2>
       </div>
 
       <div className="ni-form">
@@ -178,19 +179,19 @@ export default function NewsInteractions({ slug }: { slug: string }) {
             {data.isAdmin ? (
               <label className="ni-check">
                 <input type="checkbox" checked={asAdmin} onChange={(e) => setAsAdmin(e.target.checked)} />
-                Balas sebagai <strong>Penulis</strong>
-                {asAdmin && <small>· hapus centang untuk berkomentar atau daftar sebagai pengunjung</small>}
+                {t('ni.asAuthor')} <strong>{t('ni.author')}</strong>
+                {asAdmin && <small>{t('ni.asAuthorHint')}</small>}
               </label>
             ) : null}
             {data.user && (!data.isAdmin || !asAdmin) && (
-              <span>Berkomentar sebagai <strong>{data.user.display_name}</strong> <em>@{data.user.username}</em></span>
+              <span>{t('ni.commentingAs')} <strong>{data.user.display_name}</strong> <em>@{data.user.username}</em></span>
             )}
-            {data.user && <button type="button" onClick={logout}>Keluar</button>}
+            {data.user && <button type="button" onClick={logout}>{t('ni.logout')}</button>}
           </div>
         )}
         {showAccountTabs && (
           <div className="ni-tabs" role="tablist">
-            {([['guest', 'Tanpa akun'], ['login', 'Masuk'], ['register', 'Daftar akun']] as [Mode, string][]).map(([m, label]) => (
+            {([['guest', t('ni.tabGuest')], ['login', t('ni.tabLogin')], ['register', t('ni.tabRegister')]] as [Mode, string][]).map(([m, label]) => (
               <button key={m} type="button" role="tab" aria-selected={mode === m} className={mode === m ? 'is-active' : ''} onClick={() => { setMode(m); setError('') }}>
                 {label}
               </button>
@@ -200,37 +201,37 @@ export default function NewsInteractions({ slug }: { slug: string }) {
 
         {mode !== 'guest' && showAccountTabs ? (
           <form onSubmit={submitAccount} className="ni-fields">
-            <label>Username
-              <input value={account.username} onChange={(e) => setAccount({ ...account, username: e.target.value })} autoComplete="username" placeholder="contoh: budi_22" required />
+            <label>{t('ni.username')}
+              <input value={account.username} onChange={(e) => setAccount({ ...account, username: e.target.value })} autoComplete="username" placeholder={t('ni.usernamePh')} required />
             </label>
             {mode === 'register' && (
-              <label>Nama tampilan <small>(opsional, boleh samaran)</small>
-                <input value={account.display_name} onChange={(e) => setAccount({ ...account, display_name: e.target.value })} maxLength={COMMENT_LIMITS.nameMax} placeholder="Nama yang tampil di komentar" />
+              <label>{t('ni.displayName')} <small>{t('ni.displayNameHint')}</small>
+                <input value={account.display_name} onChange={(e) => setAccount({ ...account, display_name: e.target.value })} maxLength={COMMENT_LIMITS.nameMax} placeholder={t('ni.displayNamePh')} />
               </label>
             )}
-            <label>Password
+            <label>{t('ni.password')}
               <input type="password" value={account.password} onChange={(e) => setAccount({ ...account, password: e.target.value })} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={mode === 'register' ? 8 : undefined} required />
             </label>
-            {mode === 'register' && <p className="ni-note">Tanpa email. Akun membuat namamu tidak bisa dipakai orang lain dan komentarmu bisa kamu hapus dari perangkat mana pun. Simpan password baik-baik, karena belum ada fitur reset.</p>}
+            {mode === 'register' && <p className="ni-note">{t('ni.registerNote')}</p>}
             {error && <p className="ni-error">{error}</p>}
-            <button type="submit" className="ni-submit" disabled={busy}>{busy ? 'Memproses...' : mode === 'register' ? 'Daftar & lanjut komentar' : 'Masuk'}</button>
+            <button type="submit" className="ni-submit" disabled={busy}>{busy ? t('ni.processing') : mode === 'register' ? t('ni.registerBtn') : t('ni.loginBtn')}</button>
           </form>
         ) : (
           <form onSubmit={submitComment} className="ni-fields">
             {!data?.user && !(data?.isAdmin && asAdmin) && (
-              <label>Nama <small>(bebas, asli atau samaran)</small>
-                <input value={name} onChange={(e) => setName(e.target.value)} maxLength={COMMENT_LIMITS.nameMax} placeholder="Nama kamu" required />
+              <label>{t('ni.name')} <small>{t('ni.nameHint')}</small>
+                <input value={name} onChange={(e) => setName(e.target.value)} maxLength={COMMENT_LIMITS.nameMax} placeholder={t('ni.namePh')} required />
               </label>
             )}
-            <label>Komentar
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} maxLength={COMMENT_LIMITS.bodyMax} rows={4} placeholder="Tulis komentar..." required />
+            <label>{t('ni.comment')}
+              <textarea value={body} onChange={(e) => setBody(e.target.value)} maxLength={COMMENT_LIMITS.bodyMax} rows={4} placeholder={t('ni.commentPh')} required />
             </label>
             {/* Honeypot for bots; hidden from people and screen readers */}
             <input className="ni-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} name="website" />
             {error && <p className="ni-error">{error}</p>}
             <div className="ni-actions">
               <span>{body.length}/{COMMENT_LIMITS.bodyMax}</span>
-              <button type="submit" className="ni-submit" disabled={busy || !data}>{busy ? 'Mengirim...' : 'Kirim komentar'}</button>
+              <button type="submit" className="ni-submit" disabled={busy || !data}>{busy ? t('ni.sending') : t('ni.send')}</button>
             </div>
           </form>
         )}
@@ -238,9 +239,9 @@ export default function NewsInteractions({ slug }: { slug: string }) {
 
       <div className="ni-list">
         {!data ? (
-          <p className="ni-empty">Memuat komentar...</p>
+          <p className="ni-empty">{t('ni.loading')}</p>
         ) : data.comments.length === 0 ? (
-          <p className="ni-empty">Belum ada komentar. Jadilah yang pertama!</p>
+          <p className="ni-empty">{t('ni.empty')}</p>
         ) : (
           data.comments.map((c) => (
             <article key={c.id} className={`ni-comment ${c.author_type === 'admin' ? 'is-admin' : ''}`}>
@@ -250,9 +251,9 @@ export default function NewsInteractions({ slug }: { slug: string }) {
               <div className="ni-comment-body">
                 <div className="ni-comment-meta">
                   <strong>{c.author_name}</strong>
-                  <span className={`ni-badge is-${c.author_type}`}>{c.author_type === 'member' ? '✓ ' : ''}{badges[c.author_type]}</span>
-                  <time dateTime={c.created_at}>{timeAgo(c.created_at)}</time>
-                  {c.can_delete && <button type="button" onClick={() => remove(c)}>Hapus</button>}
+                  <span className={`ni-badge is-${c.author_type}`}>{c.author_type === 'member' ? '✓ ' : ''}{t(`ni.badge.${c.author_type}`)}</span>
+                  <time dateTime={c.created_at}>{timeAgo(c.created_at, lang, t)}</time>
+                  {c.can_delete && <button type="button" onClick={() => remove(c)}>{t('ni.delete')}</button>}
                 </div>
                 <p>{c.body}</p>
               </div>

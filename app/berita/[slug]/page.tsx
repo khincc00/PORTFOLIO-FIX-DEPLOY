@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getNewsBySlug } from '@/lib/news-public'
-import { formatNewsDate, readingTime } from '@/lib/news'
+import { readingTime } from '@/lib/news'
+import SiteHeader from '@/components/SiteHeader'
+import { LocalDate, T } from '@/components/Preferences'
 import { siteConfig } from '@/lib/site'
 import NewsInteractions from './NewsInteractions'
 
@@ -12,7 +14,7 @@ type Props = { params: { slug: string } }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getNewsBySlug(params.slug)
-  if (!post) return { title: 'Berita tidak ditemukan' }
+  if (!post) return { title: 'News not found' }
   return {
     title: post.title,
     description: post.excerpt || undefined,
@@ -51,16 +53,12 @@ export default async function NewsDetailPage({ params }: Props) {
 
   return (
     <main className="studio">
-      <nav className="studio-nav">
-        <Link className="wordmark" href="/">KHINCC® / Studio</Link>
-        <div className="nav-links"><Link href="/#works">Works</Link><Link href="/berita">News</Link><Link href="/#contact">Contact</Link></div>
-        <Link className="nav-cta" href="/#contact">Hire Me</Link>
-      </nav>
+      <SiteHeader />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <article className="news-article">
-        <Link href="/berita" className="text-link news-back">← Semua berita</Link>
-        <div className="news-meta"><span>{post.category}</span><span>{formatNewsDate(post.published_at)}</span><span>{readingTime(post.content)} menit baca</span></div>
+        <Link href="/berita" className="text-link news-back"><T k="news.back" /></Link>
+        <div className="news-meta"><span>{post.category}</span><span><LocalDate iso={post.published_at} /></span><span>{readingTime(post.content)} <T k="news.minRead" /></span></div>
         <h1>{post.title}</h1>
         {post.excerpt && <p className="news-lede">{post.excerpt}</p>}
         {post.cover_image && <img className="news-article-cover" src={post.cover_image} alt="" />}
@@ -72,7 +70,7 @@ export default async function NewsDetailPage({ params }: Props) {
         <NewsInteractions slug={post.slug} />
       </article>
 
-      <footer className="studio-footer"><span>© 2026 Khincc Studio • Indonesia • Made with intention.</span></footer>
+      <footer className="studio-footer"><span><T k="footer.text" /></span></footer>
     </main>
   )
 }
