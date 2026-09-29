@@ -1,9 +1,13 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { formatNewsDate, type NewsSummary } from '@/lib/news'
 import { portfolioSeed, campaignPosters, tiktokReviews, youtubePortfolio, capabilities, marqueeItems, contactInfo } from '@/lib/portfolio-data'
+
+const isRecent=(date:string|null)=>Boolean(date && Date.now()-new Date(date).getTime()<14*864e5)
 
 export default function Page(){
   const [works,setWorks]=useState(portfolioSeed)
+  const [news,setNews]=useState<NewsSummary[]>([])
   const [filter,setFilter]=useState('All')
   const cats=['All',...Array.from(new Set(portfolioSeed.map(p=>p.category)))]
   const filtered = filter==='All'?works:works.filter(w=>w.category===filter)
@@ -14,6 +18,7 @@ export default function Page(){
 
   useEffect(()=>{
     fetch('/api/portfolio').then(r=>r.json()).then(d=>{ if(Array.isArray(d) && d.length) setWorks(d)}).catch(()=>{})
+    fetch('/api/news?limit=4').then(r=>r.json()).then(d=>{ if(Array.isArray(d)) setNews(d)}).catch(()=>{})
   },[])
 
   useEffect(()=>{
@@ -67,7 +72,7 @@ export default function Page(){
     <main className="studio">
       <nav className="studio-nav">
         <a className="wordmark" href="#top">KHINCC® / Studio</a>
-        <div className="nav-links"><a href="#campaign">Campaign</a><a href="#works">Works</a><a href="#youtube">YouTube</a><a href="#contact">Contact</a></div>
+        <div className="nav-links"><a href="#campaign">Campaign</a><a href="#works">Works</a><a href="#youtube">YouTube</a><a href="/berita">News</a><a href="#contact">Contact</a></div>
         <a className="nav-cta" href="#contact">Hire Me</a>
       </nav>
 
@@ -91,6 +96,31 @@ export default function Page(){
           </div>
         </div>
       </section>
+
+      {news.length>0 && <section id="news" className="news-spotlight" aria-label="Berita terbaru">
+        <div className="news-spotlight-inner">
+          <div className="news-spotlight-head">
+            <p className="news-live"><i/>Latest News — Kabar Terbaru</p>
+            <a className="text-link" href="/berita">Lihat semua berita ↗</a>
+          </div>
+          <div className={`news-spotlight-grid ${news.length===1?'is-single':''}`}>
+            <a className="news-spot-main" href={`/berita/${news[0].slug}`}>
+              <div className="news-cover">{news[0].cover_image?<img src={news[0].cover_image} alt=""/>:<span>{news[0].category}</span>}{isRecent(news[0].published_at)&&<b className="news-badge">Baru</b>}</div>
+              <div className="news-spot-copy">
+                <div className="news-meta"><span>{news[0].category}</span><span>{formatNewsDate(news[0].published_at)}</span></div>
+                <h2>{news[0].title}</h2>
+                <p>{news[0].excerpt}</p>
+                <span className="news-spot-cta">Baca selengkapnya <em>→</em></span>
+              </div>
+            </a>
+            {news.length>1 && <div className="news-spot-list">{news.slice(1).map((n,i)=><a key={n.id} href={`/berita/${n.slug}`}>
+              <span className="news-spot-index">0{i+2}</span>
+              <div><div className="news-meta"><span>{n.category}</span><span>{formatNewsDate(n.published_at)}</span></div><h3>{n.title}</h3></div>
+              {n.cover_image&&<img src={n.cover_image} alt="" loading="lazy"/>}
+            </a>)}</div>}
+          </div>
+        </div>
+      </section>}
 
       <section className="ticker" aria-label="Studio capabilities"><div>{marqueeItems.concat(marqueeItems).map((item,i)=><span key={i}>{item}<b>·</b></span>)}</div></section>
 

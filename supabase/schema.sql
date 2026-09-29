@@ -79,3 +79,43 @@ insert into public.portfolio (title, likes, reel_id, category, description) valu
 ('2K Webcam Streaming', 1, 'DWKG07fzceT', 'Webcam', 'Streaming gear'),
 ('Fantech WGP-13S Gamepad', 1, 'DVEGq4SEshJ', 'Gamepad Promo', 'Sales urgency copy')
 on conflict (reel_id) do nothing;
+
+-- 7. Tabel News (Berita / Kabar Terbaru)
+create table if not exists public.news (
+  id serial primary key,
+  title text not null,
+  slug text not null unique,
+  excerpt text,
+  content text not null default '',
+  cover_image text,
+  category text default 'Update',
+  tags text[] default '{}',
+  status text not null default 'draft' check (status in ('draft', 'published')),
+  published_at timestamp with time zone,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+create index if not exists news_status_published_at_idx
+  on public.news (status, published_at desc);
+
+alter table public.news enable row level security;
+
+-- Pengunjung publik hanya bisa membaca berita yang sudah terbit
+drop policy if exists "Allow public read access to published news" on public.news;
+create policy "Allow public read access to published news"
+  on public.news
+  for select
+  using (status = 'published' and published_at <= now());
+
+-- Admin (lewat SUPABASE_SERVICE_ROLE_KEY di server) mengelola semua berita
+drop policy if exists "Allow service role full access to news" on public.news;
+create policy "Allow service role full access to news"
+  on public.news
+  for all
+  using (auth.role() = 'service_role');
+
+-- 8. Storage Bucket untuk gambar berita (dibaca publik, upload lewat server)
+insert into storage.buckets (id, name, public)
+values ('news-images', 'news-images', true)
+on conflict (id) do nothing;

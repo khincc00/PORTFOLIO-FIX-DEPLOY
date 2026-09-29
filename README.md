@@ -5,7 +5,8 @@ Website portfolio modern untuk multimedia creator, remote designer, dan video ed
 ## 🚀 Fitur Utama
 - **Curated Selected Works**: Showcase gear reviews dengan filter kategori dinamis & tautan langsung ke Instagram Reels.
 - **Client Inquiry Form**: Formulir kontak interaktif terintegrasi langsung dengan database Supabase (`contacts`).
-- **Admin Dashboard**: Halaman manajemen di `/admin` untuk memonitor portfolio dan pesan kontak yang masuk.
+- **Admin Dashboard**: Halaman manajemen di `/admin` (alias `/admin.php`) untuk memonitor portfolio dan pesan kontak yang masuk.
+- **Berita / Kabar Terbaru**: Tulis, jadwalkan, dan terbitkan berita ala WordPress dari `/admin` (editor visual, gambar unggulan, kategori, tag, draft). Tampil di `/berita` dan di beranda.
 - **Graceful Local Fallback**: Tetap berjalan mulus dengan data seed lokal jika koneksi Supabase belum dikonfigurasi.
 
 ## 🛠️ Stack Teknologi
@@ -23,4 +24,6 @@ Website portfolio modern untuk multimedia creator, remote designer, dan video ed
    - Masukkan:
      - `NEXT_PUBLIC_SUPABASE_URL`
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+     - `SUPABASE_SERVICE_ROLE_KEY` (rahasia — dari Supabase > Project Settings > API)
+     - `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`
 3. Deploy akan berjalan otomatis setiap push ke branch `main`.

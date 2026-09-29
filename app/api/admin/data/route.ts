@@ -1,27 +1,26 @@
 import { NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
+import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { portfolioSeed } from '@/lib/portfolio-data'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const { password } = await req.json()
-    const validPassword = process.env.ADMIN_PASSWORD || 'khincc2026'
-
-    if (password !== validPassword) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!isAdminRequest()) return unauthorized()
 
     let portfolioList = portfolioSeed
     let contactList: any[] = []
     let dbError: string | null = null
 
     if (isSupabaseConfigured) {
+      // Service role is needed to read contacts through RLS; fall back to anon for portfolio
+      const db = isAdminDbConfigured ? supabaseAdmin : supabase
       try {
         const [portfolioRes, contactsRes] = await Promise.all([
-          supabase.from('portfolio').select('*').order('id', { ascending: true }),
-          supabase.from('contacts').select('*').order('created_at', { ascending: false }),
+          db.from('portfolio').select('*').order('id', { ascending: true }),
+          db.from('contacts').select('*').order('created_at', { ascending: false }),
         ])
 
         if (portfolioRes.error) {
@@ -43,6 +42,7 @@ export async function POST(req: Request) {
       contactList,
       dbError,
       isSupabaseConfigured,
+      isAdminDbConfigured,
     })
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 })

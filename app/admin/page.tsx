@@ -2,6 +2,9 @@
 
 import { useState, useEffect, FormEvent } from 'react'
 import Link from 'next/link'
+import type { NewsPost } from '@/lib/news'
+import NewsList from './NewsList'
+import NewsEditor from './NewsEditor'
 
 interface PortfolioItem {
   id?: number
@@ -25,37 +28,50 @@ interface ContactItem {
   created_at: string
 }
 
+type View = 'dashboard' | 'news' | 'editor'
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
+  const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
   const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [view, setView] = useState<View>('dashboard')
 
   // Dashboard Data
   const [portfolioList, setPortfolioList] = useState<PortfolioItem[]>([])
   const [contactList, setContactList] = useState<ContactItem[]>([])
   const [dbError, setDbError] = useState<string | null>(null)
   const [isConfigured, setIsConfigured] = useState(false)
+  const [isAdminDbConfigured, setIsAdminDbConfigured] = useState(false)
   const [dataLoading, setDataLoading] = useState(false)
 
-  const fetchDashboardData = async (pwd: string) => {
+  // News Data
+  const [newsList, setNewsList] = useState<NewsPost[]>([])
+  const [newsLoading, setNewsLoading] = useState(false)
+  const [newsError, setNewsError] = useState<string | null>(null)
+  const [editingPost, setEditingPost] = useState<NewsPost | null>(null)
+  const [editorKey, setEditorKey] = useState(0)
+
+  const handleSessionExpired = (message?: string) => {
+    setIsAuthenticated(false)
+    setAuthError(message || 'Sesi telah kedaluwarsa')
+  }
+
+  const fetchDashboardData = async () => {
     setDataLoading(true)
     try {
-      const res = await fetch('/api/admin/data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pwd }),
-      })
+      const res = await fetch('/api/admin/data')
       const data = await res.json()
       if (res.ok) {
         setPortfolioList(data.portfolioList || [])
         setContactList(data.contactList || [])
         setDbError(data.dbError || null)
         setIsConfigured(data.isSupabaseConfigured || false)
-      } else {
-        setIsAuthenticated(false)
-        sessionStorage.removeItem('admin_session')
-        setAuthError(data.error || 'Sesi telah kedaluwarsa')
+        setIsAdminDbConfigured(data.isAdminDbConfigured || false)
+      } else if (res.status === 401) {
+        handleSessionExpired(data.error)
       }
     } catch {
       setDbError('Gagal memuat data dari server.')
@@ -64,13 +80,37 @@ export default function AdminPage() {
     }
   }
 
-  // Check saved session on mount
-  useEffect(() => {
-    const saved = sessionStorage.getItem('admin_session')
-    if (saved) {
-      setIsAuthenticated(true)
-      fetchDashboardData(saved)
+  const fetchNews = async () => {
+    setNewsLoading(true)
+    setNewsError(null)
+    try {
+      const res = await fetch('/api/admin/news')
+      const data = await res.json()
+      if (res.ok) setNewsList(data)
+      else if (res.status === 401) handleSessionExpired(data.error)
+      else setNewsError(data.error || 'Gagal memuat berita')
+    } catch {
+      setNewsError('Gagal memuat berita dari server.')
+    } finally {
+      setNewsLoading(false)
     }
+  }
+
+  const loadAll = () => Promise.all([fetchDashboardData(), fetchNews()])
+
+  // Check existing session cookie on mount
+  useEffect(() => {
+    fetch('/api/admin/auth')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.authenticated) {
+          setIsAuthenticated(true)
+          loadAll()
+        }
+      })
+      .catch(() => {})
+      .finally(() => setCheckingSession(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogin = async (e: FormEvent) => {
@@ -82,29 +122,45 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: passwordInput }),
+        body: JSON.stringify({ username: usernameInput, password: passwordInput }),
       })
 
       const data = await res.json()
 
       if (res.ok) {
         setIsAuthenticated(true)
-        sessionStorage.setItem('admin_session', passwordInput)
-        await fetchDashboardData(passwordInput)
+        setPasswordInput('')
+        await loadAll()
       } else {
-        setAuthError(data.error || 'Password salah.')
+        setAuthError(data.error || 'Username atau password salah.')
       }
     } catch {
-      setAuthError('Gagal memverifikasi password.')
+      setAuthError('Gagal memverifikasi akun.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth', { method: 'DELETE' }).catch(() => {})
     setIsAuthenticated(false)
     setPasswordInput('')
-    sessionStorage.removeItem('admin_session')
+    setView('dashboard')
+  }
+
+  const openEditor = (post: NewsPost | null) => {
+    setEditingPost(post)
+    setEditorKey((k) => k + 1)
+    setView('editor')
+  }
+
+  const handleNewsSaved = (post: NewsPost) => {
+    setEditingPost(post)
+    setNewsList((list) => [post, ...list.filter((p) => p.id !== post.id)])
+  }
+
+  if (checkingSession) {
+    return <main className="min-h-screen bg-[#FBFBFD] flex items-center justify-center text-sm text-[#86868B]">Memuat...</main>
   }
 
   // Lock Screen
@@ -117,21 +173,29 @@ export default function AdminPage() {
           </div>
           <h1 className="text-xl font-semibold tracking-tight">Admin Authentication</h1>
           <p className="text-xs text-[#86868B] mt-1">
-            Halaman ini diproteksi. Masukkan PIN / Password admin untuk melanjutkan.
+            Halaman ini diproteksi. Masuk dengan akun admin untuk melanjutkan.
           </p>
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
-            <div>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Masukkan PIN / Password"
-                className="w-full rounded-full border border-black/15 px-4 py-3 text-sm text-center tracking-widest outline-none focus:border-black transition"
-                required
-                autoFocus
-              />
-            </div>
+            <input
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="Username"
+              autoComplete="username"
+              className="w-full rounded-full border border-black/15 px-4 py-3 text-sm text-center outline-none focus:border-black transition"
+              required
+              autoFocus
+            />
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Password"
+              autoComplete="current-password"
+              className="w-full rounded-full border border-black/15 px-4 py-3 text-sm text-center tracking-widest outline-none focus:border-black transition"
+              required
+            />
 
             {authError && (
               <div className="text-xs text-red-600 bg-red-50 py-2 px-3 rounded-lg border border-red-100">
@@ -144,7 +208,7 @@ export default function AdminPage() {
               disabled={loading}
               className="w-full bg-black hover:bg-neutral-800 disabled:opacity-50 text-white rounded-full py-3 text-sm font-medium transition cursor-pointer"
             >
-              {loading ? 'Memverifikasi...' : 'Buka Dashboard'}
+              {loading ? 'Memverifikasi...' : 'Masuk'}
             </button>
           </form>
 
@@ -184,6 +248,59 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Menu */}
+        <div className="flex gap-1 text-sm -mt-4">
+          {([
+            ['dashboard', 'Dashboard'],
+            ['news', `Berita (${newsList.length})`],
+          ] as [View, string][]).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setView(key)}
+              className={`px-4 py-2 rounded-full cursor-pointer transition ${
+                view === key || (key === 'news' && view === 'editor') ? 'bg-black text-white' : 'text-[#86868B] hover:text-black hover:bg-neutral-100'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+          <button
+            onClick={() => openEditor(null)}
+            className="px-4 py-2 rounded-full cursor-pointer text-[#86868B] hover:text-black hover:bg-neutral-100 transition"
+          >
+            + Tulis Berita
+          </button>
+        </div>
+
+        {isConfigured && !isAdminDbConfigured && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
+            <strong>SUPABASE_SERVICE_ROLE_KEY belum diisi.</strong> Berita tidak bisa disimpan dan pesan kontak tidak bisa dibaca
+            sampai key ini ditambahkan di <code>.env.local</code> dan Environment Variables Vercel
+            (Supabase Dashboard → Project Settings → API → service_role).
+          </div>
+        )}
+
+        {view === 'news' && (
+          <NewsList
+            posts={newsList}
+            loading={newsLoading}
+            error={newsError}
+            onNew={() => openEditor(null)}
+            onEdit={openEditor}
+            onDeleted={(id) => setNewsList((list) => list.filter((p) => p.id !== id))}
+          />
+        )}
+
+        {view === 'editor' && (
+          <NewsEditor
+            key={editorKey}
+            post={editingPost}
+            onSaved={handleNewsSaved}
+            onCancel={() => setView('news')}
+          />
+        )}
+
+        {view === 'dashboard' && (<>
         {/* Status Banner */}
         <div
           className={`p-4 rounded-2xl border text-sm flex items-center justify-between gap-4 ${
@@ -340,6 +457,7 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+        </>)}
       </div>
     </main>
   )
