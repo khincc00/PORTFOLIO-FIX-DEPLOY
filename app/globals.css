@@ -218,3 +218,23 @@ a.campaign-row{transition:background .2s ease}a.campaign-row:hover h3{color:var(
 .work-art.has-cover{padding:0}
 .work-art.has-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .work-art.has-cover span{position:absolute;top:17px;left:17px;z-index:1;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+
+/* Portfolio page (/work) and homepage highlight links */
+.work-page-head{padding-top:clamp(64px,9vw,120px);padding-bottom:clamp(40px,5vw,64px)}
+.work-page-head h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-weight:500;margin:0}
+.work-jump{display:flex;gap:8px;margin-top:40px;padding:12px 0;overflow-x:auto;scrollbar-width:none;background:var(--paper);border-bottom:1px solid var(--line)}
+.work-jump::-webkit-scrollbar{display:none}
+.work-jump a{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:8px 14px;font-size:11px;transition:background .2s,color .2s,border-color .2s}
+.work-jump a span{font-size:9px;color:var(--muted)}
+.work-jump a:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.work-jump a:hover span{color:inherit}
+.see-all{grid-column:1/-1;justify-self:start;margin-top:18px;white-space:nowrap;font-weight:600;border-bottom:1px solid currentColor}
+.works-heading .see-all{display:inline-block}
+.film-heading .see-all{margin:0 0 8px}
+.work-cta{padding-top:24px;padding-bottom:96px}
+.work-cta a{display:grid;grid-template-columns:1fr auto;align-items:end;gap:6px 24px;border-top:1px solid var(--ink);padding-top:26px}
+.work-cta span{font-size:clamp(34px,5vw,68px);line-height:1;letter-spacing:-.05em;font-weight:500;transition:color .2s ease}
+.work-cta em{font-style:normal;font-size:clamp(34px,5vw,68px);line-height:1;transition:transform .25s ease}
+.work-cta small{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.work-cta a:hover span{color:var(--accent)}.work-cta a:hover em{transform:translateX(10px)}
+@media(max-width:760px){.work-jump{margin-top:28px;flex-wrap:wrap}.work-cta{padding-bottom:72px}}

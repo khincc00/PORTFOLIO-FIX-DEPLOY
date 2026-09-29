@@ -63,6 +63,7 @@ export function buildPortfolioPayload(body: any): Omit<PortfolioInput, 'position
     link: url(body.link),
     extra_links,
     is_published: body.is_published !== false,
+    is_featured: body.is_featured === true,
   }
 }
 

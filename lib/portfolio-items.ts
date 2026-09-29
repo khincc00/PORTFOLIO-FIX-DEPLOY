@@ -31,6 +31,7 @@ export interface PortfolioItem {
   extra_links: PortfolioLink[]
   position: number
   is_published: boolean
+  is_featured?: boolean // shown on the homepage; the full list lives on /work
 }
 
 export type PortfolioInput = Omit<PortfolioItem, 'id'>
@@ -75,9 +76,41 @@ const blank = (kind: PortfolioKind, position: number): PortfolioInput => ({
   extra_links: [],
   position,
   is_published: true,
+  is_featured: false,
 })
 
 export const emptyItem = blank
+
+/**
+ * Starting highlight for the homepage, picked for the site's positioning
+ * (campaign design & short-form video for tech & gear brands):
+ * brand-commissioned work first, one strong piece per sub-genre, no near-duplicates.
+ * Also used while the is_featured column does not exist yet.
+ */
+export const DEFAULT_FEATURED = new Set([
+  // Design: real client campaigns + one editorial piece for range
+  'Online Loan Awareness',
+  'Digital Safety Campaign',
+  'Down Under Brew',
+  // Reels: Fantech / WYVERN / Secondwave briefs across audio, gaming and streaming
+  'Fantech Groove ANC Zoro',
+  'Fantech Tanto Mouse Dock',
+  'WYVERN PRO IEM Gaming',
+  'Fantech WGP-13S Gamepad',
+  'Secondwave e1',
+  'Budget Setup Under Rp500k',
+  // YouTube: storytelling, a corporate documentary, and a brand review
+  'Short film for the 2023 Indonesian National Police anniversary',
+  'Documentary of a mental & physical training course for PT KPC',
+  'Fantech Groove ANC earbuds review',
+  // Web: both projects
+  'CodeQuest — Small Studio',
+  'khincreator.com',
+])
+
+/** Admin choice when the column exists, otherwise the default pick */
+export const isFeatured = (item: PortfolioItem) =>
+  typeof item.is_featured === 'boolean' ? item.is_featured : DEFAULT_FEATURED.has(item.title)
 
 const groupLabel = { audio: ['Audio', 'Audio'], streaming: ['Streaming setup', 'Setup streaming'], gaming: ['Gaming gear', 'Gear gaming'] }
 const ytType: Record<string, [string, string]> = {
@@ -149,9 +182,22 @@ export function defaultPortfolio(): PortfolioInput[] {
     })
   )
 
-  return items
+  return items.map((item) => ({ ...item, is_featured: DEFAULT_FEATURED.has(item.title) }))
 }
 
 export function fallbackPortfolio(): PortfolioItem[] {
   return defaultPortfolio().map((item, i) => ({ ...item, id: -(i + 1) }))
 }
+
+/** Groups a published list the way the homepage and /work present it */
+export function splitPortfolio(items: PortfolioItem[]) {
+  return {
+    designs: items.filter((i) => i.kind === 'design'),
+    reels: items.filter((i) => i.kind === 'video' && i.platform === 'instagram'),
+    films: items.filter((i) => i.kind === 'video' && i.platform === 'youtube'),
+    shorts: items.filter((i) => i.kind === 'video' && i.platform === 'tiktok'),
+    webs: items.filter((i) => i.kind === 'web'),
+  }
+}
+
+export type PortfolioTotals = Record<keyof ReturnType<typeof splitPortfolio>, number>

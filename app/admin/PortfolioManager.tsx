@@ -94,6 +94,8 @@ export default function PortfolioManager() {
   }
 
   const togglePublished = (item: PortfolioItem) => save({ ...item, is_published: !item.is_published })
+  const toggleFeatured = (item: PortfolioItem) => save({ ...item, is_featured: !item.is_featured })
+  const featuredCount = visible.filter((i) => i.is_featured && i.is_published).length
 
   const remove = async (item: PortfolioItem) => {
     if (!confirm(`Hapus "${item.title}" dari portfolio?`)) return
@@ -149,7 +151,8 @@ export default function PortfolioManager() {
 
       <p className="text-xs text-[#86868B]">
         Urutan di sini = urutan di website. Gunakan ↑ ↓ untuk memindahkan.
-        {kind === 'video' && ' Reels ditampilkan 8 teratas dulu; sisanya muncul lewat tombol "Show all".'}
+        Beranda hanya menampilkan karya ber-★ Highlight ({featuredCount} di daftar ini); semua karya tampil di halaman{' '}
+        <a href="/work" target="_blank" className="underline hover:text-black">/work</a>.
       </p>
 
       {error && <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs">{error}</div>}
@@ -181,6 +184,14 @@ export default function PortfolioManager() {
                   </div>
                 </div>
                 {!item.is_published && <span className="text-[10px] font-semibold uppercase bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">Disembunyikan</span>}
+                <button
+                  onClick={() => toggleFeatured(item)}
+                  aria-pressed={!!item.is_featured}
+                  title={item.is_featured ? 'Hapus dari beranda' : 'Tampilkan di beranda'}
+                  className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border cursor-pointer transition ${item.is_featured ? 'bg-amber-100 border-amber-300 text-amber-800' : 'border-black/10 text-[#86868B] hover:text-black hover:border-black/30'}`}
+                >
+                  {item.is_featured ? '★ Highlight' : '☆ Highlight'}
+                </button>
                 <div className="flex gap-3 text-xs shrink-0">
                   <button onClick={() => togglePublished(item)} className="text-[#86868B] hover:text-black cursor-pointer">{item.is_published ? 'Sembunyikan' : 'Tampilkan'}</button>
                   <button onClick={() => setDraft(item)} className="text-blue-600 hover:underline cursor-pointer">Edit</button>
@@ -343,6 +354,10 @@ function PortfolioEditor({ draft, busy, onCancel, onSave }: { draft: Draft; busy
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input type="checkbox" checked={d.is_published} onChange={(e) => set({ is_published: e.target.checked })} />
               Tampilkan di website
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={!!d.is_featured} onChange={(e) => set({ is_featured: e.target.checked })} />
+              ★ Highlight di beranda
             </label>
             <button type="submit" disabled={busy || uploading} className="w-full rounded-full bg-black text-white py-2.5 text-sm font-medium hover:bg-neutral-800 disabled:opacity-50 cursor-pointer">
               {busy ? 'Menyimpan...' : d.id ? 'Simpan perubahan' : 'Tambahkan'}

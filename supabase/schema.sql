@@ -232,3 +232,22 @@ select * from (values
   ('web', 'khincreator.com', null, 'Next.js · TypeScript · Supabase', 'This portfolio: bilingual EN/ID, day/night mode, a news CMS with comments and reactions, and SEO — designed and built by me.', 'Portofolio ini: dua bahasa EN/ID, mode siang/malam, CMS berita dengan komentar dan reaksi, serta SEO — didesain dan dibangun sendiri.', null, null, null, null, '/work/khincreator.jpg', 'Homepage of khincreator.com in day mode', 'https://khincreator.com', '[{"label":"GitHub","href":"https://github.com/khincc00/PORTFOLIO-FIX-DEPLOY"}]'::jsonb, 1, true)
 ) as seed(kind, title, title_id, subtitle, description, description_id, tag, tag_id, year, platform, image, image_alt, link, extra_links, position, is_published)
 where not exists (select 1 from public.portfolio_items);
+
+-- ==========================================
+-- 13. Portfolio highlight (homepage)
+-- ==========================================
+-- Homepage shows only highlighted items; the full list lives on /work.
+alter table public.portfolio_items add column if not exists is_featured boolean not null default false;
+
+-- Starting selection (same as DEFAULT_FEATURED in lib/portfolio-items.ts); runs only while nothing is highlighted yet
+update public.portfolio_items set is_featured = true
+where title in (
+  'Online Loan Awareness', 'Digital Safety Campaign', 'Down Under Brew',
+  'Fantech Groove ANC Zoro', 'Fantech Tanto Mouse Dock', 'WYVERN PRO IEM Gaming',
+  'Fantech WGP-13S Gamepad', 'Secondwave e1', 'Budget Setup Under Rp500k',
+  'Short film for the 2023 Indonesian National Police anniversary',
+  'Documentary of a mental & physical training course for PT KPC',
+  'Fantech Groove ANC earbuds review',
+  'CodeQuest — Small Studio', 'khincreator.com'
+)
+and not exists (select 1 from public.portfolio_items where is_featured);

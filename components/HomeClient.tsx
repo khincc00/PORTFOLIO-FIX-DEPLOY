@@ -5,10 +5,9 @@ import { formatDate, pick, type DictKey } from '@/lib/i18n'
 import { usePrefs } from '@/components/Preferences'
 import SiteHeader from '@/components/SiteHeader'
 import { capabilities, marqueeItems, contactInfo, experience, cvUrl } from '@/lib/portfolio-data'
-import { allLinks, coverOf, loc, type PortfolioItem } from '@/lib/portfolio-items'
+import { splitPortfolio, type PortfolioItem, type PortfolioTotals } from '@/lib/portfolio-items'
+import { DesignList, FilmGrid, ReelGrid, ShortList, WebGrid, pad } from '@/components/PortfolioBlocks'
 
-const pad=(n:number)=>String(n).padStart(2,'0')
-const FEATURED_REELS=8
 const sequenceImages=[
   {file:'service-branding.jpg',alt:{en:'Design desk with a tablet showing Adobe app icons next to a graphic design book',id:'Meja desain dengan tablet berisi ikon aplikasi Adobe di samping buku desain grafis'}},
   {file:'service-video.jpg',alt:{en:'Video editing timeline with clips and audio tracks',id:'Timeline editing video dengan klip dan trek audio'}},
@@ -17,20 +16,16 @@ const sequenceImages=[
 
 const isRecent=(date:string|null)=>Boolean(date && Date.now()-new Date(date).getTime()<14*864e5)
 
-export default function HomeClient({ items }: { items: PortfolioItem[] }){
+/** Homepage shows only the items highlighted in /admin → Portfolio; `totals` counts everything published for the "See all" links */
+export default function HomeClient({ items, totals }: { items: PortfolioItem[]; totals: PortfolioTotals }){
   const { t, lang } = usePrefs()
   const [news,setNews]=useState<NewsSummary[]>([])
   // Items arrive ordered by position from /admin → Portfolio
-  const designs=items.filter(i=>i.kind==='design')
-  const reels=items.filter(i=>i.kind==='video'&&i.platform==='instagram')
-  const films=items.filter(i=>i.kind==='video'&&i.platform==='youtube')
-  const shorts=items.filter(i=>i.kind==='video'&&i.platform==='tiktok')
-  const webs=items.filter(i=>i.kind==='web')
-  const [filter,setFilter]=useState('all')
-  const [showAllReels,setShowAllReels]=useState(false)
-  const reelTags=Array.from(new Map(reels.filter(r=>r.tag).map(r=>[r.tag as string,r])).values())
-  const inGroup=filter==='all'?reels:reels.filter(r=>r.tag===filter)
-  const visibleReels=filter==='all'&&!showAllReels?inGroup.slice(0,FEATURED_REELS):inGroup
+  const { designs, reels, films, shorts, webs } = splitPortfolio(items)
+  // Sections without highlights are skipped, so numbering is counted while rendering
+  let sectionNo=0
+  const eyebrow=(key:DictKey)=>`${pad(++sectionNo)} — ${t(key)}`
+  const seeAll=(count:number,shown:number,href:string)=>count>shown&&<a className="text-link see-all" href={href}>{t('work.seeAll',{n:count})} →</a>
   const [form,setForm]=useState({name:'',email:'',project_type:'Branding',budget:'<$300',message:''})
   const [sent,setSent]=useState(false)
   const sequenceRef=useRef<HTMLElement>(null)
@@ -139,46 +134,35 @@ export default function HomeClient({ items }: { items: PortfolioItem[] }){
 
       <section className="ticker" aria-hidden="true"><div>{marqueeItems.concat(marqueeItems).map((item,i)=><span key={i}>{pick(item,lang)}<b>·</b></span>)}</div></section>
 
-      <section id="campaign" className="campaign-section scroll-reveal">
+      {designs.length>0&&<section id="campaign" className="campaign-section scroll-reveal">
         <div className="campaign-inner">
-          <div className="section-heading"><p className="eyebrow">{t('campaign.eyebrow')}</p><h2>{t('campaign.title')}</h2><p className="section-note">{t('campaign.note')}</p></div>
-          <div className="campaign-list">{designs.map((p,i)=>{const cover=coverOf(p);const Row=p.link?'a':'article';return <Row className="campaign-row" key={p.id} {...(p.link?{href:p.link,target:'_blank',rel:'noreferrer'}:{})}><span className="campaign-index">{pad(i+1)}</span>{cover?<img className="campaign-art campaign-thumb" src={cover} alt={p.image_alt||p.title} loading="lazy"/>:<div className="campaign-art" aria-hidden="true"/>}<div className="campaign-copy"><span className="campaign-category">{[p.subtitle,p.year].filter(Boolean).join(' · ')}</span><h3>{loc(p,'title',lang)}</h3><p>{loc(p,'description',lang)}</p></div><span className="campaign-arrow" aria-hidden="true">{p.link?'↗':''}</span></Row>})}</div>
+          <div className="section-heading"><p className="eyebrow">{eyebrow('campaign.eyebrow')}</p><h2>{t('campaign.title')}</h2><p className="section-note">{t('campaign.note')}</p>{seeAll(totals.designs,designs.length,'/work#design')}</div>
+          <DesignList items={designs}/>
         </div>
-      </section>
+      </section>}
 
-      <section id="works" className="works-section section-wrap scroll-reveal">
-        <div className="section-heading works-heading"><div><p className="eyebrow">{t('works.eyebrow')}</p><h2>{t('works.title')}</h2></div></div>
-        <div className="filter-bar" role="group" aria-label="Filter">
-          <button onClick={()=>setFilter('all')} className={filter==='all'?'is-active':''} aria-pressed={filter==='all'}>{t('works.all')}</button>{reelTags.map(r=><button key={r.tag} onClick={()=>setFilter(r.tag as string)} className={filter===r.tag?'is-active':''} aria-pressed={filter===r.tag}>{loc(r,'tag',lang)}</button>)}
-        </div>
-        <div className="work-grid">{visibleReels.map((w,i)=>{const cover=coverOf(w);return <article className="work-card" key={w.id}>
-          <div className={`work-art ${cover?'has-cover':''}`} aria-hidden={!cover}>{cover?<img src={cover} alt={w.image_alt||w.title} loading="lazy"/>:<b/>}<span>{pad(i+1)}</span></div>
-          <div className="work-meta"><span>{loc(w,'tag',lang)}</span><span>Instagram</span></div><h3>{loc(w,'title',lang)}</h3><p>{loc(w,'description',lang)}</p>
-          {w.link&&<a href={w.link} target="_blank" rel="noreferrer">{t('works.view')}</a>}
-        </article>})}</div>
-        {filter==='all' && reels.length>FEATURED_REELS && <button type="button" className="works-more" onClick={()=>setShowAllReels(!showAllReels)} aria-expanded={showAllReels}>{showAllReels?t('works.showLess'):t('works.showAll',{n:reels.length})}</button>}
-      </section>
+      {reels.length>0&&<section id="works" className="works-section section-wrap scroll-reveal">
+        <div className="section-heading works-heading"><div><p className="eyebrow">{eyebrow('works.eyebrow')}</p><h2>{t('works.title')}</h2></div>{seeAll(totals.reels,reels.length,'/work#video')}</div>
+        <ReelGrid items={reels}/>
+      </section>}
 
       {films.length>0&&<section id="youtube" className="film-section scroll-reveal">
-        <div className="section-wrap"><div className="film-heading"><div><p className="eyebrow">{t('yt.eyebrow')}</p><h2>{t('yt.title')}</h2></div><a className="text-link" href="https://www.youtube.com/@khinccofficial" target="_blank" rel="noreferrer">{t('yt.visit')}</a></div>
-          <div className="film-grid">{films.map(y=><a className="film-card" key={y.id} href={y.link||undefined} target="_blank" rel="noreferrer"><div className="film-thumb">{coverOf(y)&&<img src={coverOf(y) as string} alt={y.image_alt||loc(y,'title',lang)} loading="lazy"/>}<span aria-hidden="true">▶</span></div><div><span>{loc(y,'tag',lang)}</span><h3>{loc(y,'title',lang)}</h3>{y.subtitle&&<p className="film-original">{y.subtitle}</p>}</div><span className="film-arrow" aria-hidden="true">↗</span></a>)}</div>
+        <div className="section-wrap"><div className="film-heading"><div><p className="eyebrow">{eyebrow('yt.eyebrow')}</p><h2>{t('yt.title')}</h2></div>{seeAll(totals.films,films.length,'/work#youtube')||<a className="text-link" href="https://www.youtube.com/@khinccofficial" target="_blank" rel="noreferrer">{t('yt.visit')}</a>}</div>
+          <FilmGrid items={films}/>
         </div>
       </section>}
 
-      {shorts.length>0&&<section className="social-section section-wrap scroll-reveal"><div className="section-heading"><p className="eyebrow">{t('social.eyebrow')}</p><h2>{t('social.title')}</h2></div><div className="social-list">{shorts.map((r,i)=><a key={r.id} href={r.link||undefined} target="_blank" rel="noreferrer"><span>{pad(i+1)}</span><div><h3>{loc(r,'title',lang)}</h3><p>{loc(r,'description',lang)}</p></div><span>TikTok ↗</span></a>)}</div></section>}
+      {shorts.length>0&&<section className="social-section section-wrap scroll-reveal"><div className="section-heading"><p className="eyebrow">{eyebrow('social.eyebrow')}</p><h2>{t('social.title')}</h2>{seeAll(totals.shorts,shorts.length,'/work#tiktok')}</div><ShortList items={shorts}/></section>}
 
       {webs.length>0&&<section id="web" className="web-section section-wrap scroll-reveal">
-        <div className="section-heading"><p className="eyebrow">{t('web.eyebrow')}</p><h2>{t('web.title')}</h2><p className="section-note">{t('web.note')}</p></div>
-        <div className="web-grid">{webs.map(w=><article className="web-card" key={w.id}>
-          {coverOf(w)&&<a className="web-shot" href={w.link||undefined} target="_blank" rel="noreferrer"><img src={coverOf(w) as string} alt={w.image_alt||w.title} loading="lazy"/></a>}
-          <div className="web-copy">{w.subtitle&&<span className="web-stack">{w.subtitle}</span>}<h3>{loc(w,'title',lang)}</h3><p>{loc(w,'description',lang)}</p>
-            <div className="web-links">{allLinks(w).map(l=><a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}</div>
-          </div>
-        </article>)}</div>
+        <div className="section-heading"><p className="eyebrow">{eyebrow('web.eyebrow')}</p><h2>{t('web.title')}</h2><p className="section-note">{t('web.note')}</p>{seeAll(totals.webs,webs.length,'/work#web')}</div>
+        <WebGrid items={webs}/>
       </section>}
 
+      <section className="work-cta section-wrap scroll-reveal"><a href="/work"><span>{t('work.cta')}</span><em aria-hidden="true">→</em><small>{t('work.count',{n:Object.values(totals).reduce((a,b)=>a+b,0)})}</small></a></section>
+
       <section id="experience" className="exp-section section-wrap scroll-reveal">
-        <div className="section-heading"><p className="eyebrow">{t('exp.eyebrow')}</p><h2>{t('exp.title')}</h2><p className="section-note">{t('exp.note')} <a className="text-link exp-cv" href={cvUrl} download>{t('exp.cv')}</a></p></div>
+        <div className="section-heading"><p className="eyebrow">{eyebrow('exp.eyebrow')}</p><h2>{t('exp.title')}</h2><p className="section-note">{t('exp.note')} <a className="text-link exp-cv" href={cvUrl} download>{t('exp.cv')}</a></p></div>
         <ol className="exp-list">{experience.map(e=><li className="exp-item" key={pick(e.role,'en')}>
           <span className="exp-period">{pick(e.period,lang)}</span>
           <div><h3>{pick(e.role,lang)}</h3><p className="exp-org">{pick(e.org,lang)}</p>
@@ -188,13 +172,13 @@ export default function HomeClient({ items }: { items: PortfolioItem[] }){
       </section>
 
       <section className="capabilities section-wrap scroll-reveal">
-        <div className="section-heading"><p className="eyebrow">{t('cap.eyebrow')}</p><h2>{t('cap.title')}</h2><p className="section-note">{t('cap.note')}</p></div>
+        <div className="section-heading"><p className="eyebrow">{eyebrow('cap.eyebrow')}</p><h2>{t('cap.title')}</h2><p className="section-note">{t('cap.note')}</p></div>
         <div className="service-grid">
           {capabilities.map(c=><article className="service-item" key={c.index}><div className="service-art" aria-hidden="true"><span>{c.index}</span><b>{pick(c.tags,lang)}</b></div><div><span>{c.index} — {pick(c.tags,lang)}</span><h3>{pick(c.title,lang)}</h3><p>{pick(c.desc,lang)}</p></div></article>)}
         </div>
       </section>
 
-      <section className="approach-section scroll-reveal"><div><p className="eyebrow">{t('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><a className="button button-light" href="#contact">{t('approach.cta')}</a></div></section>
+      <section className="approach-section scroll-reveal"><div><p className="eyebrow">{eyebrow('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><a className="button button-light" href="#contact">{t('approach.cta')}</a></div></section>
 
       <section id="contact" className="contact-section section-wrap"><div className="contact-copy"><p className="eyebrow">{t('contact.eyebrow')}</p><h2>{t('contact.title')}</h2><p>{t('contact.lede')}</p><div className="contact-meta">{(['contact.meta1','contact.meta2','contact.meta3'] as DictKey[]).map(m=><span key={m}>{t(m)}</span>)}</div><div className="contact-links"><a href={contactInfo.links.email}><span>Email</span><span>{contactInfo.email} ↗</span></a><a href={contactInfo.links.instagram} target="_blank" rel="noreferrer"><span>Instagram</span><span>{contactInfo.instagram} ↗</span></a><a href={contactInfo.links.tiktok} target="_blank" rel="noreferrer"><span>TikTok</span><span>{contactInfo.tiktok} ↗</span></a><a href={contactInfo.links.youtube} target="_blank" rel="noreferrer"><span>YouTube</span><span>{contactInfo.youtube} ↗</span></a><a href={cvUrl} download><span>CV</span><span>{t('hero.cv')} (PDF) ↓</span></a></div></div>
         <form className="contact-form" onSubmit={submit}><label>{t('contact.name')}<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder={t('contact.name')} required/></label><label>{t('contact.email')}<input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder={t('contact.email')} required/></label><div className="form-row"><label><span className="sr-only">{t('contact.projectType')}</span><select value={form.project_type} onChange={e=>setForm({...form,project_type:e.target.value})}>{['Branding','Product Video','Campaign design','Other'].map(v=><option key={v} value={v}>{t(`contact.type.${v}` as DictKey)}</option>)}</select></label><label><span className="sr-only">{t('contact.budget')}</span><select value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})}><option>&lt;$300</option><option>$300-$1000</option><option>$1000+</option></select></label></div><label>{t('contact.message')}<textarea value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder={t('contact.messagePh')} required/></label><button className="button button-dark" type="submit">{sent?t('contact.sent'):t('contact.send')}</button><p className="form-note">{contactInfo.email} • (+62) 812 1615 2280</p></form>
