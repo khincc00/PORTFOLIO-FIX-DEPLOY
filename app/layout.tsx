@@ -43,7 +43,7 @@ const jsonLd = {
       alternateName: 'khinccofficial',
       url: siteConfig.url,
       email: `mailto:${siteConfig.email}`,
-      jobTitle: 'Remote Designer & Video Editor',
+      jobTitle: 'Multimedia Designer — Campaign Design & Short-form Video',
       address: { '@type': 'PostalAddress', addressLocality: 'Sangatta', addressCountry: 'ID' },
       sameAs: siteConfig.sameAs,
     },

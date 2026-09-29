@@ -7,10 +7,10 @@ import { LocalDate, T } from '@/components/Preferences'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'News & Updates',
+  title: 'Journal',
   description: 'Project updates, new releases, and behind-the-scenes stories from Khincc Studio.',
   alternates: { canonical: '/berita' },
-  openGraph: { title: 'News & Updates | Khincc Studio', url: '/berita' },
+  openGraph: { title: 'Journal | Khincc Studio', url: '/berita' },
 }
 
 export default async function NewsIndexPage() {

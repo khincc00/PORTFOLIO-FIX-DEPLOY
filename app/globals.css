@@ -177,3 +177,24 @@ html[data-theme="dark"] img{filter:brightness(.92)}
 html[data-theme="dark"] .sequence-image{filter:none}
 .admin-root{color-scheme:light;background:#FBFBFD;color:#1D1D1F;min-height:100vh;--paper:#f8f8f6;--ink:#171817;--muted:#777b78;--line:#dedfda;--accent:#e65c3a}
 html[data-theme="dark"] .admin-root .news-body{color:#2b2d2b}html[data-theme="dark"] .admin-root .news-body blockquote{color:#4a4e4b}html[data-theme="dark"] .admin-root img{filter:none}
+
+/* Reels: show-all toggle */
+.works-more{display:block;margin:36px auto 0;background:none;border:1px solid var(--ink);color:var(--ink);border-radius:999px;padding:11px 22px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s ease,color .2s ease}
+.works-more:hover{background:var(--ink);color:var(--paper)}
+/* YouTube: original title under the descriptive caption */
+.film-original{margin:4px 0 0;font-size:11px;line-height:1.4;color:#a1a49f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Web & front-end */
+.web-section{padding-top:120px;padding-bottom:40px}
+.web-section .section-heading h2{font-size:clamp(35px,5vw,62px)}
+.web-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px;margin-top:44px}
+.web-shot{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--line);border:1px solid var(--line)}
+.web-shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;transition:transform .6s ease}
+.web-card:hover .web-shot img{transform:scale(1.03)}
+.web-copy{padding-top:18px}
+.web-stack{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.web-copy h3{font-size:24px;letter-spacing:-.03em;font-weight:500;margin:10px 0 8px}
+.web-copy p{font-size:14px;line-height:1.7;color:var(--muted);margin:0;max-width:520px}
+.web-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px}
+.web-links a{font-size:12px;font-weight:600;border-bottom:1px solid currentColor;padding-bottom:2px;transition:color .2s ease}
+.web-links a:hover{color:var(--accent)}
+@media(max-width:760px){.web-section{padding-top:80px}.web-grid{grid-template-columns:1fr;gap:36px}.works-more{width:100%}}

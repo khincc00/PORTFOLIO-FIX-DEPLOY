@@ -27,23 +27,23 @@ export const campaignPosters = [
 ];
 
 export const tiktokReviews = [
-  { title:"Fantech Grove ANC", platform:"TikTok", id:"7667530077298576660", link:"https://www.tiktok.com/@khinccofficial/video/7667530077298576660", thumb:"CONTENT/TikTok-7667530077298576660.jpg", desc:"Device review / Short-form editing", alt:"TikTok thumbnail for Fantech Grove ANC review" },
+  { title:"Fantech Groove ANC", platform:"TikTok", id:"7667530077298576660", link:"https://www.tiktok.com/@khinccofficial/video/7667530077298576660", thumb:"CONTENT/TikTok-7667530077298576660.jpg", desc:"Device review / Short-form editing", alt:"TikTok thumbnail for Fantech Grove ANC review" },
   { title:"Fantech Tanto Mouse", platform:"TikTok", id:"7665426475558046997", link:"https://www.tiktok.com/@khinccofficial/video/7665426475558046997", thumb:"CONTENT/TikTok-7665426475558046997.jpg", desc:"Device review / Product editing", alt:"TikTok thumbnail for Fantech Tanto mouse review" },
   { title:"Plug and Play Microphone", platform:"TikTok", id:"7644066982530436372", link:"https://www.tiktok.com/@khinccofficial/video/7644066982530436372", thumb:"CONTENT/TikTok-7644066982530436372.jpg", desc:"Device review / Product editing", alt:"TikTok thumbnail for plug and play microphone review" },
   { title:"OBS Filter Setup", platform:"TikTok", id:"7631625360802712853", link:"https://www.tiktok.com/@khinccofficial/video/7631625360802712853", thumb:"CONTENT/TikTok-7631625360802712853.jpg", desc:"Streaming tutorial / Editing", alt:"TikTok thumbnail for OBS filter setup tutorial" },
 ];
 
 export const youtubePortfolio = [
-  { title:'Short Movie "Scammer" HUT Bhayangkara RI 2023', type:"Film pendek", id:"KrK69_zt3RM", link:"https://www.youtube.com/watch?v=KrK69_zt3RM", thumb:"https://i.ytimg.com/vi/KrK69_zt3RM/hqdefault.jpg" },
-  { title:"PEMBARETAN SMK NEGERI 2 SANGATTA URATA 2024", type:"Dokumenter", id:"WXcYyiH0XIU", link:"https://www.youtube.com/watch?v=WXcYyiH0XIU", thumb:"https://i.ytimg.com/vi/WXcYyiH0XIU/hqdefault.jpg" },
-  { title:"SUS BINTALSIK PT. KPC", type:"Dokumenter", id:"xndoErqA96Y", link:"https://www.youtube.com/watch?v=xndoErqA96Y", thumb:"https://i.ytimg.com/vi/xndoErqA96Y/hqdefault.jpg" },
-  { title:"WEBCAM MURAH TAPI KEREN!", type:"Review perangkat", id:"N7fxwxRU23g", link:"https://www.youtube.com/watch?v=N7fxwxRU23g", thumb:"https://i.ytimg.com/vi/N7fxwxRU23g/hqdefault.jpg" },
-  { title:"Webcam Eyd 2k Nih guys", type:"Review perangkat", id:"ua-SsfsolFQ", link:"https://www.youtube.com/watch?v=ua-SsfsolFQ", thumb:"https://i.ytimg.com/vi/ua-SsfsolFQ/hqdefault.jpg" },
-  { title:"Fantech Groove ANC", type:"Review perangkat", id:"AN3x89Lz0EI", link:"https://www.youtube.com/watch?v=AN3x89Lz0EI", thumb:"https://i.ytimg.com/vi/AN3x89Lz0EI/hqdefault.jpg" },
-  { title:"Gamepad harga pelajar tapi speknya merusak pasar", type:"Review perangkat", id:"B4l6aEvbMhg", link:"https://www.youtube.com/watch?v=B4l6aEvbMhg", thumb:"https://i.ytimg.com/vi/B4l6aEvbMhg/hqdefault.jpg" },
-  { title:"Rekomendasi IEM buat gaming", type:"Review perangkat", id:"eRDN0xjid0w", link:"https://www.youtube.com/watch?v=eRDN0xjid0w", thumb:"https://i.ytimg.com/vi/eRDN0xjid0w/hqdefault.jpg" },
-  { title:'Lighting "Value for Money" Terbaik!', type:"Review perangkat", id:"hGFK8njoAhY", link:"https://www.youtube.com/watch?v=hGFK8njoAhY", thumb:"https://i.ytimg.com/vi/hGFK8njoAhY/hqdefault.jpg" },
-  { title:"HDMI CAPTURE CARD", type:"Review perangkat", id:"76VSMpFZWS0", link:"https://www.youtube.com/watch?v=76VSMpFZWS0", thumb:"https://i.ytimg.com/vi/76VSMpFZWS0/hqdefault.jpg" },
+  { title:'Short Movie "Scammer" HUT Bhayangkara RI 2023', type:"Film pendek", id:"KrK69_zt3RM", about:{en:"Short film for the 2023 Indonesian National Police anniversary",id:"Film pendek untuk HUT Bhayangkara RI 2023"}, link:"https://www.youtube.com/watch?v=KrK69_zt3RM", thumb:"https://i.ytimg.com/vi/KrK69_zt3RM/hqdefault.jpg" },
+  { title:"PEMBARETAN SMK NEGERI 2 SANGATTA URATA 2024", type:"Dokumenter", id:"WXcYyiH0XIU", about:{en:"Documentary of the 2024 beret ceremony at SMK Negeri 2 Sangatta",id:"Dokumentasi pembaretan SMK Negeri 2 Sangatta 2024"}, link:"https://www.youtube.com/watch?v=WXcYyiH0XIU", thumb:"https://i.ytimg.com/vi/WXcYyiH0XIU/hqdefault.jpg" },
+  { title:"SUS BINTALSIK PT. KPC", type:"Dokumenter", id:"xndoErqA96Y", about:{en:"Documentary of a mental & physical training course for PT KPC",id:"Dokumenter kursus pembinaan mental & fisik PT KPC"}, link:"https://www.youtube.com/watch?v=xndoErqA96Y", thumb:"https://i.ytimg.com/vi/xndoErqA96Y/hqdefault.jpg" },
+  { title:"WEBCAM MURAH TAPI KEREN!", type:"Review perangkat", id:"N7fxwxRU23g", about:{en:"Budget webcam review",id:"Review webcam murah"}, link:"https://www.youtube.com/watch?v=N7fxwxRU23g", thumb:"https://i.ytimg.com/vi/N7fxwxRU23g/hqdefault.jpg" },
+  { title:"Webcam Eyd 2k Nih guys", type:"Review perangkat", id:"ua-SsfsolFQ", about:{en:"2K webcam review",id:"Review webcam 2K"}, link:"https://www.youtube.com/watch?v=ua-SsfsolFQ", thumb:"https://i.ytimg.com/vi/ua-SsfsolFQ/hqdefault.jpg" },
+  { title:"Fantech Groove ANC", type:"Review perangkat", id:"AN3x89Lz0EI", about:{en:"Fantech Groove ANC earbuds review",id:"Review earbuds Fantech Groove ANC"}, link:"https://www.youtube.com/watch?v=AN3x89Lz0EI", thumb:"https://i.ytimg.com/vi/AN3x89Lz0EI/hqdefault.jpg" },
+  { title:"Gamepad harga pelajar tapi speknya merusak pasar", type:"Review perangkat", id:"B4l6aEvbMhg", about:{en:"Budget gamepad review",id:"Review gamepad harga pelajar"}, link:"https://www.youtube.com/watch?v=B4l6aEvbMhg", thumb:"https://i.ytimg.com/vi/B4l6aEvbMhg/hqdefault.jpg" },
+  { title:"Rekomendasi IEM buat gaming", type:"Review perangkat", id:"eRDN0xjid0w", about:{en:"IEM picks for gaming",id:"Rekomendasi IEM untuk gaming"}, link:"https://www.youtube.com/watch?v=eRDN0xjid0w", thumb:"https://i.ytimg.com/vi/eRDN0xjid0w/hqdefault.jpg" },
+  { title:'Lighting "Value for Money" Terbaik!', type:"Review perangkat", id:"hGFK8njoAhY", about:{en:"Best value-for-money lighting for creators",id:"Lighting paling worth it untuk kreator"}, link:"https://www.youtube.com/watch?v=hGFK8njoAhY", thumb:"https://i.ytimg.com/vi/hGFK8njoAhY/hqdefault.jpg" },
+  { title:"HDMI CAPTURE CARD", type:"Review perangkat", id:"76VSMpFZWS0", about:{en:"HDMI capture card review",id:"Review HDMI capture card"}, link:"https://www.youtube.com/watch?v=76VSMpFZWS0", thumb:"https://i.ytimg.com/vi/76VSMpFZWS0/hqdefault.jpg" },
 ];
 
 export const capabilities = [
@@ -59,7 +59,7 @@ export const marqueeItems = [
 ];
 
 export const contactInfo = {
-  email:"taufiqsholikhin@gmail.com",
+  email:"master@khincreator.com",
   instagram:"@khinccofficial",
   tiktok:"@khinccofficial",
   youtube:"@khinccofficial",
@@ -67,6 +67,53 @@ export const contactInfo = {
     instagram:"https://www.instagram.com/khinccofficial/",
     tiktok:"https://www.tiktok.com/@khinccofficial",
     youtube:"https://www.youtube.com/@khinccofficial",
-    email:"mailto:taufiqsholikhin@gmail.com"
+    email:"mailto:master@khincreator.com"
   }
 };
+
+// Curated copy for each reel. The database still lists the reels; these replace its short internal notes.
+export type ReelGroup = 'audio' | 'streaming' | 'gaming'
+export const reelDetails: Record<string, { group: ReelGroup; desc: { en: string; id: string }; title?: string }> = {
+  DVQrHReEkg3: { group:"audio", desc:{ en:"Gaming IEM review with a hook-first edit for Reels", id:"Review IEM gaming dengan editing hook-first untuk Reels" } },
+  "DVw6WtMk8-8": { group:"audio", desc:{ en:"Budget earphone review told as a short story", id:"Review earphone budget yang dikemas sebagai cerita singkat" } },
+  DbVXyg1JH2J: { group:"audio", desc:{ en:"One Piece edition earbuds for Fantech — ANC demo", id:"Earbuds edisi One Piece dari Fantech — demo ANC" } },
+  DbILo_CJg0i: { group:"gaming", desc:{ en:"A triple-mode wireless mouse explained in under a minute", id:"Mouse wireless tiga mode dijelaskan dalam kurang dari semenit" } },
+  "DVRlxm-EzEw": { group:"audio", title:"Secondwave × KZ Follow-up", desc:{ en:"Follow-up audio review for Secondwave and KZ", id:"Review audio lanjutan untuk Secondwave dan KZ" } },
+  DYhtuV0PbHu: { group:"streaming", desc:{ en:"My own streaming setup built from affordable gear", id:"Setup streaming pribadi dari gear terjangkau" } },
+  DVXWNrekt6i: { group:"audio", desc:{ en:"Starter guide for KZ Castor IEMs with a TikTok Shop call-to-action", id:"Panduan pemula KZ Castor dengan ajakan belanja di TikTok Shop" } },
+  DYyi95pSL3u: { group:"streaming", desc:{ en:"Tutorial: taming a dynamic mic with filters and a limiter", id:"Tutorial: mengatur mic dinamis dengan filter dan limiter" } },
+  DYjRUUEpzw8: { group:"streaming", desc:{ en:"Mic technique tips for streamers", id:"Tips teknik mic untuk streamer" } },
+  DZw_Sc5JGAP: { group:"streaming", title:"Budget Setup Under Rp500k", desc:{ en:"A complete streaming setup for under Rp500k", id:"Setup streaming lengkap di bawah Rp500 ribu" } },
+  DW1qrfEvgvS: { group:"streaming", desc:{ en:"RGB tube light review focused on picture quality", id:"Review lampu tube RGB dengan fokus kualitas gambar" } },
+  "DbJc1-5TAwx": { group:"audio", desc:{ en:"Luffy edition earbuds from the Fantech × One Piece series", id:"Earbuds edisi Luffy dari seri Fantech × One Piece" } },
+  DWKG07fzceT: { group:"streaming", desc:{ en:"2K webcam test for streaming", id:"Uji webcam 2K untuk streaming" } },
+  DVEGq4SEshJ: { group:"gaming", desc:{ en:"Promo edit for the WGP-13S gamepad with urgency-led copy", id:"Video promo gamepad WGP-13S dengan copy yang mendorong beli sekarang" } },
+}
+
+export const webProjects = [
+  {
+    id:"codequest",
+    title:"CodeQuest — Small Studio",
+    image:"/work/codequest.jpg",
+    alt:{ en:"CodeQuest game scene: a cozy studio desk with a laptop showing code, a cat asleep by the lamp", id:"Adegan game CodeQuest: meja studio dengan laptop berisi kode dan kucing tidur di dekat lampu" },
+    desc:{ en:"A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built — no quizzes.", id:"Game browser untuk belajar HTML, CSS, dan JavaScript lewat brief klien sungguhan. Game menjalankan kodemu dan memeriksa website yang kamu buat — tanpa kuis." },
+    stack:"HTML · CSS · JavaScript",
+    links:[
+      { label:"Play", href:"https://main.codequest.gamer.free/" },
+      { label:"itch.io", href:"https://khincc.itch.io/codequest-small-studio" },
+      { label:"GitHub", href:"https://github.com/khincc00/CodeQuest" },
+    ],
+  },
+  {
+    id:"khincreator",
+    title:"khincreator.com",
+    image:"/work/khincreator.jpg",
+    alt:{ en:"Homepage of khincreator.com in day mode", id:"Beranda khincreator.com dalam mode siang" },
+    desc:{ en:"This portfolio: bilingual EN/ID, day/night mode, a news CMS with comments and reactions, and SEO — designed and built by me.", id:"Portofolio ini: dua bahasa EN/ID, mode siang/malam, CMS berita dengan komentar dan reaksi, serta SEO — didesain dan dibangun sendiri." },
+    stack:"Next.js · TypeScript · Supabase",
+    links:[
+      { label:"Live", href:"https://khincreator.com" },
+      { label:"GitHub", href:"https://github.com/khincc00/PORTFOLIO-FIX-DEPLOY" },
+    ],
+  },
+]

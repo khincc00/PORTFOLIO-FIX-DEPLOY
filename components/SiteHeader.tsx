@@ -7,7 +7,7 @@ import { LANGS, type DictKey } from '@/lib/i18n'
 const links: { key: DictKey; href: string }[] = [
   { key: 'nav.campaign', href: '#campaign' },
   { key: 'nav.works', href: '#works' },
-  { key: 'nav.youtube', href: '#youtube' },
+  { key: 'nav.web', href: '#web' },
   { key: 'nav.news', href: '/berita' },
   { key: 'nav.contact', href: '#contact' },
 ]

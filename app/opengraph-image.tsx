@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 // Preview image shown when the site link is shared (WhatsApp, Instagram, X, LinkedIn, ...)
-export const alt = 'Taufiq Sholikhin — Remote Designer & Video Editor | Khincc Studio'
+export const alt = 'Taufiq Sholikhin — Campaign design & short-form video for tech & gear brands'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -28,7 +28,7 @@ export default function OpengraphImage() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 92, fontWeight: 600, letterSpacing: -4, lineHeight: 1 }}>Taufiq Sholikhin</div>
           <div style={{ fontSize: 44, color: '#555a56', marginTop: 20, letterSpacing: -1 }}>
-            Remote Designer & Video Editor — 6+ years
+            Campaign design & short-form video for tech & gear brands
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 28, color: '#e65c3a', fontWeight: 600 }}>
