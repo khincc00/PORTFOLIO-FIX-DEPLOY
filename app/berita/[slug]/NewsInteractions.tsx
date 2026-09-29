@@ -139,6 +139,8 @@ export default function NewsInteractions({ slug }: { slug: string }) {
 
   if (loadError) return null
 
+  // Admins replying as the author don't need the guest/account choice
+  const showAccountTabs = !data?.user && !(data?.isAdmin && asAdmin)
   const totalReactions = data ? Object.values(data.reactions).reduce((a, b) => a + b, 0) : 0
 
   return (
@@ -171,12 +173,13 @@ export default function NewsInteractions({ slug }: { slug: string }) {
       </div>
 
       <div className="ni-form">
-        {data?.user || data?.isAdmin ? (
+        {(data?.user || data?.isAdmin) && (
           <div className="ni-identity">
             {data.isAdmin ? (
               <label className="ni-check">
                 <input type="checkbox" checked={asAdmin} onChange={(e) => setAsAdmin(e.target.checked)} />
                 Balas sebagai <strong>Penulis</strong>
+                {asAdmin && <small>· hapus centang untuk berkomentar atau daftar sebagai pengunjung</small>}
               </label>
             ) : null}
             {data.user && (!data.isAdmin || !asAdmin) && (
@@ -184,7 +187,8 @@ export default function NewsInteractions({ slug }: { slug: string }) {
             )}
             {data.user && <button type="button" onClick={logout}>Keluar</button>}
           </div>
-        ) : (
+        )}
+        {showAccountTabs && (
           <div className="ni-tabs" role="tablist">
             {([['guest', 'Tanpa akun'], ['login', 'Masuk'], ['register', 'Daftar akun']] as [Mode, string][]).map(([m, label]) => (
               <button key={m} type="button" role="tab" aria-selected={mode === m} className={mode === m ? 'is-active' : ''} onClick={() => { setMode(m); setError('') }}>
@@ -194,7 +198,7 @@ export default function NewsInteractions({ slug }: { slug: string }) {
           </div>
         )}
 
-        {mode !== 'guest' && !data?.user && !data?.isAdmin ? (
+        {mode !== 'guest' && showAccountTabs ? (
           <form onSubmit={submitAccount} className="ni-fields">
             <label>Username
               <input value={account.username} onChange={(e) => setAccount({ ...account, username: e.target.value })} autoComplete="username" placeholder="contoh: budi_22" required />

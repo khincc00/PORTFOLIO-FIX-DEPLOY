@@ -95,3 +95,4 @@ button,a{-webkit-tap-highlight-color:transparent}
 .ni-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;border-radius:999px;background:#efeee8;color:#666b67}.ni-badge.is-member{background:#e7f3ee;color:#1f6b4f}.ni-badge.is-admin{background:var(--accent);color:#fff}
 .ni-comment-body p{margin:6px 0 0;font-size:15px;line-height:1.65;color:#2b2d2b;white-space:pre-wrap;overflow-wrap:anywhere}
 @media(max-width:760px){.ni-form{padding:16px}.ni-reaction-row button{height:40px;padding:0 12px}.ni-comment{grid-template-columns:34px 1fr;gap:11px}.ni-avatar{width:34px;height:34px;font-size:14px}}
+.ni-check small{font-size:11px;color:var(--muted)}
