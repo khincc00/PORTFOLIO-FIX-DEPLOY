@@ -32,9 +32,10 @@ const en = {
     'I design campaigns and edit short-form product videos for tech and gear brands — backed by five years of public-information campaigns for TNI AL in Sangatta. I also build the web pages that carry the work.',
   'hero.stat1': '6+ years in design & video',
   'hero.stat2': '50+ campaign assets for TNI AL',
-  'hero.stat3': 'Fantech · Secondwave · KZ',
+  'hero.stat3': 'Fantech · Secondwave · KZ · Photoolex',
   'hero.cta': 'View selected work ↗',
   'hero.talk': 'Start a conversation',
+  'hero.cv': 'Download CV',
 
   // News spotlight & pages
   'news.live': 'Latest from the Journal',
@@ -49,7 +50,7 @@ const en = {
   'news.minRead': 'min read',
 
   // Sections
-  'cap.eyebrow': '06 — Services',
+  'cap.eyebrow': '07 — Services',
   'cap.title': 'From brief to feed: design, edit, build.',
   'cap.note': 'Key visuals, short-form edits with sound design, and the web pages that carry them — handled by one person, so nothing gets lost between steps.',
   'campaign.eyebrow': '01 — Campaign & graphic design',
@@ -75,7 +76,11 @@ const en = {
   'web.eyebrow': '05 — Web & front-end',
   'web.title': 'I also build for the web.',
   'web.note': 'Designed and coded end to end, from layout to deployment.',
-  'approach.eyebrow': '07 — Approach',
+  'exp.eyebrow': '06 — Experience',
+  'exp.title': 'Five years in-house, seven on my own.',
+  'exp.note': 'The full CV — skills, tools, and education — is one click away.',
+  'exp.cv': 'Download CV (PDF) ↓',
+  'approach.eyebrow': '08 — Approach',
   'approach.title': 'Good design makes room for better ideas.',
   'approach.body':
     'My process starts with curiosity, honest conversations, and an eye for the small details. The final work should look considered and feel effortless to use.',
@@ -195,9 +200,10 @@ const id: Record<DictKey, string> = {
     'Saya mendesain kampanye dan mengedit video produk format pendek untuk brand tech dan gear — didukung lima tahun mengerjakan kampanye informasi publik untuk TNI AL di Sangatta. Saya juga membangun halaman web yang menampilkan karyanya.',
   'hero.stat1': '6+ tahun di desain & video',
   'hero.stat2': '50+ aset kampanye untuk TNI AL',
-  'hero.stat3': 'Fantech · Secondwave · KZ',
+  'hero.stat3': 'Fantech · Secondwave · KZ · Photoolex',
   'hero.cta': 'Lihat karya pilihan ↗',
   'hero.talk': 'Mulai obrolan',
+  'hero.cv': 'Unduh CV',
 
   'news.live': 'Terbaru dari Jurnal',
   'news.viewAll': 'Buka jurnal ↗',
@@ -210,7 +216,7 @@ const id: Record<DictKey, string> = {
   'news.back': '← Jurnal',
   'news.minRead': 'menit baca',
 
-  'cap.eyebrow': '06 — Layanan',
+  'cap.eyebrow': '07 — Layanan',
   'cap.title': 'Dari brief ke feed: desain, edit, bangun.',
   'cap.note': 'Key visual, video pendek dengan sound design, dan halaman web yang menampilkannya — dikerjakan satu orang, jadi tidak ada yang hilang di antara tahap.',
   'campaign.eyebrow': '01 — Desain kampanye & grafis',
@@ -236,7 +242,11 @@ const id: Record<DictKey, string> = {
   'web.eyebrow': '05 — Web & front-end',
   'web.title': 'Saya juga membangun web.',
   'web.note': 'Didesain dan dikoding dari awal sampai akhir, dari layout hingga deploy.',
-  'approach.eyebrow': '07 — Pendekatan',
+  'exp.eyebrow': '06 — Pengalaman',
+  'exp.title': 'Lima tahun in-house, tujuh tahun mandiri.',
+  'exp.note': 'CV lengkap — keahlian, tools, dan pendidikan — tinggal satu klik.',
+  'exp.cv': 'Unduh CV (PDF) ↓',
+  'approach.eyebrow': '08 — Pendekatan',
   'approach.title': 'Desain yang baik memberi ruang untuk ide yang lebih baik.',
   'approach.body':
     'Proses saya dimulai dari rasa ingin tahu, obrolan yang jujur, dan perhatian pada detail kecil. Hasil akhirnya harus terlihat matang dan terasa mudah dipakai.',

@@ -117,3 +117,43 @@ export const webProjects = [
     ],
   },
 ]
+
+export const cvUrl = "/cv/Taufiq-Sholikhin-CV.pdf"
+
+// From the CV (Taufiq_Sholikhin_CV_Designer_FrontEnd.pdf)
+export const experience = [
+  {
+    period:{ en:"Aug 2021 – Aug 2026", id:"Agu 2021 – Agu 2026" },
+    role:{ en:"Graphic Designer & Video Creator", id:"Desainer Grafis & Video Creator" },
+    org:{ en:"Pangkalan TNI AL Sangatta (Indonesian Navy Base) · Sangatta", id:"Pangkalan TNI AL Sangatta · Sangatta" },
+    points:[
+      { en:"Produced 50+ graphic and video assets for official communications and events of the naval base command.", id:"Memproduksi 50+ aset grafis dan video untuk komunikasi resmi dan acara komando pangkalan." },
+      { en:"Designed public-information poster campaigns on online loan scams, social media fraud, and responsible conduct — built to be understood at a glance on mobile.", id:"Mendesain kampanye poster informasi publik tentang penipuan pinjol, penipuan media sosial, dan perilaku bertanggung jawab — dibuat agar langsung dipahami di layar HP." },
+      { en:"Owned the full pipeline, from concept and shooting to design, editing, and delivery.", id:"Menangani seluruh alur kerja, dari konsep dan pengambilan gambar hingga desain, editing, dan pengiriman." },
+    ],
+  },
+  {
+    period:{ en:"2019 – Present", id:"2019 – Sekarang" },
+    role:{ en:"Freelance Graphic Designer, Video Editor & Web Designer", id:"Freelance Desainer Grafis, Video Editor & Web Designer" },
+    org:{ en:"KHINCC Studio · Remote", id:"KHINCC Studio · Remote" },
+    points:[
+      { en:"Logos, posters, and marketing materials for small businesses, including the Fluent English poster series and an A3 infographic and A5 flyer for Down Under Brew.", id:"Logo, poster, dan materi pemasaran untuk usaha kecil, termasuk seri poster Fluent English serta infografis A3 dan flyer A5 untuk Down Under Brew." },
+      { en:"Designed and built Meridian Residences, a multilingual property website template with booking and live chat.", id:"Mendesain dan membangun Meridian Residences, template website properti multibahasa dengan booking dan live chat." },
+      { en:"Edited 14+ short-form product videos for Fantech, Secondwave, KZ, and Photoolex, plus documentaries and event films for PT KPC and SMK Negeri 2 Sangatta.", id:"Mengedit 14+ video produk format pendek untuk Fantech, Secondwave, KZ, dan Photoolex, serta dokumenter dan film acara untuk PT KPC dan SMK Negeri 2 Sangatta." },
+    ],
+  },
+  {
+    period:{ en:"Oct 2020 – Jan 2021", id:"Okt 2020 – Jan 2021" },
+    role:{ en:"Book Cover Designer", id:"Desainer Sampul Buku" },
+    org:{ en:"Prabu21 Book Publisher · Malang", id:"Penerbit Prabu21 · Malang" },
+    points:[
+      { en:"Designed cover artwork for published titles, working directly with authors and editors on concepts and revisions.", id:"Mendesain sampul untuk buku terbitan, bekerja langsung dengan penulis dan editor dari konsep hingga revisi." },
+    ],
+  },
+  {
+    period:{ en:"2020", id:"2020" },
+    role:{ en:"Speaker — “Designing for the Future”", id:"Pembicara — “Designing for the Future”" },
+    org:{ en:"PMII Student Association · Unitri Malang", id:"PMII · Unitri Malang" },
+    points:[],
+  },
+]

@@ -4,7 +4,7 @@ import type { NewsSummary } from '@/lib/news'
 import { formatDate, pick, type DictKey } from '@/lib/i18n'
 import { usePrefs } from '@/components/Preferences'
 import SiteHeader from '@/components/SiteHeader'
-import { portfolioSeed, campaignPosters, tiktokReviews, youtubePortfolio, capabilities, marqueeItems, contactInfo, reelDetails, webProjects, type ReelGroup } from '@/lib/portfolio-data'
+import { portfolioSeed, campaignPosters, tiktokReviews, youtubePortfolio, capabilities, marqueeItems, contactInfo, reelDetails, webProjects, experience, cvUrl, type ReelGroup } from '@/lib/portfolio-data'
 
 const pad=(n:number)=>String(n).padStart(2,'0')
 const FEATURED_REELS=8
@@ -95,7 +95,7 @@ export default function Page(){
           <h1><span className="hero-line-light">{t('hero.line1')}</span><br/><span>{t('hero.line2')}</span></h1>
           <p className="hero-intro">{t('hero.intro')}</p>
           <div className="hero-stats"><span>{t('hero.stat1')}</span><span>{t('hero.stat2')}</span><span>{t('hero.stat3')}</span></div>
-          <div className="hero-actions"><a className="button button-dark" href="#campaign">{t('hero.cta')}</a><a className="text-link" href="#contact">{t('hero.talk')}</a></div>
+          <div className="hero-actions"><a className="button button-dark" href="#campaign">{t('hero.cta')}</a><a className="text-link" href={cvUrl} download>{t('hero.cv')} ↓</a></div>
         </div>
       </section>
 
@@ -174,6 +174,16 @@ export default function Page(){
         </article>)}</div>
       </section>
 
+      <section id="experience" className="exp-section section-wrap scroll-reveal">
+        <div className="section-heading"><p className="eyebrow">{t('exp.eyebrow')}</p><h2>{t('exp.title')}</h2><p className="section-note">{t('exp.note')} <a className="text-link exp-cv" href={cvUrl} download>{t('exp.cv')}</a></p></div>
+        <ol className="exp-list">{experience.map(e=><li className="exp-item" key={pick(e.role,'en')}>
+          <span className="exp-period">{pick(e.period,lang)}</span>
+          <div><h3>{pick(e.role,lang)}</h3><p className="exp-org">{pick(e.org,lang)}</p>
+            {e.points.length>0&&<ul>{e.points.map(pt=><li key={pt.en}>{pick(pt,lang)}</li>)}</ul>}
+          </div>
+        </li>)}</ol>
+      </section>
+
       <section className="capabilities section-wrap scroll-reveal">
         <div className="section-heading"><p className="eyebrow">{t('cap.eyebrow')}</p><h2>{t('cap.title')}</h2><p className="section-note">{t('cap.note')}</p></div>
         <div className="service-grid">
@@ -183,7 +193,7 @@ export default function Page(){
 
       <section className="approach-section scroll-reveal"><div><p className="eyebrow">{t('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><a className="button button-light" href="#contact">{t('approach.cta')}</a></div></section>
 
-      <section id="contact" className="contact-section section-wrap"><div className="contact-copy"><p className="eyebrow">{t('contact.eyebrow')}</p><h2>{t('contact.title')}</h2><p>{t('contact.lede')}</p><div className="contact-meta">{(['contact.meta1','contact.meta2','contact.meta3'] as DictKey[]).map(m=><span key={m}>{t(m)}</span>)}</div><div className="contact-links"><a href={contactInfo.links.email}><span>Email</span><span>{contactInfo.email} ↗</span></a><a href={contactInfo.links.instagram} target="_blank" rel="noreferrer"><span>Instagram</span><span>{contactInfo.instagram} ↗</span></a><a href={contactInfo.links.tiktok} target="_blank" rel="noreferrer"><span>TikTok</span><span>{contactInfo.tiktok} ↗</span></a><a href={contactInfo.links.youtube} target="_blank" rel="noreferrer"><span>YouTube</span><span>{contactInfo.youtube} ↗</span></a></div></div>
+      <section id="contact" className="contact-section section-wrap"><div className="contact-copy"><p className="eyebrow">{t('contact.eyebrow')}</p><h2>{t('contact.title')}</h2><p>{t('contact.lede')}</p><div className="contact-meta">{(['contact.meta1','contact.meta2','contact.meta3'] as DictKey[]).map(m=><span key={m}>{t(m)}</span>)}</div><div className="contact-links"><a href={contactInfo.links.email}><span>Email</span><span>{contactInfo.email} ↗</span></a><a href={contactInfo.links.instagram} target="_blank" rel="noreferrer"><span>Instagram</span><span>{contactInfo.instagram} ↗</span></a><a href={contactInfo.links.tiktok} target="_blank" rel="noreferrer"><span>TikTok</span><span>{contactInfo.tiktok} ↗</span></a><a href={contactInfo.links.youtube} target="_blank" rel="noreferrer"><span>YouTube</span><span>{contactInfo.youtube} ↗</span></a><a href={cvUrl} download><span>CV</span><span>{t('hero.cv')} (PDF) ↓</span></a></div></div>
         <form className="contact-form" onSubmit={submit}><label>{t('contact.name')}<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder={t('contact.name')} required/></label><label>{t('contact.email')}<input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder={t('contact.email')} required/></label><div className="form-row"><label><span className="sr-only">{t('contact.projectType')}</span><select value={form.project_type} onChange={e=>setForm({...form,project_type:e.target.value})}>{['Branding','Product Video','Campaign design','Other'].map(v=><option key={v} value={v}>{t(`contact.type.${v}` as DictKey)}</option>)}</select></label><label><span className="sr-only">{t('contact.budget')}</span><select value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})}><option>&lt;$300</option><option>$300-$1000</option><option>$1000+</option></select></label></div><label>{t('contact.message')}<textarea value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder={t('contact.messagePh')} required/></label><button className="button button-dark" type="submit">{sent?t('contact.sent'):t('contact.send')}</button><p className="form-note">{contactInfo.email} • (+62) 812 1615 2280</p></form>
       </section>
 
