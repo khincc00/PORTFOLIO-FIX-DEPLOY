@@ -1,6 +1,10 @@
+/**
+ * app/icon.tsx → ikon website (favicon) yang muncul di tab browser dan hasil pencarian Google.
+ * Gambarnya dibuat dari kode (huruf "K" + titik oranye), bukan dari file gambar.
+ */
 import { ImageResponse } from 'next/og'
 
-// Google shows favicons in search results; it asks for a square of at least 48px
+// Google menampilkan favicon di hasil pencarian; ukurannya minimal persegi 48px
 export const size = { width: 96, height: 96 }
 export const contentType = 'image/png'
 

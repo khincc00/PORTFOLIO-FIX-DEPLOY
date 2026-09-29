@@ -1,16 +1,36 @@
-// UI dictionary. English is the primary language; Indonesian is optional via the header toggle.
+/**
+ * lib/i18n.ts
+ * KAMUS DUA BAHASA untuk semua teks di website (Inggris = utama, Indonesia = pilihan).
+ *
+ * Cara kerja:
+ * - Setiap teks punya "kunci" (key), misalnya 'hero.cta'.
+ * - Objek `en` berisi teks Inggris, objek `id` berisi teks Indonesia untuk kunci yang sama.
+ * - Di komponen, teks dipanggil dengan t('hero.cta') (lihat components/Preferences.tsx),
+ *   lalu otomatis mengikuti bahasa yang dipilih lewat tombol EN/ID di header.
+ * - {n}, {min}, {max} di dalam teks adalah tempat angka yang diisi saat dipanggil,
+ *   contoh t('work.seeAll', { n: 14 }) → "See all 14".
+ *
+ * Untuk mengubah tulisan di website: cari teksnya di file ini, ubah versi en DAN id.
+ * Untuk menambah teks baru: tambahkan kunci di `en` dan di `id` (TypeScript akan
+ * memberi error kalau salah satunya lupa diisi).
+ */
 
+// Bahasa yang tersedia
 export type Lang = 'en' | 'id'
 export const LANGS: Lang[] = ['en', 'id']
+// Nama cookie & penyimpanan browser untuk mengingat pilihan bahasa dan tema
 export const LANG_COOKIE = 'khincc_lang'
 export const LANG_STORAGE = 'khincc_lang'
 export const THEME_STORAGE = 'khincc_theme'
 
+// Teks yang punya versi dua bahasa, contoh { en: 'Audio', id: 'Audio' }
 export type Localized = { en: string; id: string }
+// Ambil versi sesuai bahasa. Kalau isinya teks biasa (bukan {en, id}), dikembalikan apa adanya
 export const pick = (value: Localized | string, lang: Lang) => (typeof value === 'string' ? value : value[lang])
 
+// ===== TEKS BAHASA INGGRIS (utama) =====
 const en = {
-  // Header
+  // Header (menu navigasi atas)
   'nav.campaign': 'Design',
   'nav.works': 'Video',
   'nav.web': 'Web',
@@ -23,7 +43,7 @@ const en = {
   'theme.toDark': 'Switch to night mode',
   'theme.toLight': 'Switch to day mode',
 
-  // Hero
+  // Hero (bagian judul besar paling atas beranda)
   'hero.eyebrow': 'Sangatta, Indonesia • WITA UTC+8 • Fully remote • Available for projects',
   'hero.kicker': 'Taufiq Sholikhin — Multimedia designer',
   'hero.line1': 'Campaign design & short\u2011form video',
@@ -37,7 +57,7 @@ const en = {
   'hero.talk': 'Start a conversation',
   'hero.cv': 'Download CV',
 
-  // News spotlight & pages
+  // Berita: sorotan di beranda & halaman /berita
   'news.live': 'Latest from the Journal',
   'news.viewAll': 'Open the journal ↗',
   'news.new': 'New',
@@ -49,7 +69,7 @@ const en = {
   'news.back': '← Journal',
   'news.minRead': 'min read',
 
-  // Sections
+  // Bagian-bagian beranda dan halaman /work
   'cap.eyebrow': 'Services',
   'cap.title': 'From brief to feed: design, edit, build.',
   'cap.note': 'Key visuals, short-form edits with sound design, and the web pages that carry them — handled by one person, so nothing gets lost between steps.',
@@ -96,7 +116,7 @@ const en = {
     'My process starts with curiosity, honest conversations, and an eye for the small details. The final work should look considered and feel effortless to use.',
   'approach.cta': 'Let’s work together ↗',
 
-  // Contact
+  // Kontak (form di bagian bawah beranda)
   'contact.eyebrow': "Let's make something",
   'contact.title': "Tell me what you're thinking.",
   'contact.lede': 'Campaign design, editorial layout, or short-form edits — bring the idea and we will shape it together.',
@@ -117,7 +137,7 @@ const en = {
   'contact.sent': 'Sent ✓',
   'footer.text': '© 2026 Khincc Studio • Taufiq Sholikhin — campaign design, short-form video & web for tech and gear brands • Sangatta, Indonesia',
 
-  // Reactions & comments
+  // Reaksi & komentar di halaman berita
   'ni.prompt': 'What do you think?',
   'ni.reactions': 'reactions',
   'ni.react': 'React with',
@@ -164,7 +184,7 @@ const en = {
   'ni.loginFailed': 'Could not sign in',
   'ni.deleteFailed': 'Could not delete comment',
 
-  // Server messages (API routes)
+  // Pesan error dari server (API)
   'err.server': 'Something went wrong. Please try again.',
   'err.disabled': 'Comments are not available yet.',
   'err.newsNotFound': 'News not found.',
@@ -187,8 +207,11 @@ const en = {
   'err.badLogin': 'Wrong username or password.',
 }
 
+// DictKey = semua kunci yang ada di `en`. Dipakai TypeScript untuk mencegah salah ketik kunci
 export type DictKey = keyof typeof en
 
+// ===== TEKS BAHASA INDONESIA =====
+// Record<DictKey, string> memaksa semua kunci di `en` juga ada di sini
 const id: Record<DictKey, string> = {
   'nav.campaign': 'Desain',
   'nav.works': 'Video',
@@ -360,16 +383,21 @@ const id: Record<DictKey, string> = {
   'err.badLogin': 'Username atau password salah.',
 }
 
+// Gabungan kedua kamus
 export const dictionaries: Record<Lang, Record<DictKey, string>> = { en, id }
 
+// Ambil teks untuk kunci tertentu, lalu isi {variabel} di dalamnya.
+// Kalau teks Indonesia tidak ada, pakai teks Inggris; kalau tetap tidak ada, tampilkan kuncinya
 export function translate(lang: Lang, key: DictKey, vars?: Record<string, string | number>) {
   let text = dictionaries[lang][key] ?? dictionaries.en[key] ?? key
   if (vars) for (const [k, v] of Object.entries(vars)) text = text.replace(`{${k}}`, String(v))
   return text
 }
 
+// Cek apakah sebuah nilai adalah kode bahasa yang sah ('en' atau 'id')
 export const isLang = (value: unknown): value is Lang => value === 'en' || value === 'id'
 
+// Format tanggal sesuai bahasa: "30 September 2026" (id) atau "September 30, 2026" (en)
 export function formatDate(date: string | null, lang: Lang) {
   if (!date) return '—'
   return new Date(date).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })

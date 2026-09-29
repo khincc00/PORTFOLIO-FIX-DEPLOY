@@ -1,3 +1,8 @@
+/**
+ * app/api/admin/auth/route.ts → /api/admin/auth
+ * GET: cek status login admin. POST: login admin. DELETE: logout admin.
+ * Logika tanda tangan token ada di lib/admin-auth.ts.
+ */
 import { NextResponse } from 'next/server'
 import {
   SESSION_COOKIE,
@@ -8,6 +13,7 @@ import {
   verifyCredentials,
 } from '@/lib/admin-auth'
 
+// Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
 // Cek apakah sesi admin masih aktif
@@ -15,7 +21,7 @@ export async function GET() {
   return NextResponse.json({ authenticated: isAdminRequest() })
 }
 
-// Login
+// Login: cocokkan username & password dengan Environment Variables, lalu pasang cookie sesi
 export async function POST(req: Request) {
   try {
     if (!isAdminAuthConfigured) {
@@ -39,7 +45,7 @@ export async function POST(req: Request) {
   }
 }
 
-// Logout
+// Logout: hapus cookie sesi admin
 export async function DELETE() {
   const res = NextResponse.json({ ok: true })
   res.cookies.set(SESSION_COOKIE, '', { ...sessionCookieOptions, maxAge: 0 })

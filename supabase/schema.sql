@@ -2,6 +2,14 @@
 -- Schema Database untuk Portfolio Khincc (Supabase)
 -- Jalankan skrip ini di SQL Editor pada Supabase Dashboard
 -- ========================================================
+--
+-- Istilah penting:
+-- - Tabel      = tempat data disimpan, seperti lembar Excel (kolom = jenis data, baris = satu data).
+-- - RLS        = Row Level Security: aturan siapa boleh membaca/mengubah baris mana.
+--                Kunci publik (anon) di browser hanya bisa melakukan yang diizinkan "policy".
+--                Server memakai service role key yang melewati RLS (lihat lib/supabase-admin.ts).
+-- - "if not exists" / "drop ... if exists" membuat skrip aman dijalankan berulang kali.
+-- Bagian 1–6 adalah tabel lama; 7–11 untuk berita & komentar; 12–13 untuk menu Admin → Portfolio.
 
 -- 1. Tabel Portfolio
 create table if not exists public.portfolio (
@@ -161,6 +169,8 @@ alter table public.news_comments enable row level security;
 alter table public.news_reactions enable row level security;
 
 -- 12. Portfolio Items (dikelola dari /admin → Portfolio: Design, Video, Web)
+-- Satu tabel untuk semua jenis karya. Arti kolom ada di interface PortfolioItem (lib/portfolio-items.ts).
+-- check (...) = database menolak nilai di luar daftar yang diizinkan.
 create table if not exists public.portfolio_items (
   id serial primary key,
   kind text not null check (kind in ('design', 'video', 'web')),
@@ -182,10 +192,12 @@ create table if not exists public.portfolio_items (
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
+-- Index mempercepat pengambilan data yang diurutkan per jenis lalu per posisi
 create index if not exists portfolio_items_kind_position_idx on public.portfolio_items (kind, position);
 
 alter table public.portfolio_items enable row level security;
 
+-- Publik hanya boleh MEMBACA karya yang ditampilkan. Menulis hanya lewat server (API admin)
 drop policy if exists "Allow public read access to published portfolio items" on public.portfolio_items;
 create policy "Allow public read access to published portfolio items"
   on public.portfolio_items
@@ -234,12 +246,13 @@ select * from (values
 where not exists (select 1 from public.portfolio_items);
 
 -- ==========================================
--- 13. Portfolio highlight (homepage)
+-- 13. Portfolio highlight (homepage) — karya ber-★ yang tampil di beranda
 -- ==========================================
--- Homepage shows only highlighted items; the full list lives on /work.
+-- Beranda hanya menampilkan karya ber-highlight; semua karya tampil di halaman /work.
 alter table public.portfolio_items add column if not exists is_featured boolean not null default false;
 
--- Starting selection (same as DEFAULT_FEATURED in lib/portfolio-items.ts); runs only while nothing is highlighted yet
+-- Pilihan awal (sama dengan DEFAULT_FEATURED di lib/portfolio-items.ts).
+-- Hanya dijalankan kalau belum ada satu pun karya ber-highlight, jadi pilihan dari admin tidak tertimpa
 update public.portfolio_items set is_featured = true
 where title in (
   'Online Loan Awareness', 'Digital Safety Campaign', 'Down Under Brew',

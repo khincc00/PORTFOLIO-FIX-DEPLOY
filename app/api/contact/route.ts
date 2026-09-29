@@ -1,6 +1,12 @@
+/**
+ * app/api/contact/route.ts → POST /api/contact
+ * Menerima isi form kontak di beranda dan menyimpannya ke tabel `contacts`.
+ * Pesan bisa dibaca di Dashboard admin. Catatan: belum ada notifikasi email.
+ */
 import { NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
+// Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
@@ -8,6 +14,7 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { name, email, project_type, budget, message } = body
 
+    // Nama, email, dan pesan wajib diisi
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: 'Nama, email, dan pesan wajib diisi.' },
@@ -16,7 +23,8 @@ export async function POST(req: Request) {
     }
 
     if (!isSupabaseConfigured) {
-      // Graceful fallback when Supabase credentials aren't deployed yet
+      // Kalau Supabase belum diatur, tetap jawab "berhasil" supaya form tidak error
+      // (tapi pesan tidak tersimpan di mana pun)
       return NextResponse.json({
         ok: true,
         data: {
@@ -32,6 +40,7 @@ export async function POST(req: Request) {
       })
     }
 
+    // Simpan pesan. Kunci publik boleh MENAMBAH pesan, tapi tidak boleh MEMBACA (diatur RLS)
     const { data, error } = await supabase
       .from('contacts')
       .insert({

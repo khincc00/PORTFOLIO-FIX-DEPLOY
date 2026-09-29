@@ -1,8 +1,14 @@
 'use client'
+/**
+ * app/admin/NewsList.tsx → tabel DAFTAR BERITA di admin (menu Berita).
+ * Ada filter Semua/Terbit/Draft, kotak pencarian, dan tombol Edit/Lihat/Hapus.
+ * Datanya dikirim dari app/admin/page.tsx lewat "props".
+ */
 
 import { useState } from 'react'
 import { formatNewsDate, type NewsPost } from '@/lib/news'
 
+// Props = data & fungsi yang dikirim dari komponen induk (app/admin/page.tsx)
 interface Props {
   posts: NewsPost[]
   loading: boolean
@@ -14,6 +20,7 @@ interface Props {
 
 type Filter = 'all' | 'published' | 'draft'
 
+// Tentukan lencana status: Draft, Terjadwal (tanggal terbit di masa depan), atau Terbit
 const statusBadge = (post: NewsPost) => {
   if (post.status === 'draft') return { label: 'Draft', cls: 'bg-neutral-100 text-neutral-600' }
   if (post.published_at && new Date(post.published_at) > new Date()) return { label: 'Terjadwal', cls: 'bg-amber-50 text-amber-700' }
@@ -23,18 +30,22 @@ const statusBadge = (post: NewsPost) => {
 export default function NewsList({ posts, loading, error, onNew, onEdit, onDeleted }: Props) {
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
+  // id berita yang sedang dihapus (untuk menampilkan "Menghapus...")
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
+  // Jumlah berita untuk setiap tombol filter
   const counts = {
     all: posts.length,
     published: posts.filter((p) => p.status === 'published').length,
     draft: posts.filter((p) => p.status === 'draft').length,
   }
 
+  // Berita yang ditampilkan setelah filter status dan pencarian judul
   const visible = posts
     .filter((p) => filter === 'all' || p.status === filter)
     .filter((p) => p.title.toLowerCase().includes(query.toLowerCase()))
 
+  // Hapus berita permanen setelah konfirmasi
   const remove = async (post: NewsPost) => {
     if (!confirm(`Hapus berita "${post.title}" secara permanen?`)) return
     setDeletingId(post.id)
@@ -115,6 +126,7 @@ export default function NewsList({ posts, loading, error, onNew, onEdit, onDelet
                           <button onClick={() => onEdit(post)} className="font-medium text-left hover:text-blue-600 cursor-pointer">
                             {post.title}
                           </button>
+                          {/* Tombol aksi: di layar lebar baru muncul saat baris disorot mouse */}
                           <div className="flex gap-2 text-[11px] mt-1 sm:opacity-0 group-hover:opacity-100 transition">
                             <button onClick={() => onEdit(post)} className="text-blue-600 hover:underline cursor-pointer">Edit</button>
                             {badge.label === 'Terbit' && (

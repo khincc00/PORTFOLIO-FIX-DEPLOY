@@ -1,3 +1,7 @@
+/**
+ * app/apple-icon.tsx → ikon saat website disimpan ke layar utama iPhone/iPad (180×180 px).
+ * Desainnya sama dengan app/icon.tsx, hanya ukurannya lebih besar.
+ */
 import { ImageResponse } from 'next/og'
 
 export const size = { width: 180, height: 180 }

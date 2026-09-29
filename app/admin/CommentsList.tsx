@@ -1,7 +1,13 @@
 'use client'
+/**
+ * app/admin/CommentsList.tsx → menu KOMENTAR di admin.
+ * Menampilkan 200 komentar terbaru dari semua berita, bisa dicari dan dihapus.
+ * Class seperti "flex gap-2 text-xs" adalah class Tailwind (lihat tailwind.config.js).
+ */
 
 import { useEffect, useState } from 'react'
 
+// Bentuk data komentar dari /api/admin/comments (termasuk judul & slug beritanya)
 interface AdminComment {
   id: number
   author_name: string
@@ -11,15 +17,18 @@ interface AdminComment {
   news: { title: string; slug: string } | null
 }
 
+// Label & warna lencana untuk tiap jenis penulis
 const typeLabel = { guest: 'Tamu', member: 'Member', admin: 'Penulis' }
 const typeClass = { guest: 'bg-neutral-100 text-neutral-600', member: 'bg-emerald-50 text-emerald-700', admin: 'bg-orange-50 text-orange-700' }
 
+// onCount = fungsi dari halaman admin untuk memperbarui angka jumlah komentar di menu samping
 export default function CommentsList({ onCount }: { onCount?: (n: number) => void }) {
   const [comments, setComments] = useState<AdminComment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
 
+  // Ambil daftar komentar sekali saat menu dibuka
   useEffect(() => {
     fetch('/api/admin/comments')
       .then(async (r) => {
@@ -33,6 +42,7 @@ export default function CommentsList({ onCount }: { onCount?: (n: number) => voi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Hapus satu komentar setelah konfirmasi
   const remove = async (c: AdminComment) => {
     if (!confirm(`Hapus komentar dari "${c.author_name}"?`)) return
     const res = await fetch(`/api/admin/comments/${c.id}`, { method: 'DELETE' })
@@ -42,6 +52,7 @@ export default function CommentsList({ onCount }: { onCount?: (n: number) => voi
     onCount?.(next.length)
   }
 
+  // Pencarian: cocokkan nama, isi komentar, atau judul berita (huruf besar/kecil diabaikan)
   const q = query.toLowerCase()
   const visible = comments.filter(
     (c) => !q || c.author_name.toLowerCase().includes(q) || c.body.toLowerCase().includes(q) || c.news?.title.toLowerCase().includes(q)

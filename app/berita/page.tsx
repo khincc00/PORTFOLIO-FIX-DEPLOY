@@ -1,9 +1,14 @@
+/**
+ * app/berita/page.tsx → halaman DAFTAR BERITA (https://khincreator.com/berita)
+ * Berita terbaru ditampilkan besar di atas, sisanya dalam bentuk grid kartu.
+ */
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getPublishedNews } from '@/lib/news-public'
 import SiteHeader from '@/components/SiteHeader'
 import { LocalDate, T } from '@/components/Preferences'
 
+// Cache halaman, dibuat ulang paling lama tiap 60 detik (dan langsung saat admin menerbitkan berita)
 export const revalidate = 60
 
 export const metadata: Metadata = {
@@ -15,6 +20,7 @@ export const metadata: Metadata = {
 
 export default async function NewsIndexPage() {
   const posts = await getPublishedNews()
+  // Pisahkan berita pertama (terbaru) dari sisanya
   const [featured, ...rest] = posts
 
   return (
@@ -32,6 +38,7 @@ export default async function NewsIndexPage() {
           <p className="news-empty"><T k="news.empty" /></p>
         ) : (
           <>
+            {/* Berita terbaru, tampil besar */}
             <Link href={`/berita/${featured.slug}`} className="news-featured">
               <div className="news-cover">{featured.cover_image ? <img src={featured.cover_image} alt="" /> : <span>{featured.category}</span>}</div>
               <div>
@@ -42,6 +49,7 @@ export default async function NewsIndexPage() {
               </div>
             </Link>
 
+            {/* Berita lainnya dalam grid */}
             {rest.length > 0 && (
               <div className="news-grid">
                 {rest.map((post) => (

@@ -1,3 +1,7 @@
+/**
+ * app/api/news/[slug]/comments/route.ts → /api/news/<slug>/comments
+ * POST: kirim komentar. DELETE: hapus komentar (milik sendiri, atau semua kalau admin).
+ */
 import { NextResponse } from 'next/server'
 import { st } from '@/lib/i18n-server'
 import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
@@ -6,10 +10,12 @@ import { isNameTakenByAccount } from '@/lib/account'
 import { getIpHash, isReservedName, normalizeName } from '@/lib/user-auth'
 import { COMMENT_LIMITS } from '@/lib/interactions'
 
+// Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
 type Params = { params: { slug: string } }
 
+// Batas anti-spam: jeda minimal 20 detik antar komentar, maksimal 15 komentar per jam per IP
 const MIN_SECONDS_BETWEEN_COMMENTS = 20
 const MAX_COMMENTS_PER_HOUR = 15
 
@@ -21,17 +27,21 @@ export async function POST(req: Request, { params }: Params) {
     const body = await req.json()
     const viewer = await getViewer()
 
-    // Honeypot: real visitors never see or fill this field
+    // Honeypot (jebakan bot): kolom "website" disembunyikan dari pengunjung asli.
+    // Kalau terisi, pasti bot → pura-pura berhasil tapi tidak disimpan
     if (body.website) return NextResponse.json({ ok: true })
 
+    // Rapikan baris baru: maksimal satu baris kosong berturut-turut
     const text = String(body.body || '').replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
     if (text.length < COMMENT_LIMITS.bodyMin || text.length > COMMENT_LIMITS.bodyMax) {
       return NextResponse.json({ error: st('err.bodyLength', { min: COMMENT_LIMITS.bodyMin, max: COMMENT_LIMITS.bodyMax }) }, { status: 400 })
     }
+    // Hitung jumlah link di komentar (spam biasanya berisi banyak link)
     if ((text.match(/https?:\/\/|www\./gi) || []).length > COMMENT_LIMITS.maxLinks) {
       return NextResponse.json({ error: st('err.tooManyLinks', { max: COMMENT_LIMITS.maxLinks }) }, { status: 400 })
     }
 
+    // Tentukan penulis komentar: admin (sebagai penulis), anggota yang login, atau tamu
     let author: { author_name: string; author_type: 'guest' | 'member' | 'admin'; user_id: number | null }
     if (viewer.isAdmin && body.as_admin) {
       author = { author_name: 'Khincc', author_type: 'admin', user_id: null }
@@ -45,7 +55,7 @@ export async function POST(req: Request, { params }: Params) {
       if (isReservedName(name)) {
         return NextResponse.json({ error: st('err.nameReserved') }, { status: 400 })
       }
-      // Guests can't borrow a name that belongs to a registered account
+      // Tamu tidak boleh memakai nama milik akun terdaftar
       if (await isNameTakenByAccount(name)) {
         return NextResponse.json({ error: st('err.nameTaken') }, { status: 409 })
       }
@@ -55,6 +65,7 @@ export async function POST(req: Request, { params }: Params) {
     const newsId = await findPublishedNewsId(params.slug)
     if (!newsId) return NextResponse.json({ error: st('err.newsNotFound') }, { status: 404 })
 
+    // Cek batas spam berdasarkan IP (admin tidak dibatasi)
     const ipHash = getIpHash()
     if (!viewer.isAdmin) {
       const { data: recent } = await supabaseAdmin
@@ -78,6 +89,7 @@ export async function POST(req: Request, { params }: Params) {
       .single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+    // Kirim komentar versi publik; pasang cookie tamu kalau baru pertama kali
     return withVisitorCookie(NextResponse.json({ comment: toPublicComment(data, viewer) }), viewer.visitor)
   } catch {
     return NextResponse.json({ error: st('err.server') }, { status: 500 })
@@ -88,6 +100,7 @@ export async function POST(req: Request, { params }: Params) {
 export async function DELETE(req: Request, { params }: Params) {
   if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
 
+  // id komentar dikirim lewat URL, contoh ...?id=12
   const id = Number(new URL(req.url).searchParams.get('id'))
   const newsId = await findPublishedNewsId(params.slug)
   if (!id || !newsId) return NextResponse.json({ error: st('err.commentNotFound') }, { status: 404 })
@@ -99,6 +112,7 @@ export async function DELETE(req: Request, { params }: Params) {
     .eq('id', id)
     .eq('news_id', newsId)
     .maybeSingle()
+  // Hanya pemilik komentar atau admin yang boleh menghapus (403 = dilarang)
   if (!row || !toPublicComment(row, viewer).can_delete) {
     return NextResponse.json({ error: st('err.cannotDelete') }, { status: 403 })
   }

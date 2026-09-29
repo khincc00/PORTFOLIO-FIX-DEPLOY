@@ -1,3 +1,10 @@
+/**
+ * utils/supabase/middleware.ts
+ * Template resmi Supabase untuk menyegarkan sesi login Supabase lewat middleware.
+ *
+ * Catatan: saat ini TIDAK dipakai (tidak ada file middleware.ts di proyek ini).
+ * Login admin & pengunjung memakai sistem sendiri di lib/admin-auth.ts dan lib/user-auth.ts.
+ */
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 

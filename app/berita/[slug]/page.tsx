@@ -1,3 +1,7 @@
+/**
+ * app/berita/[slug]/page.tsx → halaman SATU BERITA (contoh /berita/judul-berita)
+ * [slug] di nama folder artinya bagian URL ini berubah-ubah sesuai berita yang dibuka.
+ */
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -8,10 +12,12 @@ import { LocalDate, T } from '@/components/Preferences'
 import { siteConfig } from '@/lib/site'
 import NewsInteractions from './NewsInteractions'
 
+// Cache halaman, dibuat ulang paling lama tiap 60 detik
 export const revalidate = 60
 
 type Props = { params: { slug: string } }
 
+// Judul, deskripsi, dan gambar preview berbeda untuk setiap berita (untuk Google & media sosial)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getNewsBySlug(params.slug)
   if (!post) return { title: 'News not found' }
@@ -35,8 +41,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function NewsDetailPage({ params }: Props) {
   const post = await getNewsBySlug(params.slug)
-  if (!post) notFound()
+  if (!post) notFound() // berita tidak ada / belum terbit → tampilkan halaman 404
 
+  // Data terstruktur NewsArticle supaya Google mengenali halaman ini sebagai artikel berita
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
@@ -55,6 +62,7 @@ export default async function NewsDetailPage({ params }: Props) {
     <main className="studio">
       <SiteHeader />
 
+      {/* replace(/</g, ...) mencegah isi berita "keluar" dari tag <script> */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <article className="news-article">
         <Link href="/berita" className="text-link news-back"><T k="news.back" /></Link>
@@ -62,11 +70,12 @@ export default async function NewsDetailPage({ params }: Props) {
         <h1>{post.title}</h1>
         {post.excerpt && <p className="news-lede">{post.excerpt}</p>}
         {post.cover_image && <img className="news-article-cover" src={post.cover_image} alt="" />}
-        {/* Content is sanitized with an allowlist when saved (lib/sanitize.ts) */}
+        {/* Isi berita (HTML) sudah dibersihkan saat disimpan (lib/sanitize.ts), jadi aman ditampilkan */}
         <div className="news-body" dangerouslySetInnerHTML={{ __html: post.content }} />
         {post.tags && post.tags.length > 0 && (
           <div className="news-tags">{post.tags.map((t) => <span key={t}>#{t}</span>)}</div>
         )}
+        {/* Reaksi emoji & komentar */}
         <NewsInteractions slug={post.slug} />
       </article>
 

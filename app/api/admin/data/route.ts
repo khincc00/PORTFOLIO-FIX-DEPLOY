@@ -1,21 +1,30 @@
+/**
+ * app/api/admin/data/route.ts → GET /api/admin/data
+ * Data untuk Dashboard admin: pesan dari form kontak dan daftar karya dari tabel LAMA `portfolio`.
+ * Catatan: tabel lama ini sudah tidak dipakai beranda. Karya sekarang diatur di menu Portfolio
+ * (tabel portfolio_items).
+ */
 import { NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
 import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { portfolioSeed } from '@/lib/portfolio-data'
 
+// Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
     if (!isAdminRequest()) return unauthorized()
 
+    // Nilai awal: data bawaan di kode, dipakai kalau database tidak bisa diakses
     let portfolioList = portfolioSeed
     let contactList: any[] = []
     let dbError: string | null = null
 
     if (isSupabaseConfigured) {
-      // Service role is needed to read contacts through RLS; fall back to anon for portfolio
+      // Pesan kontak hanya bisa dibaca dengan kunci admin (dilindungi RLS).
+      // Kalau kunci admin belum ada, pakai kunci publik (hanya portfolio yang terbaca)
       const db = isAdminDbConfigured ? supabaseAdmin : supabase
       try {
         const [portfolioRes, contactsRes] = await Promise.all([

@@ -1,14 +1,22 @@
 'use client'
+/**
+ * app/work/WorkClient.tsx → tampilan halaman /work (semua karya).
+ *
+ * 'use client' di baris pertama artinya komponen ini berjalan di BROWSER,
+ * karena memakai hal interaktif (tombol filter reels, pilihan bahasa).
+ * Datanya dikirim dari app/work/page.tsx yang berjalan di server.
+ */
 import type { DictKey } from '@/lib/i18n'
 import { usePrefs } from '@/components/Preferences'
 import SiteHeader from '@/components/SiteHeader'
 import { DesignList, FilmGrid, ReelGrid, ShortList, WebGrid } from '@/components/PortfolioBlocks'
 import { splitPortfolio, type PortfolioItem } from '@/lib/portfolio-items'
 
-/** Full portfolio, every published item in admin order */
+/** Portofolio lengkap: semua karya yang ditampilkan, sesuai urutan di admin */
 export default function WorkClient({ items }: { items: PortfolioItem[] }) {
   const { t } = usePrefs()
   const { designs, reels, films, shorts, webs } = splitPortfolio(items)
+  // Tombol loncat di bagian atas: id bagian, label, dan jumlah karyanya
   const groups: { id: string; label: DictKey; count: number }[] = [
     { id: 'design', label: 'nav.campaign', count: designs.length },
     { id: 'video', label: 'work.reels', count: reels.length },
@@ -21,6 +29,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
     <main className="studio">
       <SiteHeader />
 
+      {/* Judul halaman + tombol loncat ke tiap bagian */}
       <section className="work-page-head section-wrap">
         <div className="section-heading">
           <p className="eyebrow">{t('work.eyebrow')}</p>
@@ -32,6 +41,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
         </nav>
       </section>
 
+      {/* Setiap bagian hanya tampil kalau ada karyanya. id dipakai untuk link seperti /work#design */}
       {designs.length > 0 && <section id="design" className="campaign-section">
         <div className="campaign-inner">
           <div className="section-heading"><p className="eyebrow">{t('campaign.eyebrow')}</p><h2>{t('campaign.title')}</h2><p className="section-note">{t('campaign.note')}</p></div>
@@ -41,6 +51,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
 
       {reels.length > 0 && <section id="video" className="works-section section-wrap">
         <div className="section-heading works-heading"><div><p className="eyebrow">{t('works.eyebrow')}</p><h2>{t('works.title')}</h2></div></div>
+        {/* filterable = tampilkan tombol filter Audio / Gaming / Streaming */}
         <ReelGrid items={reels} filterable />
       </section>}
 
@@ -57,6 +68,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
         <WebGrid items={webs} />
       </section>}
 
+      {/* Ajakan kerja sama di akhir halaman, mengarah ke form kontak di beranda */}
       <section className="approach-section"><div><p className="eyebrow">{t('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><a className="button button-light" href="/#contact">{t('approach.cta')}</a></div></section>
 
       <footer className="studio-footer"><span>{t('footer.text')}</span></footer>

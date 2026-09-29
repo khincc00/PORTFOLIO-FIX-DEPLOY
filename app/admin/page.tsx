@@ -1,4 +1,17 @@
 'use client'
+/**
+ * app/admin/page.tsx → HALAMAN ADMIN (https://khincreator.com/admin)
+ *
+ * Alur halaman:
+ * 1. Saat dibuka, cek apakah cookie sesi admin masih berlaku (GET /api/admin/auth).
+ * 2. Belum login → tampilkan layar kunci (form username & password).
+ * 3. Sudah login → tampilkan panel dengan menu:
+ *      Dashboard  → pesan kontak & tabel reel lama
+ *      Portfolio  → kelola karya Design/Video/Web (app/admin/PortfolioManager.tsx)
+ *      Berita     → daftar berita (NewsList.tsx) dan form tulis/edit (NewsEditor.tsx)
+ *      Komentar   → moderasi komentar (CommentsList.tsx)
+ * Variabel `view` menentukan menu mana yang sedang tampil.
+ */
 
 import { useState, useEffect, FormEvent } from 'react'
 import Link from 'next/link'
@@ -8,6 +21,7 @@ import NewsEditor from './NewsEditor'
 import CommentsList from './CommentsList'
 import PortfolioManager from './PortfolioManager'
 
+// Bentuk data reel dari tabel LAMA `portfolio` (hanya untuk tabel di Dashboard)
 interface PortfolioItem {
   id?: number
   title: string
@@ -19,6 +33,7 @@ interface PortfolioItem {
   created_at?: string
 }
 
+// Bentuk satu pesan dari form kontak
 interface ContactItem {
   id: number
   name: string
@@ -30,18 +45,20 @@ interface ContactItem {
   created_at: string
 }
 
+// Menu yang bisa dibuka. 'editor' = form tulis/edit berita
 type View = 'dashboard' | 'portfolio' | 'news' | 'editor' | 'comments'
 
 export default function AdminPage() {
+  // --- Status login ---
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
   const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [view, setView] = useState<View>('dashboard')
+  const [view, setView] = useState<View>('dashboard') // menu yang sedang dibuka
 
-  // Dashboard Data
+  // --- Data Dashboard ---
   const [portfolioList, setPortfolioList] = useState<PortfolioItem[]>([])
   const [contactList, setContactList] = useState<ContactItem[]>([])
   const [dbError, setDbError] = useState<string | null>(null)
@@ -49,18 +66,21 @@ export default function AdminPage() {
   const [isAdminDbConfigured, setIsAdminDbConfigured] = useState(false)
   const [dataLoading, setDataLoading] = useState(false)
 
-  // News Data
+  // --- Data Berita ---
   const [newsList, setNewsList] = useState<NewsPost[]>([])
   const [newsLoading, setNewsLoading] = useState(false)
   const [newsError, setNewsError] = useState<string | null>(null)
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null)
+  // editorKey diganti setiap membuka editor supaya form dimulai dari awal (React membuat ulang komponennya)
   const [editorKey, setEditorKey] = useState(0)
 
+  // Kalau server menjawab 401 (sesi habis), kembali ke layar login
   const handleSessionExpired = (message?: string) => {
     setIsAuthenticated(false)
     setAuthError(message || 'Sesi telah kedaluwarsa')
   }
 
+  // Ambil data Dashboard: pesan kontak, reel lama, dan status koneksi Supabase
   const fetchDashboardData = async () => {
     setDataLoading(true)
     try {
@@ -82,6 +102,7 @@ export default function AdminPage() {
     }
   }
 
+  // Ambil semua berita (draft + terbit)
   const fetchNews = async () => {
     setNewsLoading(true)
     setNewsError(null)
@@ -98,9 +119,10 @@ export default function AdminPage() {
     }
   }
 
+  // Muat data Dashboard dan Berita bersamaan
   const loadAll = () => Promise.all([fetchDashboardData(), fetchNews()])
 
-  // Check existing session cookie on mount
+  // Saat halaman dibuka: cek apakah masih login dari kunjungan sebelumnya (cookie sesi)
   useEffect(() => {
     fetch('/api/admin/auth')
       .then((r) => r.json())
@@ -115,6 +137,7 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Kirim username & password ke server untuk login
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
     setAuthError('')
@@ -143,6 +166,7 @@ export default function AdminPage() {
     }
   }
 
+  // Logout: hapus cookie sesi di server, lalu kembali ke layar login
   const handleLogout = async () => {
     await fetch('/api/admin/auth', { method: 'DELETE' }).catch(() => {})
     setIsAuthenticated(false)
@@ -150,22 +174,25 @@ export default function AdminPage() {
     setView('dashboard')
   }
 
+  // Buka form berita. post = null → berita baru; berisi berita → mode edit
   const openEditor = (post: NewsPost | null) => {
     setEditingPost(post)
     setEditorKey((k) => k + 1)
     setView('editor')
   }
 
+  // Setelah berita disimpan: pindahkan ke paling atas daftar (ganti versi lamanya)
   const handleNewsSaved = (post: NewsPost) => {
     setEditingPost(post)
     setNewsList((list) => [post, ...list.filter((p) => p.id !== post.id)])
   }
 
+  // Selama masih mengecek sesi, tampilkan "Memuat..."
   if (checkingSession) {
     return <main className="min-h-screen bg-[#FBFBFD] flex items-center justify-center text-sm text-[#86868B]">Memuat...</main>
   }
 
-  // Lock Screen
+  // ===== LAYAR KUNCI (belum login) =====
   if (!isAuthenticated) {
     return (
       <main className="min-h-screen bg-[#FBFBFD] flex items-center justify-center p-6 text-[#1D1D1F]">
@@ -224,11 +251,11 @@ export default function AdminPage() {
     )
   }
 
-  // Authenticated Dashboard
+  // ===== PANEL ADMIN (sudah login) =====
   return (
     <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] p-6 md:p-12">
       <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
+        {/* Header: judul, tombol ke website, dan logout */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-black/[0.08] pb-6">
           <div>
             <div className="text-xs uppercase tracking-widest text-[#86868B]">Dashboard Management</div>
@@ -250,7 +277,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Menu */}
+        {/* Menu: setiap tombol mengganti nilai `view` */}
         <div className="flex flex-wrap gap-1 text-sm -mt-4">
           {([
             ['dashboard', 'Dashboard'],
@@ -276,6 +303,7 @@ export default function AdminPage() {
           </button>
         </div>
 
+        {/* Peringatan kalau kunci database admin belum diisi (biasanya hanya di komputer lokal) */}
         {isConfigured && !isAdminDbConfigured && (
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
             <strong>SUPABASE_SERVICE_ROLE_KEY belum diisi.</strong> Berita tidak bisa disimpan dan pesan kontak tidak bisa dibaca
@@ -284,6 +312,7 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Isi halaman sesuai menu yang dipilih */}
         {view === 'news' && (
           <NewsList
             posts={newsList}
@@ -309,7 +338,7 @@ export default function AdminPage() {
         )}
 
         {view === 'dashboard' && (<>
-        {/* Status Banner */}
+        {/* Status koneksi Supabase */}
         <div
           className={`p-4 rounded-2xl border text-sm flex items-center justify-between gap-4 ${
             isConfigured && !dbError
@@ -340,7 +369,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Stats Grid */}
+        {/* Kotak angka ringkasan */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-black/[0.06] shadow-sm">
             <div className="text-xs text-[#86868B] uppercase">Total Portfolio</div>
@@ -363,7 +392,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Section: Contacts */}
+        {/* Tabel pesan dari form kontak */}
         <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
           <div className="p-5 border-b border-black/[0.06] flex justify-between items-center">
             <h2 className="font-semibold text-lg">Pesan Masuk (Contacts)</h2>
@@ -413,7 +442,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Section: Portfolio */}
+        {/* Tabel reel dari tabel LAMA `portfolio` (sudah tidak dipakai beranda; kelola karya di menu Portfolio) */}
         <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
           <div className="p-5 border-b border-black/[0.06] flex justify-between items-center">
             <h2 className="font-semibold text-lg">Daftar Karya (Portfolio Items)</h2>

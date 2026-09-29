@@ -1,4 +1,12 @@
 'use client'
+/**
+ * app/admin/NewsEditor.tsx → FORM TULIS / EDIT BERITA di admin (mirip editor WordPress).
+ *
+ * Bagian-bagiannya:
+ * - Kolom kiri: judul, permalink (slug), editor isi (mode Visual atau HTML), ringkasan.
+ * - Kolom kanan (sidebar): tombol Simpan Draft / Terbitkan, tanggal terbit, kategori, tag, gambar unggulan.
+ * Juga mengekspor uploadImage() yang dipakai ulang oleh menu Portfolio.
+ */
 
 import { useEffect, useRef, useState } from 'react'
 import { newsCategories, slugify, stripHtml, type NewsPost } from '@/lib/news'
@@ -9,6 +17,7 @@ interface Props {
   onCancel: () => void
 }
 
+// Isi form selama sedang diedit (semua berupa teks supaya mudah diikat ke input)
 type Draft = {
   title: string
   slug: string
@@ -20,12 +29,14 @@ type Draft = {
   published_at: string // nilai input datetime-local
 }
 
+// Ubah tanggal dari database (UTC) ke format input datetime-local sesuai zona waktu pengguna
 const toLocalInput = (iso: string | null) => {
   if (!iso) return ''
   const d = new Date(iso)
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
 }
 
+// Isi awal form: dari berita yang diedit, atau kosong untuk berita baru
 const fromPost = (post: NewsPost | null): Draft => ({
   title: post?.title || '',
   slug: post?.slug || '',
@@ -37,6 +48,7 @@ const fromPost = (post: NewsPost | null): Draft => ({
   published_at: toLocalInput(post?.published_at || null),
 })
 
+// Upload satu gambar ke /api/admin/upload, lalu kembalikan alamat publik gambarnya
 export async function uploadImage(file: File): Promise<string> {
   const body = new FormData()
   body.append('file', file)
@@ -46,6 +58,7 @@ export async function uploadImage(file: File): Promise<string> {
   return data.url
 }
 
+// Tombol-tombol format di atas editor. cmd = perintah document.execCommand bawaan browser
 const toolbar: { label: string; title: string; cmd: string; arg?: string; className?: string }[] = [
   { label: 'P', title: 'Paragraf', cmd: 'formatBlock', arg: 'p' },
   { label: 'H2', title: 'Judul 2', cmd: 'formatBlock', arg: 'h2' },
@@ -65,24 +78,26 @@ const toolbar: { label: string; title: string; cmd: string; arg?: string; classN
 
 export default function NewsEditor({ post, onSaved, onCancel }: Props) {
   const [draft, setDraft] = useState<Draft>(() => fromPost(post))
+  // slugTouched: kalau admin sudah mengubah slug sendiri, slug tidak lagi ikut berubah mengikuti judul
   const [slugTouched, setSlugTouched] = useState(Boolean(post))
   const [mode, setMode] = useState<'visual' | 'html'>('visual')
   const [saving, setSaving] = useState<'draft' | 'published' | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
-  const [dirty, setDirty] = useState(false)
+  const [dirty, setDirty] = useState(false) // true = ada perubahan yang belum disimpan
 
+  // Referensi ke elemen editor dan input file yang disembunyikan
   const editorRef = useRef<HTMLDivElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
   const inlineImageRef = useRef<HTMLInputElement>(null)
 
-  // Load content into the contentEditable area on mount and when switching back to visual mode
+  // Masukkan isi berita ke area editor saat pertama dibuka dan saat kembali dari mode HTML ke Visual
   useEffect(() => {
     if (mode === 'visual' && editorRef.current) editorRef.current.innerHTML = draft.content
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode])
 
-  // Warn before leaving with unsaved changes
+  // Peringatan browser kalau menutup tab padahal ada perubahan yang belum disimpan
   useEffect(() => {
     if (!dirty) return
     const handler = (e: BeforeUnloadEvent) => e.preventDefault()
@@ -90,15 +105,18 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     return () => window.removeEventListener('beforeunload', handler)
   }, [dirty])
 
+  // Ubah sebagian isi form dan tandai ada perubahan
   const update = (patch: Partial<Draft>) => {
     setDraft((d) => ({ ...d, ...patch }))
     setDirty(true)
   }
 
+  // Salin HTML dari area editor ke state draft
   const syncFromEditor = () => {
     if (editorRef.current) update({ content: editorRef.current.innerHTML })
   }
 
+  // Jalankan perintah format (tebal, miring, dll.) pada teks yang sedang dipilih
   const exec = (cmd: string, arg?: string) => {
     editorRef.current?.focus()
     document.execCommand(cmd, false, arg)
@@ -110,6 +128,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     if (url) exec('createLink', url)
   }
 
+  // Upload gambar lalu sisipkan di posisi kursor dalam isi berita
   const handleInlineImage = async (file?: File) => {
     if (!file) return
     setUploading(true)
@@ -124,6 +143,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     }
   }
 
+  // Upload gambar unggulan (cover)
   const handleCover = async (file?: File) => {
     if (!file) return
     setUploading(true)
@@ -137,6 +157,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     }
   }
 
+  // Simpan berita. status 'draft' = belum tampil di website, 'published' = terbit
   const save = async (status: 'draft' | 'published') => {
     const content = mode === 'visual' && editorRef.current ? editorRef.current.innerHTML : draft.content
     if (!draft.title.trim()) {
@@ -151,6 +172,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     setSaving(status)
     setMessage(null)
     try {
+      // Berita lama → PUT (ubah), berita baru → POST (buat)
       const res = await fetch(post ? `/api/admin/news/${post.id}` : '/api/admin/news', {
         method: post ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -176,6 +198,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
     }
   }
 
+  // Info tambahan: jumlah kata, apakah terjadwal, dan tulisan tombol terbit
   const words = stripHtml(draft.content).split(' ').filter(Boolean).length
   const isScheduled = draft.published_at && new Date(draft.published_at) > new Date()
   const publishLabel = post?.status === 'published' ? 'Perbarui' : isScheduled ? 'Jadwalkan' : 'Terbitkan'
@@ -233,7 +256,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
                       key={t.title}
                       type="button"
                       title={t.title}
-                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseDown={(e) => e.preventDefault()} // supaya teks yang dipilih tidak hilang saat tombol diklik
                       onClick={() => exec(t.cmd, t.arg)}
                       className={`min-w-[32px] h-8 px-2 rounded-md text-xs hover:bg-white border border-transparent hover:border-black/10 transition cursor-pointer ${t.className || ''}`}
                     >
@@ -245,6 +268,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
                   <input ref={inlineImageRef} type="file" accept="image/*" hidden onChange={(e) => { handleInlineImage(e.target.files?.[0]); e.target.value = '' }} />
                 </>
               )}
+              {/* Pilihan mode Visual / HTML */}
               <div className="ml-auto flex rounded-md border border-black/10 overflow-hidden text-xs">
                 {(['visual', 'html'] as const).map((m) => (
                   <button
@@ -259,6 +283,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
               </div>
             </div>
 
+            {/* Mode Visual: area yang bisa diketik langsung (contentEditable). Mode HTML: kode mentah */}
             {mode === 'visual' ? (
               <div
                 ref={editorRef}
@@ -295,7 +320,7 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Sidebar: pengaturan terbit, kategori, tag, gambar unggulan */}
         <aside className="space-y-4 lg:sticky lg:top-6">
           <div className="bg-white rounded-2xl border border-black/[0.08] overflow-hidden">
             <div className="px-4 py-3 border-b border-black/[0.08] font-semibold text-sm">Terbitkan</div>

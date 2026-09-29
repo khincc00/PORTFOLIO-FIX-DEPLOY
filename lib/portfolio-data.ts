@@ -1,5 +1,19 @@
+/**
+ * lib/portfolio-data.ts
+ * Data portfolio "bawaan" yang ditulis langsung di kode, plus teks tetap untuk beranda.
+ *
+ * Sejak ada menu Admin → Portfolio, karya (desain, video, web) disimpan di tabel
+ * `portfolio_items` di Supabase. Data karya di file ini sekarang hanya dipakai:
+ * - sebagai isi awal tabel itu (seed), dan
+ * - sebagai cadangan kalau database tidak bisa diakses (lihat fallbackPortfolio di lib/portfolio-items.ts).
+ * Jadi untuk menambah/mengubah karya, pakai halaman admin, bukan file ini.
+ *
+ * Yang masih dibaca langsung dari file ini: layanan (capabilities), teks berjalan (marquee),
+ * kontak, link CV, dan pengalaman kerja.
+ */
+// Daftar Instagram Reels lama. reel_id = kode unik reel di URL Instagram
 export const portfolioSeed = [
-  // === EXISTING 14 REELS (from Supabase) ===
+  // === 14 REELS INSTAGRAM (data awal dari tabel lama di Supabase) ===
   {title:"WYVERN PRO IEM Gaming",likes:18,reel_id:"DVQrHReEkg3",category:"Gaming Audio",description:"Top performer, hook step musuh", platform:"instagram", link:"https://www.instagram.com/reel/DVQrHReEkg3/"},
   {title:"Secondwave e1",likes:11,reel_id:"DVw6WtMk8-8",category:"Audio Review",description:"Budget high-end storytelling", platform:"instagram", link:"https://www.instagram.com/reel/DVw6WtMk8-8/"},
   {title:"Fantech Groove ANC Zoro",likes:8,reel_id:"DbVXyg1JH2J",category:"Earbuds ANC",description:"One Piece + ANC demo", platform:"instagram", link:"https://www.instagram.com/reel/DbVXyg1JH2J/"},
@@ -16,8 +30,9 @@ export const portfolioSeed = [
   {title:"Fantech WGP-13S Gamepad",likes:1,reel_id:"DVEGq4SEshJ",category:"Gamepad Promo",description:"Sales urgency copy", platform:"instagram", link:"https://www.instagram.com/reel/DVEGq4SEshJ/"},
 ];
 
-// === DATA BARU DARI HTML LAMA YANG BELUM ADA ===
+// === DATA DARI VERSI HTML LAMA ===
 
+// Poster kampanye untuk bagian Design. description berisi teks {en, id} untuk dua bahasa
 export const campaignPosters = [
   { id:"atlas", title:"Online Loan Awareness", category:"Campaign design / Social media", year:"2026", image:"CONTENT/Institution1.jpg", alt:"Poster design about avoiding online loan scams for Penerangan Lanal Sangatta", description:{en:"Campaign for Penerangan Lanal Sangatta — raising awareness of illegal online loans",id:"Kampanye untuk Penerangan Lanal Sangatta — edukasi bahaya pinjol"} },
   { id:"ruang", title:"Digital Safety Campaign", category:"Public information / Illustration", year:"2026", image:"CONTENT/Institution2.jpg", alt:"Poster design about preventing fraud and exploitation on social media", description:{en:"Educating the public on preventing fraud and exploitation on social media",id:"Edukasi pencegahan penipuan dan eksploitasi di media sosial"} },
@@ -26,6 +41,7 @@ export const campaignPosters = [
   { title:"Down Under Brew", category:"Editorial infographic / Information design", year:"2026", image:"CONTENT/Under brew.jpg", alt:"Editorial infographic design about Australian coffee production", description:{en:"Editorial infographic on Australian coffee production",id:"Infografis editorial tentang produksi kopi Australia"} },
 ];
 
+// Video TikTok
 export const tiktokReviews = [
   { title:"Fantech Groove ANC", platform:"TikTok", id:"7667530077298576660", link:"https://www.tiktok.com/@khinccofficial/video/7667530077298576660", thumb:"CONTENT/TikTok-7667530077298576660.jpg", desc:"Device review / Short-form editing", alt:"TikTok thumbnail for Fantech Grove ANC review" },
   { title:"Fantech Tanto Mouse", platform:"TikTok", id:"7665426475558046997", link:"https://www.tiktok.com/@khinccofficial/video/7665426475558046997", thumb:"CONTENT/TikTok-7665426475558046997.jpg", desc:"Device review / Product editing", alt:"TikTok thumbnail for Fantech Tanto mouse review" },
@@ -33,6 +49,7 @@ export const tiktokReviews = [
   { title:"OBS Filter Setup", platform:"TikTok", id:"7631625360802712853", link:"https://www.tiktok.com/@khinccofficial/video/7631625360802712853", thumb:"CONTENT/TikTok-7631625360802712853.jpg", desc:"Streaming tutorial / Editing", alt:"TikTok thumbnail for OBS filter setup tutorial" },
 ];
 
+// Video YouTube. `about` = keterangan dua bahasa, `title` = judul asli di YouTube
 export const youtubePortfolio = [
   { title:'Short Movie "Scammer" HUT Bhayangkara RI 2023', type:"Film pendek", id:"KrK69_zt3RM", about:{en:"Short film for the 2023 Indonesian National Police anniversary",id:"Film pendek untuk HUT Bhayangkara RI 2023"}, link:"https://www.youtube.com/watch?v=KrK69_zt3RM", thumb:"https://i.ytimg.com/vi/KrK69_zt3RM/hqdefault.jpg" },
   { title:"PEMBARETAN SMK NEGERI 2 SANGATTA URATA 2024", type:"Dokumenter", id:"WXcYyiH0XIU", about:{en:"Documentary of the 2024 beret ceremony at SMK Negeri 2 Sangatta",id:"Dokumentasi pembaretan SMK Negeri 2 Sangatta 2024"}, link:"https://www.youtube.com/watch?v=WXcYyiH0XIU", thumb:"https://i.ytimg.com/vi/WXcYyiH0XIU/hqdefault.jpg" },
@@ -46,6 +63,7 @@ export const youtubePortfolio = [
   { title:"HDMI CAPTURE CARD", type:"Review perangkat", id:"76VSMpFZWS0", about:{en:"HDMI capture card review",id:"Review HDMI capture card"}, link:"https://www.youtube.com/watch?v=76VSMpFZWS0", thumb:"https://i.ytimg.com/vi/76VSMpFZWS0/hqdefault.jpg" },
 ];
 
+// Bagian "Services" di beranda (4 layanan)
 export const capabilities = [
   { index:"01", title:{en:"Campaign & poster design",id:"Desain kampanye & poster"}, desc:{en:"Public-information campaigns, poster series, and key visuals for institutions and brands.",id:"Kampanye informasi publik, seri poster, dan key visual untuk instansi dan brand."}, tags:{en:"Art direction / Print",id:"Art direction / Cetak"} },
   { index:"02", title:{en:"Editorial & infographic",id:"Editorial & infografis"}, desc:{en:"Information design that turns dense material into something easy to read and share.",id:"Desain informasi yang mengubah materi padat jadi mudah dibaca dan dibagikan."}, tags:{en:"Layout / Data",id:"Layout / Data"} },
@@ -53,11 +71,13 @@ export const capabilities = [
   { index:"04", title:{en:"Social content systems",id:"Sistem konten sosial"}, desc:{en:"Repeatable visual templates so every post still feels considered and on-brand.",id:"Template visual yang bisa dipakai ulang agar setiap posting tetap rapi dan sesuai brand."}, tags:{en:"Systems / Templates",id:"Sistem / Template"} },
 ];
 
+// Teks berjalan (ticker) di bawah foto besar beranda
 export const marqueeItems = [
   {en:"Campaign design",id:"Desain kampanye"},{en:"Editorial & infographic",id:"Editorial & infografis"},{en:"Short-form video",id:"Video pendek"},
   {en:"Social content",id:"Konten sosial"},{en:"Art direction",id:"Art direction"},{en:"Motion graphics",id:"Motion graphics"},
 ];
 
+// Kontak dan akun media sosial (dipakai di beranda, footer, dan SEO)
 export const contactInfo = {
   email:"master@khincreator.com",
   instagram:"@khinccofficial",
@@ -71,7 +91,8 @@ export const contactInfo = {
   }
 };
 
-// Curated copy for each reel. The database still lists the reels; these replace its short internal notes.
+// Judul & deskripsi rapi untuk tiap reel, menggantikan catatan internal singkat di portfolioSeed.
+// group menentukan tombol filter di beranda: audio, streaming, atau gaming
 export type ReelGroup = 'audio' | 'streaming' | 'gaming'
 export const reelDetails: Record<string, { group: ReelGroup; desc: { en: string; id: string }; title?: string }> = {
   DVQrHReEkg3: { group:"audio", desc:{ en:"Gaming IEM review with a hook-first edit for Reels", id:"Review IEM gaming dengan editing hook-first untuk Reels" } },
@@ -90,6 +111,7 @@ export const reelDetails: Record<string, { group: ReelGroup; desc: { en: string;
   DVEGq4SEshJ: { group:"gaming", desc:{ en:"Promo edit for the WGP-13S gamepad with urgency-led copy", id:"Video promo gamepad WGP-13S dengan copy yang mendorong beli sekarang" } },
 }
 
+// Proyek web & front-end. links[0] jadi link utama, sisanya link tambahan
 export const webProjects = [
   {
     id:"codequest",
@@ -118,9 +140,10 @@ export const webProjects = [
   },
 ]
 
+// Lokasi file CV (ada di folder public/cv), dipakai tombol "Download CV"
 export const cvUrl = "/cv/Taufiq-Sholikhin-CV.pdf"
 
-// From the CV (Taufiq_Sholikhin_CV_Designer_FrontEnd.pdf)
+// Riwayat kerja untuk bagian Experience, diambil dari CV (Taufiq_Sholikhin_CV_Designer_FrontEnd.pdf)
 export const experience = [
   {
     period:{ en:"Aug 2021 – Aug 2026", id:"Agu 2021 – Agu 2026" },

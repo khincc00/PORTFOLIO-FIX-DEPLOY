@@ -1,3 +1,8 @@
+/**
+ * lib/portfolio-server.ts
+ * Fungsi portfolio yang hanya berjalan di SERVER.
+ * Dipakai oleh app/page.tsx (beranda), app/work/page.tsx, dan API admin portfolio.
+ */
 import { revalidatePath } from 'next/cache'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import {
@@ -10,7 +15,11 @@ import {
   type VideoPlatform,
 } from '@/lib/portfolio-items'
 
-/** Published items for the homepage; falls back to the built-in list until the table exists or has rows */
+/**
+ * Ambil semua karya yang ditampilkan (is_published = true), urut per jenis lalu per posisi.
+ * Kalau database error atau tabel masih kosong, pakai daftar bawaan dari kode
+ * supaya website tidak pernah tampil kosong.
+ */
 export async function getPublishedPortfolio(): Promise<PortfolioItem[]> {
   if (!isSupabaseConfigured) return fallbackPortfolio()
   const { data, error } = await supabase
@@ -23,6 +32,7 @@ export async function getPublishedPortfolio(): Promise<PortfolioItem[]> {
   return data as PortfolioItem[]
 }
 
+// Rapikan input teks: ubah ke string, hapus spasi di ujung, potong sesuai batas. Kosong → null
 const text = (v: unknown, max = 2000) => {
   const s = String(v ?? '').trim().slice(0, max)
   return s || null
@@ -30,18 +40,27 @@ const text = (v: unknown, max = 2000) => {
 
 const url = (v: unknown) => {
   const s = text(v, 1000)
-  // Allow site-relative paths (e.g. /work/shot.jpg) and http(s) URLs only
+  // Hanya terima link http(s) atau alamat di website sendiri (contoh /work/shot.jpg).
+  // Link lain seperti javascript: ditolak demi keamanan
   return s && (/^https?:\/\//.test(s) || s.startsWith('/')) ? s : null
 }
 
+/**
+ * Ubah data dari form admin jadi data yang aman disimpan ke tabel portfolio_items.
+ * Kalau ada yang tidak valid (jenis salah, judul kosong, platform video belum dipilih),
+ * fungsi ini melempar error dan pesannya ditampilkan di admin.
+ * `position` tidak diatur di sini karena urutan diatur lewat tombol ↑ ↓ (API reorder).
+ */
 export function buildPortfolioPayload(body: any): Omit<PortfolioInput, 'position'> {
   const kind = body.kind as PortfolioKind
   if (!PORTFOLIO_KINDS.includes(kind)) throw new Error('Jenis portfolio tidak valid.')
   const title = text(body.title, 200)
   if (!title) throw new Error('Judul wajib diisi.')
+  // Platform hanya berlaku untuk video (instagram / youtube / tiktok)
   const platform = kind === 'video' && VIDEO_PLATFORMS.includes(body.platform) ? (body.platform as VideoPlatform) : null
   if (kind === 'video' && !platform) throw new Error('Pilih platform video.')
 
+  // Link tambahan (misalnya GitHub, itch.io): buang yang tidak valid, maksimal 6
   const extra_links = (Array.isArray(body.extra_links) ? body.extra_links : [])
     .map((l: any) => ({ label: text(l?.label, 40) || 'Link', href: url(l?.href) }))
     .filter((l: any) => l.href)
@@ -62,11 +81,12 @@ export function buildPortfolioPayload(body: any): Omit<PortfolioInput, 'position
     image_alt: text(body.image_alt, 300),
     link: url(body.link),
     extra_links,
-    is_published: body.is_published !== false,
-    is_featured: body.is_featured === true,
+    is_published: body.is_published !== false, // default: tampil
+    is_featured: body.is_featured === true, // default: tidak di-highlight di beranda
   }
 }
 
+// Minta Next.js membuat ulang beranda dan /work supaya perubahan dari admin langsung terlihat
 export function revalidatePortfolio() {
   revalidatePath('/')
 }

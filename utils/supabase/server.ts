@@ -1,3 +1,9 @@
+/**
+ * utils/supabase/server.ts
+ * Template resmi Supabase untuk membuat koneksi di SERVER yang membaca cookie sesi Supabase.
+ *
+ * Catatan: saat ini TIDAK dipakai. Kode server memakai lib/supabase.ts dan lib/supabase-admin.ts.
+ */
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -20,8 +26,8 @@ export const createClient = (cookieStore?: ReturnType<typeof cookies>) => {
             store.set(name, value, options)
           );
         } catch {
-          // The `setAll` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing user sessions.
+          // setAll dipanggil dari Server Component (yang tidak boleh mengubah cookie).
+          // Aman diabaikan kalau ada middleware yang menyegarkan sesi pengguna.
         }
       },
     },

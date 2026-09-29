@@ -1,4 +1,13 @@
 'use client'
+/**
+ * app/admin/PortfolioManager.tsx → menu PORTFOLIO di admin.
+ *
+ * Dua bagian:
+ * 1. PortfolioManager (daftar): tab Design / Video / Web, filter platform video,
+ *    tombol ↑ ↓ untuk urutan, ★ Highlight (tampil di beranda), Sembunyikan, Edit, Hapus.
+ * 2. PortfolioEditor (form): kolom isian yang menyesuaikan jenis karya.
+ * Semua perubahan disimpan lewat /api/admin/portfolio-items.
+ */
 
 import { useEffect, useRef, useState } from 'react'
 import { uploadImage } from './NewsEditor'
@@ -12,24 +21,28 @@ import {
   type VideoPlatform,
 } from '@/lib/portfolio-items'
 
+// Nama tampilan jenis karya dan platform video
 const kindLabel: Record<PortfolioKind, string> = { design: 'Design', video: 'Video', web: 'Web' }
 const platformLabel: Record<VideoPlatform, string> = { instagram: 'Instagram Reels', youtube: 'YouTube', tiktok: 'TikTok' }
 
+// Class Tailwind yang dipakai berulang di form
 const inputCls = 'w-full rounded-lg border border-black/15 px-3 py-2 text-sm outline-none focus:border-black bg-white'
 const labelCls = 'block text-xs font-semibold mb-1'
 const hintCls = 'text-[11px] text-[#86868B] mt-1'
 
+// Isi form: data karya, dengan id kalau sedang mengedit karya yang sudah ada
 type Draft = PortfolioInput & { id?: number }
 
 export default function PortfolioManager() {
   const [items, setItems] = useState<PortfolioItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [kind, setKind] = useState<PortfolioKind>('design')
-  const [platform, setPlatform] = useState<'all' | VideoPlatform>('all')
-  const [draft, setDraft] = useState<Draft | null>(null)
+  const [kind, setKind] = useState<PortfolioKind>('design') // tab yang aktif
+  const [platform, setPlatform] = useState<'all' | VideoPlatform>('all') // filter platform di tab Video
+  const [draft, setDraft] = useState<Draft | null>(null) // berisi data = form terbuka; null = daftar
   const [busy, setBusy] = useState(false)
 
+  // Ambil semua karya dari server
   const load = async () => {
     setLoading(true)
     setError(null)
@@ -47,10 +60,12 @@ export default function PortfolioManager() {
 
   useEffect(() => { load() }, [])
 
+  // Karya pada tab aktif (urut posisi), lalu yang terlihat setelah filter platform
   const ofKind = items.filter((i) => i.kind === kind).sort((a, b) => a.position - b.position)
   const visible = kind === 'video' && platform !== 'all' ? ofKind.filter((i) => i.platform === platform) : ofKind
 
-  // Swap with the neighbour shown in the current (possibly filtered) list, then save the whole order for this kind
+  // Tukar posisi dengan tetangga yang terlihat di daftar (bisa sedang difilter),
+  // lalu simpan seluruh urutan jenis ini. Tampilan langsung berubah; kalau server gagal, dikembalikan
   const move = async (item: PortfolioItem, dir: -1 | 1) => {
     const idx = visible.indexOf(item)
     const neighbour = visible[idx + dir]
@@ -73,6 +88,7 @@ export default function PortfolioManager() {
     }
   }
 
+  // Simpan karya: sudah punya id → PUT (ubah), belum → POST (baru)
   const save = async (payload: Draft) => {
     setBusy(true)
     try {
@@ -93,10 +109,13 @@ export default function PortfolioManager() {
     }
   }
 
+  // Tombol cepat di daftar: Sembunyikan/Tampilkan dan ★ Highlight
   const togglePublished = (item: PortfolioItem) => save({ ...item, is_published: !item.is_published })
   const toggleFeatured = (item: PortfolioItem) => save({ ...item, is_featured: !item.is_featured })
+  // Jumlah karya ber-highlight yang tampil di daftar saat ini
   const featuredCount = visible.filter((i) => i.is_featured && i.is_published).length
 
+  // Hapus karya permanen setelah konfirmasi
   const remove = async (item: PortfolioItem) => {
     if (!confirm(`Hapus "${item.title}" dari portfolio?`)) return
     const res = await fetch(`/api/admin/portfolio-items/${item.id}`, { method: 'DELETE' })
@@ -104,6 +123,7 @@ export default function PortfolioManager() {
     else alert((await res.json()).error || 'Gagal menghapus')
   }
 
+  // Kalau form terbuka, tampilkan form saja (daftar disembunyikan)
   if (draft) {
     return (
       <PortfolioEditor
@@ -127,6 +147,7 @@ export default function PortfolioManager() {
         </button>
       </div>
 
+      {/* Tab jenis karya dengan jumlahnya */}
       <div className="flex flex-wrap gap-1 text-sm border-b border-black/[0.08]">
         {(['design', 'video', 'web'] as PortfolioKind[]).map((k) => (
           <button
@@ -139,6 +160,7 @@ export default function PortfolioManager() {
         ))}
       </div>
 
+      {/* Filter platform, hanya di tab Video */}
       {kind === 'video' && (
         <div className="flex flex-wrap gap-1 text-xs">
           {(['all', 'instagram', 'youtube', 'tiktok'] as const).map((p) => (
@@ -163,10 +185,12 @@ export default function PortfolioManager() {
         ) : visible.length === 0 ? (
           <div className="p-10 text-center text-sm text-[#86868B]">Belum ada karya di sini. Klik “+ Tambah {kindLabel[kind]}”.</div>
         ) : (
+          // Satu baris per karya
           visible.map((item, i) => {
             const cover = coverOf(item)
             return (
               <div key={item.id} className={`p-3 flex items-center gap-3 ${item.is_published ? '' : 'opacity-60'}`}>
+                {/* Tombol naik/turun. Nonaktif di baris paling atas/bawah */}
                 <div className="flex flex-col">
                   <button onClick={() => move(item, -1)} disabled={i === 0} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Naikkan" title="Naikkan">↑</button>
                   <button onClick={() => move(item, 1)} disabled={i === visible.length - 1} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Turunkan" title="Turunkan">↓</button>
@@ -206,15 +230,19 @@ export default function PortfolioManager() {
   )
 }
 
+// ===== FORM TAMBAH / EDIT KARYA =====
 function PortfolioEditor({ draft, busy, onCancel, onSave }: { draft: Draft; busy: boolean; onCancel: () => void; onSave: (d: Draft) => void }) {
   const [d, setD] = useState<Draft>(draft)
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  // Ubah sebagian isi form
   const set = (patch: Partial<Draft>) => setD((cur) => ({ ...cur, ...patch }))
   const isVideo = d.kind === 'video'
   const isWeb = d.kind === 'web'
+  // Video YouTube tanpa gambar akan memakai thumbnail otomatis dari YouTube
   const autoThumb = isVideo && d.platform === 'youtube' && !d.image && youtubeId(d.link)
 
+  // Upload gambar lewat fungsi yang sama dengan editor berita
   const upload = async (file?: File) => {
     if (!file) return
     setUploading(true)
@@ -227,6 +255,7 @@ function PortfolioEditor({ draft, busy, onCancel, onSave }: { draft: Draft; busy
     }
   }
 
+  // Gambar pratinjau di sidebar form
   const preview = coverOf({ ...d, id: 0 } as PortfolioItem)
 
   return (
@@ -241,6 +270,7 @@ function PortfolioEditor({ draft, busy, onCancel, onSave }: { draft: Draft; busy
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 items-start">
         <div className="bg-white rounded-2xl border border-black/[0.08] p-5 space-y-4">
+          {/* Kolom yang tampil menyesuaikan jenis karya (isVideo / isWeb / desain) */}
           {isVideo && (
             <div>
               <label className={labelCls}>Platform *</label>
@@ -310,6 +340,7 @@ function PortfolioEditor({ draft, busy, onCancel, onSave }: { draft: Draft; busy
             <input className={inputCls} type="url" value={d.link ?? ''} onChange={(e) => set({ link: e.target.value })} required={isVideo} placeholder="https://..." />
           </div>
 
+          {/* Link tambahan khusus proyek web: bisa ditambah, diubah, dan dihapus per baris */}
           {isWeb && (
             <div>
               <label className={labelCls}>Link tambahan</label>

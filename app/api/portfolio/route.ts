@@ -1,9 +1,16 @@
+/**
+ * app/api/portfolio/route.ts → /api/portfolio
+ * API untuk tabel LAMA `portfolio` (sebelum ada menu Admin → Portfolio).
+ * Catatan: beranda sudah tidak memakai API ini. Karya sekarang ada di tabel portfolio_items.
+ */
 import { NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { portfolioSeed } from '@/lib/portfolio-data'
 
+// Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
+// GET: daftar reel lama yang ditampilkan, urut dari likes terbanyak. Kalau gagal, pakai data bawaan
 export async function GET() {
   if (!isSupabaseConfigured) {
     return NextResponse.json(portfolioSeed)
@@ -26,6 +33,8 @@ export async function GET() {
   }
 }
 
+// POST: tambah data ke tabel lama. Memakai kunci publik, jadi berhasil atau tidaknya
+// bergantung pada aturan RLS tabel `portfolio` di database
 export async function POST(req: Request) {
   if (!isSupabaseConfigured) {
     return NextResponse.json(

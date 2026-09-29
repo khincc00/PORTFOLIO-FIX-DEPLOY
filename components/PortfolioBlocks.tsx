@@ -3,8 +3,20 @@ import { useState } from 'react'
 import { usePrefs } from '@/components/Preferences'
 import { allLinks, coverOf, loc, type PortfolioItem } from '@/lib/portfolio-items'
 
-// Portfolio lists shared by the homepage (highlighted items) and /work (everything)
+/**
+ * components/PortfolioBlocks.tsx
+ * Potongan tampilan (blok) portfolio yang dipakai bersama oleh
+ * beranda (karya ber-highlight saja) dan halaman /work (semua karya).
+ * Dengan begini, desain kartu cukup diubah di satu tempat.
+ *
+ *   DesignList → daftar poster/desain (baris bernomor dengan gambar kecil)
+ *   ReelGrid   → grid Instagram Reels (opsional dengan tombol filter)
+ *   FilmGrid   → grid video YouTube dengan thumbnail
+ *   ShortList  → daftar video TikTok
+ *   WebGrid    → kartu proyek web dengan screenshot dan link
+ */
 
+// Ubah angka jadi 2 digit: 1 → "01", 12 → "12"
 export const pad = (n: number) => String(n).padStart(2, '0')
 
 export function DesignList({ items }: { items: PortfolioItem[] }) {
@@ -12,9 +24,11 @@ export function DesignList({ items }: { items: PortfolioItem[] }) {
   return (
     <div className="campaign-list">{items.map((p, i) => {
       const cover = coverOf(p)
+      // Kalau karya punya link, barisnya jadi link <a>; kalau tidak, jadi <article> biasa
       const Row = p.link ? 'a' : 'article'
       return <Row className="campaign-row" key={p.id} {...(p.link ? { href: p.link, target: '_blank', rel: 'noreferrer' } : {})}>
         <span className="campaign-index">{pad(i + 1)}</span>
+        {/* Ada gambar → tampilkan gambar; tidak ada → kotak gradien dekoratif */}
         {cover ? <img className="campaign-art campaign-thumb" src={cover} alt={p.image_alt || p.title} loading="lazy" /> : <div className="campaign-art" aria-hidden="true" />}
         <div className="campaign-copy"><span className="campaign-category">{[p.subtitle, p.year].filter(Boolean).join(' · ')}</span><h3>{loc(p, 'title', lang)}</h3><p>{loc(p, 'description', lang)}</p></div>
         <span className="campaign-arrow" aria-hidden="true">{p.link ? '↗' : ''}</span>
@@ -23,14 +37,16 @@ export function DesignList({ items }: { items: PortfolioItem[] }) {
   )
 }
 
-/** Instagram Reels grid; with `filterable` it adds the tag filter bar */
+/** Grid Instagram Reels. Kalau `filterable`, muncul tombol filter berdasarkan tag */
 export function ReelGrid({ items, filterable = false }: { items: PortfolioItem[]; filterable?: boolean }) {
   const { t, lang } = usePrefs()
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('all') // tag yang sedang dipilih ('all' = semua)
+  // Daftar tag unik dari semua reel (satu contoh reel per tag, untuk ambil labelnya)
   const tags = Array.from(new Map(items.filter((r) => r.tag).map((r) => [r.tag as string, r])).values())
   const shown = filter === 'all' ? items : items.filter((r) => r.tag === filter)
   return (
     <>
+      {/* Tombol filter hanya muncul kalau ada lebih dari satu tag */}
       {filterable && tags.length > 1 && <div className="filter-bar" role="group" aria-label="Filter">
         <button onClick={() => setFilter('all')} className={filter === 'all' ? 'is-active' : ''} aria-pressed={filter === 'all'}>{t('works.all')}</button>
         {tags.map((r) => <button key={r.tag} onClick={() => setFilter(r.tag as string)} className={filter === r.tag ? 'is-active' : ''} aria-pressed={filter === r.tag}>{loc(r, 'tag', lang)}</button>)}
@@ -47,6 +63,7 @@ export function ReelGrid({ items, filterable = false }: { items: PortfolioItem[]
   )
 }
 
+// Grid video YouTube: thumbnail, jenis video, keterangan, dan judul asli
 export function FilmGrid({ items }: { items: PortfolioItem[] }) {
   const { lang } = usePrefs()
   return (
@@ -61,6 +78,7 @@ export function FilmGrid({ items }: { items: PortfolioItem[] }) {
   )
 }
 
+// Daftar video TikTok bernomor
 export function ShortList({ items }: { items: PortfolioItem[] }) {
   const { lang } = usePrefs()
   return (
@@ -70,6 +88,7 @@ export function ShortList({ items }: { items: PortfolioItem[] }) {
   )
 }
 
+// Kartu proyek web: screenshot, teknologi, deskripsi, dan semua link
 export function WebGrid({ items }: { items: PortfolioItem[] }) {
   const { lang } = usePrefs()
   return (
