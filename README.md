@@ -70,3 +70,8 @@ public/                   file statis: gambar, CV (bisa diakses langsung lewat U
 **File tanpa komentar** (format JSON tidak mendukung komentar):
 - `package.json`: daftar library dan perintah (`npm run dev` untuk menjalankan di komputer, `npm run build` untuk membuat versi siap online).
 - `tsconfig.json`: pengaturan TypeScript.
+
+## 📄 Lisensi
+**Kode** di repository ini memakai [MIT License](LICENSE): boleh dipakai, diubah, dan dibagikan, termasuk untuk keperluan komersial, asalkan menyertakan pemberitahuan hak cipta dan teks lisensinya.
+
+**Konten pribadi tidak termasuk** dan tetap hak cipta © Taufiq Sholikhin (all rights reserved). Konten pribadi meliputi CV, foto, gambar karya dan poster, video, logo/nama "Khincc", serta tulisan portfolio dan berita. Kalau memakai kode ini sebagai template, ganti semua konten tersebut dengan milik sendiri.
