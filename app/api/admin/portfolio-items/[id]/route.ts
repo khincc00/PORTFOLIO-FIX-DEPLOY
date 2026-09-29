@@ -29,7 +29,7 @@ export async function PUT(req: Request, { params }: Params) {
       .single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    revalidatePortfolio() // perbarui cache beranda
+    revalidatePortfolio() // perbarui cache beranda dan /work
     return NextResponse.json(data)
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status: 400 })

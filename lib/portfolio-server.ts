@@ -89,4 +89,5 @@ export function buildPortfolioPayload(body: any): Omit<PortfolioInput, 'position
 // Minta Next.js membuat ulang beranda dan /work supaya perubahan dari admin langsung terlihat
 export function revalidatePortfolio() {
   revalidatePath('/')
+  revalidatePath('/work')
 }
