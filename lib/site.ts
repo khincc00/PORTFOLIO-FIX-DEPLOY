@@ -16,7 +16,7 @@ export const siteConfig = {
   title: 'Taufiq Sholikhin — Campaign Design & Short-form Video for Tech & Gear Brands',
   // Deskripsi singkat di bawah judul pada hasil pencarian
   description:
-    'Campaign design and short-form video for tech & gear brands. Taufiq Sholikhin (@khinccofficial) is a remote multimedia designer from Indonesia with 6+ years of experience, 50+ campaign assets for TNI AL, and work for Fantech, Secondwave, and KZ.',
+    'Campaign design and short-form video for tech & gear brands. Taufiq Sholikhin (@khinccofficial) is a remote multimedia designer from Indonesia with 5+ years of experience, 50+ campaign assets for TNI AL, and work for Fantech, Secondwave, and KZ.',
   // Kata kunci pencarian yang relevan
   keywords: [
     'Taufiq Sholikhin',

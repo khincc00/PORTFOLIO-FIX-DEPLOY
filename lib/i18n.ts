@@ -50,7 +50,7 @@ const en = {
   'hero.line2': 'for tech\u00a0&\u00a0gear brands.',
   'hero.intro':
     'I design campaigns and edit short-form product videos for tech and gear brands — backed by five years of public-information campaigns for TNI AL in Sangatta. I also build the web pages that carry the work.',
-  'hero.stat1': '6+ years in design & video',
+  'hero.stat1': '5+ years in design & video',
   'hero.stat2': '50+ campaign assets for TNI AL',
   'hero.stat3': 'Fantech · Secondwave · KZ · Photoolex',
   'hero.cta': 'View selected work ↗',
@@ -236,7 +236,7 @@ const id: Record<DictKey, string> = {
   'hero.line2': 'untuk brand tech\u00a0&\u00a0gear.',
   'hero.intro':
     'Saya mendesain kampanye dan mengedit video produk format pendek untuk brand tech dan gear — didukung lima tahun mengerjakan kampanye informasi publik untuk TNI AL di Sangatta. Saya juga membangun halaman web yang menampilkan karyanya.',
-  'hero.stat1': '6+ tahun di desain & video',
+  'hero.stat1': '5+ tahun di desain & video',
   'hero.stat2': '50+ aset kampanye untuk TNI AL',
   'hero.stat3': 'Fantech · Secondwave · KZ · Photoolex',
   'hero.cta': 'Lihat karya pilihan ↗',
