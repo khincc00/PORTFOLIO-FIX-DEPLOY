@@ -4,7 +4,8 @@
  * Pesan bisa dibaca di Dashboard admin. Catatan: belum ada notifikasi email.
  */
 import { NextResponse } from 'next/server'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
       )
     }
 
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !isAdminDbConfigured) {
       // Kalau Supabase belum diatur, tetap jawab "berhasil" supaya form tidak error
       // (tapi pesan tidak tersimpan di mana pun)
       return NextResponse.json({
@@ -40,8 +41,8 @@ export async function POST(req: Request) {
       })
     }
 
-    // Simpan pesan. Kunci publik boleh MENAMBAH pesan, tapi tidak boleh MEMBACA (diatur RLS)
-    const { data, error } = await supabase
+    // Simpan pesan lewat server (kunci admin). Publik tidak punya akses langsung ke tabel ini (RLS)
+    const { data, error } = await supabaseAdmin
       .from('contacts')
       .insert({
         name,
