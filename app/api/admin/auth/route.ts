@@ -12,6 +12,7 @@ import {
   sessionCookieOptions,
   verifyCredentials,
 } from '@/lib/admin-auth'
+import { clearFailures, lockedMessage, lockedSeconds, recordFailure } from '@/lib/rate-limit'
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
@@ -33,9 +34,20 @@ export async function POST(req: Request) {
 
     const { username, password } = await req.json()
 
+    // Terkunci setelah 4 kali salah (kode 429 = terlalu banyak permintaan)
+    const locked = await lockedSeconds('admin')
+    if (locked) {
+      return NextResponse.json(
+        { error: lockedMessage(locked) },
+        { status: 429, headers: { 'Retry-After': String(locked) } }
+      )
+    }
+
     if (!verifyCredentials(String(username || ''), String(password || ''))) {
+      await recordFailure('admin')
       return NextResponse.json({ error: 'Username atau password salah' }, { status: 401 })
     }
+    await clearFailures('admin')
 
     const res = NextResponse.json({ ok: true })
     res.cookies.set(SESSION_COOKIE, createSessionToken(), sessionCookieOptions)

@@ -48,27 +48,29 @@ create policy "Allow public read access to published portfolio"
   for select
   using (is_published = true);
 
--- Mengizinkan service role / user terotentikasi mengelola portfolio
+-- Hanya service role (server) yang boleh mengelola portfolio.
+-- Role 'authenticated' sengaja TIDAK diberi akses: kalau kelak ada login Supabase Auth,
+-- pengguna biasa tetap tidak boleh mengubah data
 drop policy if exists "Allow authenticated full access to portfolio" on public.portfolio;
-create policy "Allow authenticated full access to portfolio"
+drop policy if exists "Allow service role full access to portfolio" on public.portfolio;
+create policy "Allow service role full access to portfolio"
   on public.portfolio
   for all
-  using (auth.role() = 'service_role' or auth.role() = 'authenticated');
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
 
 -- 5. Policy RLS untuk Tabel Contacts:
--- Mengizinkan pengunjung publik (anon) mengirimkan pesan kontak melalui website
+-- Pesan kontak masuk lewat API server (/api/contact, memakai service role).
+-- Insert langsung dari publik (anon) DIHAPUS supaya tabel tidak bisa dibanjiri spam dari luar
 drop policy if exists "Allow public insert to contacts" on public.contacts;
-create policy "Allow public insert to contacts"
-  on public.contacts
-  for insert
-  with check (true);
 
--- Mengizinkan admin / service role untuk membaca semua pesan kontak yang masuk
+-- Hanya service role (server/admin) yang boleh membaca dan mengelola pesan kontak
 drop policy if exists "Allow service role full access to contacts" on public.contacts;
 create policy "Allow service role full access to contacts"
   on public.contacts
   for all
-  using (auth.role() = 'service_role' or auth.role() = 'authenticated');
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
 
 -- 6. Data Awal (Seed Data) Portfolio
 insert into public.portfolio (title, likes, reel_id, category, description) values
@@ -264,3 +266,19 @@ where title in (
   'CodeQuest — Small Studio', 'khincreator.com'
 )
 and not exists (select 1 from public.portfolio_items where is_featured);
+
+-- ==========================================
+-- 14. Pembatas percobaan login (4 kali salah → dikunci 15 menit)
+-- ==========================================
+-- Dipakai lib/rate-limit.ts. `key` = jenis login + hash IP (bukan IP asli).
+-- RLS aktif tanpa policy: hanya server (service role) yang bisa membaca/menulis.
+create table if not exists public.login_attempts (
+  key text primary key,
+  fails int not null default 0,
+  first_at timestamp with time zone not null default now(),
+  locked_until timestamp with time zone not null default 'epoch'
+);
+alter table public.login_attempts enable row level security;
+
+-- Cabut hak akses langsung dari publik pada tabel yang hanya dipakai server
+revoke all on public.login_attempts, public.contacts, public.site_users, public.news_comments, public.news_reactions from anon, authenticated;

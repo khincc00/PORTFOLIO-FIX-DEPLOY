@@ -5,6 +5,8 @@
  */
 import { NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
+import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { portfolioSeed } from '@/lib/portfolio-data'
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
@@ -33,9 +35,10 @@ export async function GET() {
   }
 }
 
-// POST: tambah data ke tabel lama. Memakai kunci publik, jadi berhasil atau tidaknya
-// bergantung pada aturan RLS tabel `portfolio` di database
+// POST: tambah data ke tabel lama. Hanya admin yang sudah login (menulis memakai kunci admin)
 export async function POST(req: Request) {
+  if (!isAdminRequest()) return unauthorized()
+  if (!isAdminDbConfigured) return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY belum diisi.' }, { status: 503 })
   if (!isSupabaseConfigured) {
     return NextResponse.json(
       { error: 'Supabase is not configured yet. Please configure environment variables in Vercel.' },
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { data, error } = await supabase.from('portfolio').insert(body).select().single()
+    const { data, error } = await supabaseAdmin.from('portfolio').insert(body).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json(data)
   } catch (err: any) {
