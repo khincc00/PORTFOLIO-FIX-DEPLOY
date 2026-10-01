@@ -261,7 +261,6 @@ html[data-theme="dark"] .admin-root .news-body{color:#2b2d2b}html[data-theme="da
 
 /* Karya portfolio yang punya gambar asli (diupload dari admin) menggantikan kotak gradien */
 .campaign-thumb{object-fit:cover;display:block;width:100%;background:var(--line)}
-a.campaign-row{transition:background .2s ease}a.campaign-row:hover h3{color:var(--accent)}
 .work-art.has-cover{padding:0}
 .work-art.has-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .work-art.has-cover span{position:absolute;top:17px;left:17px;z-index:1;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.4)}
@@ -285,3 +284,67 @@ a.campaign-row{transition:background .2s ease}a.campaign-row:hover h3{color:var(
 .work-cta small{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 .work-cta a:hover span{color:var(--accent)}.work-cta a:hover em{transform:translateX(10px)}
 @media(max-width:760px){.work-jump{margin-top:28px;flex-wrap:wrap}.work-cta{padding-bottom:72px}}
+
+/* ===== KARTU PORTFOLIO YANG BISA DIKLIK (membuka jendela pratinjau) =====
+   .card-open = tombol transparan yang menutupi seluruh kartu. Link di dalam kartu
+   diberi z-index lebih tinggi supaya tetap bisa diklik sendiri. */
+.campaign-row,.work-card,.film-card{position:relative}
+.card-open{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;margin:0;border:0;background:none;cursor:pointer}
+.card-open:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.work-card>a{position:relative;z-index:2}
+.campaign-row:hover h3,.work-card:hover h3,.film-card:hover h3{color:var(--accent)}
+.campaign-row h3,.work-card h3,.film-card h3{transition:color .2s ease}
+.campaign-thumb{transition:transform .4s ease}.campaign-row:hover .campaign-thumb{transform:scale(1.04)}
+/* Cover video vertikal (Reels/TikTok): kotak 4:5, gambar mengisi penuh */
+.work-art.has-cover{aspect-ratio:4/5}
+.work-art.has-cover:after{display:none}
+.work-art.has-cover img{transition:transform .5s ease}.work-card:hover .work-art.has-cover img{transform:scale(1.04)}
+.work-play{position:absolute;left:50%;top:50%;z-index:1;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:15px;padding-left:3px;color:#fff;background:rgba(15,17,16,.55);border:1px solid rgba(255,255,255,.55);backdrop-filter:blur(4px);transition:transform .25s ease,background .25s ease}
+.work-card:hover .work-play{transform:scale(1.1);background:var(--accent)}
+.work-grid.is-four{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){.work-grid.is-four{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.work-grid.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}.work-play{width:44px;height:44px;margin:-22px 0 0 -22px;font-size:12px}}
+
+/* ===== JENDELA PRATINJAU (components/PreviewModal.tsx) =====
+   <dialog> dibuat selebar layar dan transparan; panel putih di tengah berisi media + info.
+   Klik di area gelap = klik pada <dialog> itu sendiri → jendela ditutup. */
+.pv{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:24px;border:0;background:transparent;color:var(--ink);overflow:auto}
+.pv[open]{display:flex;align-items:center;justify-content:center}
+.pv::backdrop{background:rgba(10,12,11,.84);backdrop-filter:blur(6px)}
+.pv[open] .pv-panel{animation:pv-in .25s ease}
+@keyframes pv-in{from{opacity:0;transform:translateY(12px) scale(.98)}}
+.pv-panel{position:relative;display:flex;max-width:min(1180px,100%);max-height:calc(100dvh - 48px);background:var(--paper);box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden}
+.pv-media{flex:0 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;background:#0d0f0e;overflow:auto}
+.pv-media img{display:block;max-width:min(62vw,820px);max-height:calc(100dvh - 48px);object-fit:contain}
+.pv-media iframe{display:block;border:0;background:#000}
+.is-instagram .pv-media{align-items:flex-start}
+.is-instagram iframe{width:min(400px,92vw);height:calc(100dvh - 48px);background:#fff}
+.is-tiktok iframe{height:min(calc(100dvh - 48px),760px);aspect-ratio:9/16;width:auto}
+/* Lebar video YouTube dibatasi supaya video + info (±330px) tetap muat setinggi layar */
+.is-youtube{flex-direction:column;width:min(1080px,100%,calc((100dvh - 330px) * 16 / 9))}
+.is-youtube iframe{width:100%;aspect-ratio:16/9;height:auto}
+.pv-info{flex:0 0 340px;display:flex;flex-direction:column;gap:12px;padding:56px 30px 28px;overflow:auto}
+.is-youtube .pv-info{flex:0 0 auto;padding:22px 28px 24px}
+.pv-meta{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.pv-info h2{font-size:clamp(24px,2.4vw,32px);line-height:1.08;letter-spacing:-.035em;font-weight:500;margin:0}
+.pv-info p{margin:0;font-size:14px;line-height:1.7;color:var(--muted)}
+.pv-info .pv-sub{font-size:12px}
+.pv-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px}
+.pv-links a{font-size:12px;font-weight:600;border-bottom:1px solid currentColor;padding-bottom:2px}.pv-links a:hover{color:var(--accent)}
+.pv-nav{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:18px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.is-youtube .pv-nav{margin-top:6px}
+.pv-nav button,.pv-close{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;font-size:15px;transition:border-color .2s ease,background .2s ease}
+.pv-nav button:hover,.pv-close:hover{border-color:var(--ink)}
+.pv-close{position:absolute;top:12px;right:12px;z-index:2}
+.pv-nav button:focus-visible,.pv-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:860px){
+  .pv{padding:0}
+  .pv-panel{flex-direction:column;width:100%;max-width:100%;max-height:100dvh;height:100dvh;overflow:auto}
+  .pv-media{flex:0 0 auto}
+  .pv-media img{max-width:100%;max-height:70dvh}
+  .is-instagram iframe{width:100%;height:78dvh}
+  .is-tiktok iframe{height:72dvh}
+  .pv-info{flex:0 0 auto;padding:22px 20px 28px}
+  .pv-close{top:10px;right:10px;background:rgba(15,17,16,.6);color:#fff;border-color:rgba(255,255,255,.4)}
+}
+@media(prefers-reduced-motion:reduce){.pv[open] .pv-panel{animation:none}}

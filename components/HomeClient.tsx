@@ -186,7 +186,7 @@ export default function HomeClient({ items, totals }: { items: PortfolioItem[]; 
       </section>}
 
       {/* TikTok */}
-      {shorts.length>0&&<section className="social-section section-wrap scroll-reveal"><div className="section-heading"><p className="eyebrow">{eyebrow('social.eyebrow')}</p><h2>{t('social.title')}</h2>{seeAll(totals.shorts,shorts.length,'/work#tiktok')}</div><ShortList items={shorts}/></section>}
+      {shorts.length>0&&<section className="works-section section-wrap scroll-reveal"><div className="section-heading works-heading"><div><p className="eyebrow">{eyebrow('social.eyebrow')}</p><h2>{t('social.title')}</h2></div>{seeAll(totals.shorts,shorts.length,'/work#tiktok')}</div><ShortList items={shorts}/></section>}
 
       {/* Web & front-end */}
       {webs.length>0&&<section id="web" className="web-section section-wrap scroll-reveal">

@@ -61,7 +61,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
         </div>
       </section>}
 
-      {shorts.length > 0 && <section id="tiktok" className="social-section section-wrap"><div className="section-heading"><p className="eyebrow">{t('social.eyebrow')}</p><h2>{t('social.title')}</h2></div><ShortList items={shorts} /></section>}
+      {shorts.length > 0 && <section id="tiktok" className="works-section section-wrap"><div className="section-heading works-heading"><div><p className="eyebrow">{t('social.eyebrow')}</p><h2>{t('social.title')}</h2></div></div><ShortList items={shorts} /></section>}
 
       {webs.length > 0 && <section id="web" className="web-section section-wrap">
         <div className="section-heading"><p className="eyebrow">{t('web.eyebrow')}</p><h2>{t('web.title')}</h2><p className="section-note">{t('web.note')}</p></div>

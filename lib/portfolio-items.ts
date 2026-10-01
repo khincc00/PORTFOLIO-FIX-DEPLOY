@@ -73,6 +73,31 @@ export function allLinks(item: PortfolioItem): PortfolioLink[] {
   return [...primary, ...(item.extra_links || [])]
 }
 
+// Nama platform video untuk ditampilkan
+export const platformName: Record<VideoPlatform, string> = { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok' }
+
+/**
+ * Alamat pemutar (embed) untuk memutar video langsung di jendela pratinjau website.
+ * Diambil dari link video: kode reel Instagram, id video TikTok, atau id YouTube.
+ * null kalau bukan video atau link-nya tidak dikenali (pratinjau memakai gambar saja).
+ */
+export function embedOf(item: PortfolioItem): string | null {
+  if (item.kind !== 'video' || !item.link) return null
+  if (item.platform === 'youtube') {
+    const id = youtubeId(item.link)
+    return id ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0` : null
+  }
+  if (item.platform === 'instagram') {
+    const m = item.link.match(/instagram\.com\/(?:reels?|p|tv)\/([\w-]+)/)
+    return m ? `https://www.instagram.com/reel/${m[1]}/embed/` : null
+  }
+  if (item.platform === 'tiktok') {
+    const m = item.link.match(/\/video\/(\d+)/)
+    return m ? `https://www.tiktok.com/player/v1/${m[1]}?autoplay=1&rel=0` : null
+  }
+  return null
+}
+
 // Karya kosong sebagai titik awal form "+ Tambah" di admin
 const blank = (kind: PortfolioKind, position: number): PortfolioInput => ({
   kind,
@@ -156,6 +181,7 @@ export function defaultPortfolio(): PortfolioInput[] {
       year: p.year,
       description: p.description.en,
       description_id: p.description.id,
+      image: p.image,
       image_alt: p.alt,
     })
   )
@@ -172,6 +198,7 @@ export function defaultPortfolio(): PortfolioInput[] {
       tag,
       tag_id: tagId,
       link: r.link,
+      image: `/work/reel-${r.reel_id}.jpg`, // cover reel yang disimpan di public/work
     })
   })
   // YouTube → Video (youtube)
@@ -190,7 +217,7 @@ export function defaultPortfolio(): PortfolioInput[] {
   })
   // TikTok → Video (tiktok)
   tiktokReviews.forEach((t) =>
-    push('video', { platform: 'tiktok', title: t.title, description: t.desc, tag: t.platform, link: t.link })
+    push('video', { platform: 'tiktok', title: t.title, description: t.desc, tag: t.platform, link: t.link, image: t.thumb })
   )
 
   // Proyek web → Web; link pertama jadi link utama
