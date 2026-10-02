@@ -7,6 +7,7 @@ Website portfolio modern untuk multimedia creator, remote designer, dan video ed
 - **Client Inquiry Form**: Formulir kontak interaktif terintegrasi langsung dengan database Supabase (`contacts`).
 - **Admin Dashboard**: Halaman manajemen di `/admin` (alias `/admin.php`) untuk memonitor portfolio dan pesan kontak yang masuk.
 - **Berita / Kabar Terbaru**: Tulis, jadwalkan, dan terbitkan berita ala WordPress dari `/admin` (editor visual, gambar unggulan, kategori, tag, draft). Tampil di `/berita` dan di beranda.
+- **Komunitas (`/komunitas`)**: ruang berbagi ala Reddit. Anggota yang login bisa membuat kiriman (teks + sampai 4 gambar), berkomentar bersarang, vote ▲▼, dan melaporkan. Admin memoderasi di menu **Komunitas**. Jalankan `supabase/migrations/20261004_community.sql` sekali di Supabase SQL Editor.
 - **Graceful Local Fallback**: Tetap berjalan mulus dengan data seed lokal jika koneksi Supabase belum dikonfigurasi.
 
 ## 🛠️ Stack Teknologi
