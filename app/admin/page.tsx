@@ -10,6 +10,7 @@
  *      Portfolio  → kelola karya Design/Video/Web (app/admin/PortfolioManager.tsx)
  *      Berita     → daftar berita (NewsList.tsx) dan form tulis/edit (NewsEditor.tsx)
  *      Komentar   → moderasi komentar (CommentsList.tsx)
+ *      Komunitas  → laporan & moderasi komunitas (CommunityModeration.tsx)
  * Variabel `view` menentukan menu mana yang sedang tampil.
  */
 
@@ -19,6 +20,7 @@ import type { NewsPost } from '@/lib/news'
 import NewsList from './NewsList'
 import NewsEditor from './NewsEditor'
 import CommentsList from './CommentsList'
+import CommunityModeration from './CommunityModeration'
 import PortfolioManager from './PortfolioManager'
 
 // Bentuk data reel dari tabel LAMA `portfolio` (hanya untuk tabel di Dashboard)
@@ -46,7 +48,7 @@ interface ContactItem {
 }
 
 // Menu yang bisa dibuka. 'editor' = form tulis/edit berita
-type View = 'dashboard' | 'portfolio' | 'news' | 'editor' | 'comments'
+type View = 'dashboard' | 'portfolio' | 'news' | 'editor' | 'comments' | 'community'
 
 export default function AdminPage() {
   // --- Status login ---
@@ -287,6 +289,7 @@ export default function AdminPage() {
             ['portfolio', 'Portfolio'],
             ['news', `Berita (${newsList.length})`],
             ['comments', 'Komentar'],
+            ['community', 'Komunitas'],
           ] as [View, string][]).map(([key, label]) => (
             <button
               key={key}
@@ -328,6 +331,7 @@ export default function AdminPage() {
         )}
 
         {view === 'comments' && <CommentsList />}
+        {view === 'community' && <CommunityModeration />}
 
         {view === 'portfolio' && <PortfolioManager />}
 
