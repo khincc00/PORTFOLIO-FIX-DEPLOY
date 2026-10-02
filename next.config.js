@@ -14,7 +14,9 @@ module.exports = {
       { source: '/studio', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
     ]
   },
-  serverExternalPackages: ['sanitize-html'],
+  // sanitize-html memakai htmlparser2 v12 yang formatnya ESM saja. Kalau dimuat langsung oleh Node di server,
+  // hasilnya error 500 di Node < 22.12 (dulu terjadi di Vercel). Karena itu paket ini SENGAJA ikut digabung
+  // (di-bundle) ke hasil build, bukan dimuat terpisah, sehingga tidak bergantung pada versi Node.
   // Pengalihan alamat otomatis
   async redirects() {
     return [
