@@ -7,6 +7,7 @@
  * Datanya dikirim dari app/work/page.tsx yang berjalan di server.
  */
 import type { DictKey } from '@/lib/i18n'
+import Link from 'next/link'
 import { usePrefs } from '@/components/Preferences'
 import SiteHeader from '@/components/SiteHeader'
 import { DesignList, FilmGrid, ReelGrid, ShortList, WebGrid } from '@/components/PortfolioBlocks'
@@ -69,7 +70,7 @@ export default function WorkClient({ items }: { items: PortfolioItem[] }) {
       </section>}
 
       {/* Ajakan kerja sama di akhir halaman, mengarah ke form kontak di beranda */}
-      <section className="approach-section"><div><p className="eyebrow">{t('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><a className="button button-light" href="/#contact">{t('approach.cta')}</a></div></section>
+      <section className="approach-section"><div><p className="eyebrow">{t('approach.eyebrow')}</p><h2>{t('approach.title')}</h2></div><div><p>{t('approach.body')}</p><Link className="button button-light" href="/#contact">{t('approach.cta')}</Link></div></section>
 
       <footer className="studio-footer"><span>{t('footer.text')}</span></footer>
     </main>

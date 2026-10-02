@@ -12,6 +12,7 @@
  * Bagian portfolio hanya berisi karya yang di-highlight (★) di admin.
  */
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import type { NewsSummary } from '@/lib/news'
 import { formatDate, pick, type DictKey } from '@/lib/i18n'
 import { usePrefs } from '@/components/Preferences'
@@ -140,7 +141,7 @@ export default function HomeClient({ items, totals }: { items: PortfolioItem[]; 
         <div className="news-spotlight-inner">
           <div className="news-spotlight-head">
             <p className="news-live"><i/>{t('news.live')}</p>
-            <a className="text-link" href="/berita">{t('news.viewAll')}</a>
+            <Link className="text-link" href="/berita">{t('news.viewAll')}</Link>
           </div>
           <div className={`news-spotlight-grid ${news.length===1?'is-single':''}`}>
             <a className="news-spot-main" href={`/berita/${news[0].slug}`}>
