@@ -33,7 +33,8 @@
   margin: 16px 0;
 }
 .p-welcome h1 span {
-  font-family: "Instrument Serif", serif;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
   color: var(--s-accent);
   font-style: italic;
   font-size: 58px;
@@ -142,8 +143,11 @@
 }
 .p-contact h2 {
   font:
-    32px "Instrument Serif",
-    serif;
+    32px "DM Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-weight: 500;
   margin: 10px 0 23px;
 }
 @media (max-width: 640px) {
