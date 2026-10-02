@@ -6,20 +6,22 @@ import { NextResponse } from 'next/server'
 import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib/supabase-admin'
 import { buildNewsPayload, uniqueSlug, revalidateNews } from '@/lib/news-admin'
+import { trySyncPublishedContent } from '@/lib/github-sync'
+export const maxDuration = 60
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
-type Params = { params: { id: string } }
+type Params = { params: Promise<{ id: string }> }
 
 // Perbarui berita
 export async function PUT(req: Request, { params }: Params) {
   // Tolak kalau bukan admin (401) atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     // Ambil slug lama, supaya halaman dengan alamat lama juga diperbarui kalau slug diganti
     const { data: existing } = await supabaseAdmin.from('news').select('slug').eq('id', id).single()
     if (!existing) return NextResponse.json({ error: 'Berita tidak ditemukan.' }, { status: 404 })
@@ -33,6 +35,7 @@ export async function PUT(req: Request, { params }: Params) {
     // Perbarui cache halaman lama & baru
     revalidateNews(existing.slug)
     revalidateNews(data.slug)
+    await trySyncPublishedContent()
     return NextResponse.json(data)
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status: 400 })
@@ -41,18 +44,19 @@ export async function PUT(req: Request, { params }: Params) {
 
 // Hapus berita
 export async function DELETE(_req: Request, { params }: Params) {
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   const { data, error } = await supabaseAdmin
     .from('news')
     .delete()
-    .eq('id', Number(params.id))
+    .eq('id', Number((await params).id))
     .select('slug')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   revalidateNews(data?.slug)
+  await trySyncPublishedContent()
   return NextResponse.json({ ok: true })
 }

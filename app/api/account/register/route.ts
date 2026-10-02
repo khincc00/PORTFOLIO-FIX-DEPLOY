@@ -35,25 +35,25 @@ export async function POST(req: Request) {
 
     // --- Validasi input (kode 400 = permintaan tidak valid) ---
     if (!USERNAME_PATTERN.test(username)) {
-      return NextResponse.json({ error: st('err.usernameFormat') }, { status: 400 })
+      return NextResponse.json({ error: await st('err.usernameFormat') }, { status: 400 })
     }
     if (password.length < 8 || password.length > 100) {
-      return NextResponse.json({ error: st('err.passwordLength') }, { status: 400 })
+      return NextResponse.json({ error: await st('err.passwordLength') }, { status: 400 })
     }
     if (displayName.length < 2 || displayName.length > 40) {
-      return NextResponse.json({ error: st('err.displayNameLength') }, { status: 400 })
+      return NextResponse.json({ error: await st('err.displayNameLength') }, { status: 400 })
     }
     if (isReservedName(username) || isReservedName(displayName)) {
-      return NextResponse.json({ error: st('err.nameReserved') }, { status: 400 })
+      return NextResponse.json({ error: await st('err.nameReserved') }, { status: 400 })
     }
 
     // Nama tidak boleh sama dengan username/nama tampilan akun lain (kode 409 = bentrok)
     if ((await isNameTakenByAccount(displayName)) || (displayName !== username && (await isNameTakenByAccount(username)))) {
-      return NextResponse.json({ error: st('err.accountNameTaken') }, { status: 409 })
+      return NextResponse.json({ error: await st('err.accountNameTaken') }, { status: 409 })
     }
 
     // Hitung akun yang dibuat dari IP ini dalam 24 jam terakhir (kode 429 = terlalu banyak permintaan)
-    const ipHash = getIpHash()
+    const ipHash = await getIpHash()
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
     const { count } = await supabaseAdmin
       .from('site_users')
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       .eq('ip_hash', ipHash)
       .gte('created_at', since)
     if ((count || 0) >= MAX_ACCOUNTS_PER_IP_PER_DAY) {
-      return NextResponse.json({ error: st('err.tooManySignups') }, { status: 429 })
+      return NextResponse.json({ error: await st('err.tooManySignups') }, { status: 429 })
     }
 
     // Simpan akun baru. Password disimpan dalam bentuk hash, bukan aslinya
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       // 23505 = kode error Postgres untuk data unik yang sudah ada (username sudah dipakai)
       const taken = error.code === '23505'
       return NextResponse.json(
-        { error: taken ? st('err.usernameTaken') : error.message },
+        { error: taken ? await st('err.usernameTaken') : error.message },
         { status: taken ? 409 : 500 }
       )
     }
@@ -85,6 +85,6 @@ export async function POST(req: Request) {
     res.cookies.set(USER_COOKIE, createUserToken(data.id), userCookieOptions)
     return res
   } catch {
-    return NextResponse.json({ error: st('err.server') }, { status: 500 })
+    return NextResponse.json({ error: await st('err.server') }, { status: 500 })
   }
 }

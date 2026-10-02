@@ -64,8 +64,8 @@ export function isValidSession(token?: string) {
 }
 
 // Dipanggil di awal setiap API admin: apakah yang meminta ini admin yang sudah login?
-export function isAdminRequest() {
-  return isValidSession(cookies().get(SESSION_COOKIE)?.value)
+export async function isAdminRequest() {
+  return isValidSession((await cookies()).get(SESSION_COOKIE)?.value)
 }
 
 // Jawaban standar kalau belum login (kode 401 = Unauthorized)

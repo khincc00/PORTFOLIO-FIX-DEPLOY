@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react'
+import { adminFetch as fetch } from '@/lib/admin-fetch'
 import { formatNewsDate, type NewsPost } from '@/lib/news'
 
 // Props = data & fungsi yang dikirim dari komponen induk (app/admin/page.tsx)
@@ -93,7 +94,18 @@ export default function NewsList({ posts, loading, error, onNew, onEdit, onDelet
         />
       </div>
 
-      <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-x-auto">
+      <div className="md:hidden space-y-3">
+        {loading ? <p className="p-5 text-sm text-[#86868B]">Memuat berita...</p> : visible.length === 0 ? <p className="p-5 text-sm text-[#86868B]">Tidak ada berita yang cocok.</p> : visible.map(post => {
+          const badge = statusBadge(post)
+          return <article key={post.id} className="border border-black/10 bg-white rounded-xl p-4">
+            <div className="flex items-center justify-between gap-3 text-xs mb-3"><span className="text-[#86868B]">{post.category}</span><span className={`px-2 py-1 rounded ${badge.cls}`}>{badge.label}</span></div>
+            <button onClick={() => onEdit(post)} className="font-medium text-left text-sm leading-relaxed">{post.title}</button>
+            <p className="text-xs text-[#86868B] mt-2">{formatNewsDate(post.updated_at)}</p>
+            <div className="flex gap-5 border-t border-black/5 mt-3 pt-2 text-xs"><button onClick={() => onEdit(post)} className="text-blue-600">Edit berita</button>{badge.label === 'Terbit' && <a className="text-blue-600 inline-flex items-center" href={`/berita/${post.slug}`} target="_blank" rel="noreferrer">Lihat</a>}<button className="text-red-600 ml-auto" disabled={deletingId === post.id} onClick={() => remove(post)}>{deletingId === post.id ? 'Menghapus...' : 'Hapus'}</button></div>
+          </article>
+        })}
+      </div>
+      <div className="hidden md:block bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-x-auto">
         {loading ? (
           <div className="p-8 text-center text-sm text-[#86868B]">Memuat berita...</div>
         ) : visible.length === 0 ? (

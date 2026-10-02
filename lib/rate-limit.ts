@@ -18,7 +18,7 @@ type Row = { fails: number; first_at: number; locked_until: number }
 const memory = new Map<string, Row>() // cadangan kalau database tidak tersedia
 
 // Kunci unik per jenis login + IP (IP sudah berbentuk hash, bukan IP asli)
-const keyFor = (scope: 'admin' | 'user') => `${scope}:${getIpHash()}`
+const keyFor = async (scope: 'admin' | 'user') => `${scope}:${await getIpHash()}`
 
 async function load(key: string): Promise<Row | null> {
   if (isAdminDbConfigured) {
@@ -51,14 +51,14 @@ async function save(key: string, row: Row) {
 
 // Cek sebelum memeriksa password. Mengembalikan sisa detik terkunci, atau 0 kalau boleh mencoba
 export async function lockedSeconds(scope: 'admin' | 'user') {
-  const row = await load(keyFor(scope))
+  const row = await load(await keyFor(scope))
   const left = row ? row.locked_until - Date.now() : 0
   return left > 0 ? Math.ceil(left / 1000) : 0
 }
 
 // Catat satu percobaan yang salah. Percobaan ke-4 langsung mengunci
 export async function recordFailure(scope: 'admin' | 'user') {
-  const key = keyFor(scope)
+  const key = await keyFor(scope)
   const now = Date.now()
   const prev = await load(key)
   const fresh = !prev || now - prev.first_at > WINDOW_MS
@@ -72,7 +72,7 @@ export async function recordFailure(scope: 'admin' | 'user') {
 
 // Login berhasil: hapus hitungan gagal
 export async function clearFailures(scope: 'admin' | 'user') {
-  const key = keyFor(scope)
+  const key = await keyFor(scope)
   memory.delete(key)
   if (isAdminDbConfigured) await supabaseAdmin.from('login_attempts').delete().eq('key', key)
 }

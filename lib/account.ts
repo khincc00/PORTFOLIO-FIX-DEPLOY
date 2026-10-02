@@ -14,7 +14,7 @@ export interface SiteUser {
 
 // Akun yang sedang login, dibaca dari cookie `khincc_user`. null kalau belum login
 export async function getCurrentUser(): Promise<SiteUser | null> {
-  const id = getUserId()
+  const id = await getUserId()
   if (!id) return null
   const { data } = await supabaseAdmin.from('site_users').select('id,username,display_name').eq('id', id).maybeSingle()
   return data || null

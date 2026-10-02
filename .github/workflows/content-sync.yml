@@ -1,0 +1,26 @@
+name: Retry published content sync
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: studio-content-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Sync published content only
+        env:
+          SYNC_URL: ${{ vars.CONTENT_SYNC_URL }}
+          CRON_SECRET: ${{ secrets.CONTENT_SYNC_CRON_SECRET }}
+        run: |
+          if [ -z "$SYNC_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Content sync is not configured. Add repository variable CONTENT_SYNC_URL and secret CONTENT_SYNC_CRON_SECRET."
+            exit 1
+          fi
+          case "$SYNC_URL" in https://*) ;; *) echo "HTTPS required"; exit 1 ;; esac
+          curl --fail-with-body --silent --show-error --max-time 65 \
+            --request POST --header "Authorization: Bearer $CRON_SECRET" "$SYNC_URL"

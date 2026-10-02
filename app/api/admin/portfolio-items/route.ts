@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server'
 import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib/supabase-admin'
 import { buildPortfolioPayload, revalidatePortfolio } from '@/lib/portfolio-server'
+import { trySyncPublishedContent } from '@/lib/github-sync'
+export const maxDuration = 60
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
@@ -13,7 +15,7 @@ export const dynamic = 'force-dynamic'
 // Semua karya (termasuk yang disembunyikan), urut per jenis
 export async function GET() {
   // Tolak kalau bukan admin (401) atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   const { data, error } = await supabaseAdmin.from('portfolio_items').select('*').order('kind').order('position')
@@ -30,7 +32,7 @@ export async function GET() {
 
 // Tambah karya baru di urutan paling bawah pada jenisnya
 export async function POST(req: Request) {
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   try {
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     revalidatePortfolio()
+    await trySyncPublishedContent()
     return NextResponse.json(data)
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status: 400 })

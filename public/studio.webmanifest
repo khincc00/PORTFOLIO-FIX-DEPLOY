@@ -1,0 +1,16 @@
+{
+  "id": "/studio",
+  "name": "Khincc Studio",
+  "short_name": "Studio",
+  "description": "Kelola berita, portofolio, dan pesan klien Khincc Studio.",
+  "lang": "id",
+  "start_url": "/studio",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f4",
+  "theme_color": "#f7f7f4",
+  "icons": [
+    {"src": "/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

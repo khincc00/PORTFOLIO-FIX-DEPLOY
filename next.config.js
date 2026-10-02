@@ -4,11 +4,17 @@
  */
 /** @type {import('next').NextConfig} */
 module.exports = {
-  experimental: {
-    // sanitize-html memakai htmlparser2 yang formatnya khusus (ESM saja).
-    // Supaya tidak error di Vercel, paket ini dimuat langsung oleh Node.js, tidak digabung ke bundle
-    serverComponentsExternalPackages: ['sanitize-html'],
+  async headers() {
+    return [
+      { source: '/sw.js', headers: [
+        { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+        { key: 'Service-Worker-Allowed', value: '/' },
+      ] },
+      { source: '/api/admin/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
+      { source: '/studio', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
+    ]
   },
+  serverExternalPackages: ['sanitize-html'],
   // Pengalihan alamat otomatis
   async redirects() {
     return [

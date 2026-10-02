@@ -15,11 +15,11 @@ import NewsInteractions from './NewsInteractions'
 // Cache halaman, dibuat ulang paling lama tiap 60 detik
 export const revalidate = 60
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 // Judul, deskripsi, dan gambar preview berbeda untuk setiap berita (untuk Google & media sosial)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getNewsBySlug(params.slug)
+  const post = await getNewsBySlug((await params).slug)
   if (!post) return { title: 'News not found' }
   return {
     title: post.title,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function NewsDetailPage({ params }: Props) {
-  const post = await getNewsBySlug(params.slug)
+  const post = await getNewsBySlug((await params).slug)
   if (!post) notFound() // berita tidak ada / belum terbit → tampilkan halaman 404
 
   // Data terstruktur NewsArticle supaya Google mengenali halaman ini sebagai artikel berita

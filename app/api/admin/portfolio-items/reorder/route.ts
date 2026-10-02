@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server'
 import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib/supabase-admin'
 import { revalidatePortfolio } from '@/lib/portfolio-server'
+import { trySyncPublishedContent } from '@/lib/github-sync'
+export const maxDuration = 60
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
@@ -13,7 +15,7 @@ export const dynamic = 'force-dynamic'
 // Simpan urutan baru: { ids: [id paling atas, ..., id paling bawah] }
 export async function POST(req: Request) {
   // Tolak kalau bukan admin yang sudah login (401), atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   // ids harus berupa daftar angka bulat
@@ -30,5 +32,6 @@ export async function POST(req: Request) {
   if (failed?.error) return NextResponse.json({ error: failed.error.message }, { status: 500 })
 
   revalidatePortfolio()
+  await trySyncPublishedContent()
   return NextResponse.json({ ok: true })
 }

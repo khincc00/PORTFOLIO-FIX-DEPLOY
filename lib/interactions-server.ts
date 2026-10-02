@@ -25,8 +25,8 @@ export async function findPublishedNewsId(slug: string) {
 
 // Siapa yang sedang membuka halaman: akun login, admin, atau tamu (dikenali dari cookie)
 export async function getViewer() {
-  const [user, isAdmin] = [await getCurrentUser(), isAdminRequest()]
-  const visitor = getVisitorId()
+  const [user, isAdmin] = await Promise.all([getCurrentUser(), isAdminRequest()])
+  const visitor = await getVisitorId()
   return {
     user,
     isAdmin,

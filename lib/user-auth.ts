@@ -57,8 +57,8 @@ export function createUserToken(userId: number) {
 }
 
 /** Id akun pengunjung yang sedang login, atau null kalau belum login / token tidak sah */
-export function getUserId(): number | null {
-  const token = cookies().get(USER_COOKIE)?.value
+export async function getUserId(): Promise<number | null> {
+  const token = (await cookies()).get(USER_COOKIE)?.value
   if (!token || !secret) return null
   const lastDot = token.lastIndexOf('.')
   if (lastDot < 0) return null
@@ -70,16 +70,17 @@ export function getUserId(): number | null {
 }
 
 /** Id tamu dari cookie. `fresh: true` artinya id baru dibuat dan harus disimpan ke cookie */
-export function getVisitorId() {
-  const existing = cookies().get(VISITOR_COOKIE)?.value
+export async function getVisitorId() {
+  const existing = (await cookies()).get(VISITOR_COOKIE)?.value
   // Format UUID: 36 karakter berisi angka, huruf a–f, dan strip
   if (existing && /^[0-9a-f-]{36}$/.test(existing)) return { id: existing, fresh: false }
   return { id: randomUUID(), fresh: true }
 }
 
 // Alamat IP pengunjung dalam bentuk hash (bukan IP asli) untuk membatasi spam komentar
-export function getIpHash() {
-  const ip = headers().get('x-forwarded-for')?.split(',')[0].trim() || headers().get('x-real-ip') || 'unknown'
+export async function getIpHash() {
+  const h = await headers()
+  const ip = h.get('x-forwarded-for')?.split(',')[0].trim() || h.get('x-real-ip') || 'unknown'
   return createHash('sha256').update(`${secret}:${ip}`).digest('hex').slice(0, 32)
 }
 

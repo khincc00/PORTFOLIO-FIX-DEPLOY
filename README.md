@@ -75,3 +75,9 @@ public/                   file statis: gambar, CV (bisa diakses langsung lewat U
 **Kode** di repository ini memakai [MIT License](LICENSE): boleh dipakai, diubah, dan dibagikan, termasuk untuk keperluan komersial, asalkan menyertakan pemberitahuan hak cipta dan teks lisensinya.
 
 **Konten pribadi tidak termasuk** dan tetap hak cipta © Taufiq Sholikhin (all rights reserved). Konten pribadi meliputi CV, foto, gambar karya dan poster, video, logo/nama "Khincc", serta tulisan portfolio dan berita. Kalau memakai kode ini sebagai template, ganti semua konten tersebut dengan milik sendiri.
+# Studio iPhone PWA
+
+Versi mobile admin ada di `/studio`, dan feed pengunjung di `/app`.
+Panduan aktivasi: [docs/STUDIO-IPHONE.md](docs/STUDIO-IPHONE.md).
+Catatan pengujian: [docs/STUDIO-QA.md](docs/STUDIO-QA.md).
+Memerlukan Node.js 22.12 atau lebih baru; sinkronisasi GitHub harus dikonfigurasi di server sebelum digunakan.

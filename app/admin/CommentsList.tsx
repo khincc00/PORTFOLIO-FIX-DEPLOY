@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import { adminFetch as fetch } from '@/lib/admin-fetch'
 
 // Bentuk data komentar dari /api/admin/comments (termasuk judul & slug beritanya)
 interface AdminComment {

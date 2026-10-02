@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { adminFetch as fetch } from '@/lib/admin-fetch'
 import { uploadImage } from './NewsEditor'
 import {
   coverOf,
@@ -67,6 +68,7 @@ export default function PortfolioManager() {
   // Tukar posisi dengan tetangga yang terlihat di daftar (bisa sedang difilter),
   // lalu simpan seluruh urutan jenis ini. Tampilan langsung berubah; kalau server gagal, dikembalikan
   const move = async (item: PortfolioItem, dir: -1 | 1) => {
+    if (busy) return
     const idx = visible.indexOf(item)
     const neighbour = visible[idx + dir]
     if (!neighbour) return
@@ -76,20 +78,24 @@ export default function PortfolioManager() {
     ;[order[a], order[b]] = [order[b], order[a]]
     const positions = new Map(order.map((it, i) => [it.id, i]))
     const previous = items
+    setBusy(true)
     setItems(items.map((it) => (positions.has(it.id) ? { ...it, position: positions.get(it.id)! } : it)))
-    const res = await fetch('/api/admin/portfolio-items/reorder', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: order.map((it) => it.id) }),
-    })
-    if (!res.ok) {
+    try {
+      const res = await fetch('/api/admin/portfolio-items/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: order.map((it) => it.id) }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error || 'Gagal menyimpan urutan')
+    } catch (e) {
       setItems(previous)
-      alert((await res.json()).error || 'Gagal menyimpan urutan')
-    }
+      setError(e instanceof Error ? e.message : 'Koneksi terputus. Urutan dikembalikan.')
+    } finally { setBusy(false) }
   }
 
   // Simpan karya: sudah punya id → PUT (ubah), belum → POST (baru)
   const save = async (payload: Draft) => {
+    if (busy) return false
     setBusy(true)
     try {
       const res = await fetch(payload.id ? `/api/admin/portfolio-items/${payload.id}` : '/api/admin/portfolio-items', {
@@ -117,10 +123,16 @@ export default function PortfolioManager() {
 
   // Hapus karya permanen setelah konfirmasi
   const remove = async (item: PortfolioItem) => {
+    if (busy) return
     if (!confirm(`Hapus "${item.title}" dari portfolio?`)) return
-    const res = await fetch(`/api/admin/portfolio-items/${item.id}`, { method: 'DELETE' })
-    if (res.ok) setItems((list) => list.filter((i) => i.id !== item.id))
-    else alert((await res.json()).error || 'Gagal menghapus')
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/admin/portfolio-items/${item.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error((await res.json()).error || 'Gagal menghapus')
+      setItems((list) => list.filter((i) => i.id !== item.id))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Koneksi terputus. Coba lagi.')
+    } finally { setBusy(false) }
   }
 
   // Kalau form terbuka, tampilkan form saja (daftar disembunyikan)
@@ -140,6 +152,7 @@ export default function PortfolioManager() {
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-2xl font-semibold tracking-tight">Portfolio</h2>
         <button
+          disabled={busy}
           onClick={() => setDraft({ ...emptyItem(kind, ofKind.length), platform: kind === 'video' ? (platform === 'all' ? 'instagram' : platform) : null })}
           className="bg-black text-white px-4 py-2 rounded-full text-xs font-medium hover:bg-neutral-800 transition cursor-pointer"
         >
@@ -189,11 +202,11 @@ export default function PortfolioManager() {
           visible.map((item, i) => {
             const cover = coverOf(item)
             return (
-              <div key={item.id} className={`p-3 flex items-center gap-3 ${item.is_published ? '' : 'opacity-60'}`}>
+              <div key={item.id} className={`p-3 flex flex-wrap md:flex-nowrap items-center gap-3 ${item.is_published ? '' : 'opacity-60'}`}>
                 {/* Tombol naik/turun. Nonaktif di baris paling atas/bawah */}
                 <div className="flex flex-col">
-                  <button onClick={() => move(item, -1)} disabled={i === 0} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Naikkan" title="Naikkan">↑</button>
-                  <button onClick={() => move(item, 1)} disabled={i === visible.length - 1} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Turunkan" title="Turunkan">↓</button>
+                  <button onClick={() => move(item, -1)} disabled={busy || i === 0} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Naikkan" title="Naikkan">↑</button>
+                  <button onClick={() => move(item, 1)} disabled={busy || i === visible.length - 1} className="w-7 h-6 rounded hover:bg-neutral-100 disabled:opacity-20 cursor-pointer text-sm" aria-label="Turunkan" title="Turunkan">↓</button>
                 </div>
                 <span className="w-6 text-xs font-mono text-[#86868B] text-right">{String(i + 1).padStart(2, '0')}</span>
                 {cover ? (
@@ -201,7 +214,7 @@ export default function PortfolioManager() {
                 ) : (
                   <div className="w-16 h-11 rounded bg-gradient-to-br from-orange-300 to-slate-600 shrink-0" />
                 )}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-[100px]">
                   <div className="font-medium text-sm truncate">{item.title}</div>
                   <div className="text-xs text-[#86868B] truncate">
                     {[item.platform && platformLabel[item.platform], item.tag, item.subtitle, item.year].filter(Boolean).join(' · ')}
@@ -209,6 +222,7 @@ export default function PortfolioManager() {
                 </div>
                 {!item.is_published && <span className="text-[10px] font-semibold uppercase bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">Disembunyikan</span>}
                 <button
+                  disabled={busy}
                   onClick={() => toggleFeatured(item)}
                   aria-pressed={!!item.is_featured}
                   title={item.is_featured ? 'Hapus dari beranda' : 'Tampilkan di beranda'}
@@ -216,10 +230,10 @@ export default function PortfolioManager() {
                 >
                   {item.is_featured ? '★ Highlight' : '☆ Highlight'}
                 </button>
-                <div className="flex gap-3 text-xs shrink-0">
-                  <button onClick={() => togglePublished(item)} className="text-[#86868B] hover:text-black cursor-pointer">{item.is_published ? 'Sembunyikan' : 'Tampilkan'}</button>
-                  <button onClick={() => setDraft(item)} className="text-blue-600 hover:underline cursor-pointer">Edit</button>
-                  <button onClick={() => remove(item)} className="text-red-600 hover:underline cursor-pointer">Hapus</button>
+                <div className="flex gap-3 text-xs shrink-0 w-full md:w-auto justify-end border-t md:border-0 border-black/5 pt-1 md:pt-0">
+                  <button disabled={busy} onClick={() => togglePublished(item)} className="text-[#86868B] hover:text-black cursor-pointer">{item.is_published ? 'Sembunyikan' : 'Tampilkan'}</button>
+                  <button disabled={busy} onClick={() => setDraft(item)} className="text-blue-600 hover:underline cursor-pointer">Edit</button>
+                  <button disabled={busy} onClick={() => remove(item)} className="text-red-600 hover:underline cursor-pointer">Hapus</button>
                 </div>
               </div>
             )

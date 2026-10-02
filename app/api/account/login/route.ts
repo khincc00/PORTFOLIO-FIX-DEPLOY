@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     // Format username tidak mungkin benar → langsung tolak tanpa bertanya ke database
     if (!USERNAME_PATTERN.test(username)) {
       await recordFailure('user')
-      return NextResponse.json({ error: st('err.badLogin') }, { status: 401 })
+      return NextResponse.json({ error: await st('err.badLogin') }, { status: 401 })
     }
 
     // Cari akun berdasarkan username (huruf besar/kecil dianggap sama)
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     // supaya orang lain tidak bisa mengecek username mana yang terdaftar
     if (!user || !verifyPassword(password, user.password_hash)) {
       await recordFailure('user')
-      return NextResponse.json({ error: st('err.badLogin') }, { status: 401 })
+      return NextResponse.json({ error: await st('err.badLogin') }, { status: 401 })
     }
 
     await clearFailures('user')
@@ -55,6 +55,6 @@ export async function POST(req: Request) {
     res.cookies.set(USER_COOKIE, createUserToken(user.id), userCookieOptions)
     return res
   } catch {
-    return NextResponse.json({ error: st('err.server') }, { status: 500 })
+    return NextResponse.json({ error: await st('err.server') }, { status: 500 })
   }
 }

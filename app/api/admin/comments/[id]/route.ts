@@ -10,12 +10,12 @@ import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib
 export const dynamic = 'force-dynamic'
 
 // Hapus komentar
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   // Tolak kalau bukan admin yang sudah login (401), atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
-  const { error } = await supabaseAdmin.from('news_comments').delete().eq('id', Number(params.id))
+  const { error } = await supabaseAdmin.from('news_comments').delete().eq('id', Number((await params).id))
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    if (!isAdminRequest()) return unauthorized()
+    if (!(await isAdminRequest())) return unauthorized()
 
     // Nilai awal: data bawaan di kode, dipakai kalau database tidak bisa diakses
     let portfolioList = portfolioSeed

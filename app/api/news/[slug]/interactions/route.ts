@@ -11,14 +11,14 @@ import type { InteractionsPayload } from '@/lib/interactions'
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
-type Params = { params: { slug: string } }
+type Params = { params: Promise<{ slug: string }> }
 
 // Komentar + jumlah reaksi + status login pengunjung untuk satu berita
 export async function GET(_req: Request, { params }: Params) {
-  if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
+  if (!isAdminDbConfigured) return NextResponse.json({ error: await st('err.disabled') }, { status: 503 })
 
-  const newsId = await findPublishedNewsId(params.slug)
-  if (!newsId) return NextResponse.json({ error: st('err.newsNotFound') }, { status: 404 })
+  const newsId = await findPublishedNewsId((await params).slug)
+  if (!newsId) return NextResponse.json({ error: await st('err.newsNotFound') }, { status: 404 })
 
   const viewer = await getViewer()
   // Ambil komentar (terlama di atas) dan semua reaksi secara bersamaan

@@ -62,6 +62,7 @@ export async function uniqueSlug(base: string, excludeId?: number) {
 // (tanpa ini, halaman lama di cache baru diperbarui beberapa menit kemudian)
 export function revalidateNews(slug?: string) {
   revalidatePath('/berita')
+  revalidatePath('/app')
   revalidatePath('/sitemap.xml')
   if (slug) revalidatePath(`/berita/${slug}`)
 }

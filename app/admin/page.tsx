@@ -262,6 +262,9 @@ export default function AdminPage() {
             <h1 className="text-3xl font-semibold tracking-tight mt-1">Admin Panel</h1>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/studio" className="inline-flex items-center gap-2 bg-[#e65c3a] text-white px-4 py-2 rounded-full text-xs font-medium">
+              Studio iPhone
+            </Link>
             <Link
               href="/"
               className="inline-flex items-center gap-2 bg-neutral-100 text-[#1D1D1F] px-4 py-2 rounded-full text-xs font-medium hover:bg-neutral-200 transition"

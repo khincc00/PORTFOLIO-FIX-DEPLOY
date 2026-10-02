@@ -11,18 +11,18 @@ import { REACTIONS } from '@/lib/interactions'
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
 
-type Params = { params: { slug: string } }
+type Params = { params: Promise<{ slug: string }> }
 
 // Beri / batalkan reaksi (toggle)
 export async function POST(req: Request, { params }: Params) {
-  if (!isAdminDbConfigured) return NextResponse.json({ error: st('err.disabled') }, { status: 503 })
+  if (!isAdminDbConfigured) return NextResponse.json({ error: await st('err.disabled') }, { status: 503 })
 
   const { emoji } = await req.json().catch(() => ({}))
   // Hanya emoji yang ada di daftar REACTIONS yang diterima
-  if (!REACTIONS.includes(emoji)) return NextResponse.json({ error: st('err.reactionUnknown') }, { status: 400 })
+  if (!REACTIONS.includes(emoji)) return NextResponse.json({ error: await st('err.reactionUnknown') }, { status: 400 })
 
-  const newsId = await findPublishedNewsId(params.slug)
-  if (!newsId) return NextResponse.json({ error: st('err.newsNotFound') }, { status: 404 })
+  const newsId = await findPublishedNewsId((await params).slug)
+  if (!newsId) return NextResponse.json({ error: await st('err.newsNotFound') }, { status: 404 })
 
   const viewer = await getViewer()
   // Satu reaksi dikenali dari: berita + emoji + siapa pemberinya

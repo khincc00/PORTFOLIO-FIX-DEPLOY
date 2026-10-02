@@ -28,7 +28,10 @@ export async function getPublishedPortfolio(): Promise<PortfolioItem[]> {
     .eq('is_published', true)
     .order('kind')
     .order('position')
-  if (error || !data?.length) return fallbackPortfolio()
+  if (error) throw new Error('Portfolio belum dapat dimuat dari database.')
+  // An intentionally empty public portfolio must remain empty. Otherwise hidden
+  // or deleted work would incorrectly reappear from the seed.
+  if (!data) return []
   return data as PortfolioItem[]
 }
 
@@ -90,4 +93,5 @@ export function buildPortfolioPayload(body: any): Omit<PortfolioInput, 'position
 export function revalidatePortfolio() {
   revalidatePath('/')
   revalidatePath('/work')
+  revalidatePath('/app')
 }

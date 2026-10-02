@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { adminFetch as fetch } from '@/lib/admin-fetch'
 import { newsCategories, slugify, stripHtml, type NewsPost } from '@/lib/news'
 
 interface Props {
@@ -287,6 +288,9 @@ export default function NewsEditor({ post, onSaved, onCancel }: Props) {
             {mode === 'visual' ? (
               <div
                 ref={editorRef}
+                role="textbox"
+                aria-label="Isi berita"
+                aria-multiline="true"
                 contentEditable
                 suppressContentEditableWarning
                 onInput={syncFromEditor}

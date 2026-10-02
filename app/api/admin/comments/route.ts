@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 // Komentar terbaru dari semua berita untuk moderasi
 export async function GET() {
   // Tolak kalau bukan admin yang sudah login (401), atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   const { data, error } = await supabaseAdmin

@@ -23,7 +23,7 @@ const ALLOWED_TYPES: Record<string, string> = {
 // Upload gambar (cover / isi berita) ke Supabase Storage
 export async function POST(req: Request) {
   // Tolak kalau bukan admin yang sudah login (401), atau kunci database admin belum diatur (503)
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
 
   try {

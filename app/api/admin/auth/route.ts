@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic'
 
 // Cek apakah sesi admin masih aktif
 export async function GET() {
-  return NextResponse.json({ authenticated: isAdminRequest() })
+  return NextResponse.json({ authenticated: await isAdminRequest() })
 }
 
 // Login: cocokkan username & password dengan Environment Variables, lalu pasang cookie sesi

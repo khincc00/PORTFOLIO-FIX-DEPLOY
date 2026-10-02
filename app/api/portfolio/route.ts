@@ -37,7 +37,7 @@ export async function GET() {
 
 // POST: tambah data ke tabel lama. Hanya admin yang sudah login (menulis memakai kunci admin)
 export async function POST(req: Request) {
-  if (!isAdminRequest()) return unauthorized()
+  if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY belum diisi.' }, { status: 503 })
   if (!isSupabaseConfigured) {
     return NextResponse.json(
