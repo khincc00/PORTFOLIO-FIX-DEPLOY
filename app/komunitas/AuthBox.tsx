@@ -10,7 +10,7 @@ import { usePrefs } from '@/components/Preferences'
 
 type Mode = 'login' | 'register'
 
-export default function AuthBox({ user }: { user: { display_name: string; username: string } | null }) {
+export default function AuthBox({ user, asAdmin = false }: { user: { display_name: string; username: string } | null; asAdmin?: boolean }) {
   const { t } = usePrefs()
   const router = useRouter()
   const [mode, setMode] = useState<Mode>('login')
@@ -42,6 +42,14 @@ export default function AuthBox({ user }: { user: { display_name: string; userna
   const logout = async () => {
     await fetch('/api/account', { method: 'DELETE' })
     router.refresh()
+  }
+
+  if (user && asAdmin) {
+    return (
+      <div className="cm-identity">
+        <span>{t('ni.commentingAs')} <strong>{user.display_name}</strong> <b className="cm-admin">Admin</b></span>
+      </div>
+    )
   }
 
   if (user) {

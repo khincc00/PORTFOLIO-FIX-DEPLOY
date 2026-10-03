@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getViewer } from '@/lib/interactions-server'
 import {
+  ADMIN_AUTHOR,
   COMMUNITY_LIMITS,
   type CommunitySort,
   type CommunityViewer,
@@ -18,10 +19,33 @@ import {
 
 export const COMMUNITY_BUCKET = 'community-images'
 
-// Pengunjung saat ini dalam bentuk ringkas (akun login + apakah admin)
+let adminAccount: { id: number; username: string; display_name: string } | null = null
+
+// Akun penulis untuk admin. Dibuat sekali saja; password_hash sengaja tidak valid, jadi tidak bisa dipakai login
+async function ensureAdminAccount() {
+  if (adminAccount) return adminAccount
+  const find = () =>
+    supabaseAdmin.from('site_users').select('id,username,display_name').eq('username', ADMIN_AUTHOR.username).maybeSingle()
+  let { data } = await find()
+  if (!data) {
+    await supabaseAdmin.from('site_users').insert({ ...ADMIN_AUTHOR, password_hash: 'scrypt$x$x' })
+    // Kalau dua permintaan membuatnya bersamaan, salah satu gagal (23505); cukup baca ulang
+    data = (await find()).data
+  }
+  if (data) adminAccount = data
+  return data
+}
+
+/**
+ * Pengunjung saat ini. Admin yang sedang login (cookie admin) tanpa akun anggota otomatis
+ * bertindak sebagai akun "Khincc", jadi bisa membuat kiriman, berkomentar, dan vote dari mana saja.
+ * Kalau admin juga login sebagai anggota, akun anggota itu yang dipakai.
+ */
 export async function getCommunityViewer(): Promise<CommunityViewer> {
   const v = await getViewer()
-  return { user: v.user, isAdmin: v.isAdmin }
+  if (v.user || !v.isAdmin) return { user: v.user, isAdmin: v.isAdmin }
+  const user = await ensureAdminAccount()
+  return { user, isAdmin: true, asAdmin: !!user }
 }
 
 // Tolak permintaan yang berasal dari website lain (perlindungan tambahan di atas cookie SameSite)
@@ -74,6 +98,7 @@ type Row = Record<string, any>
 const authorOf = (row: Row) => ({
   display_name: row.author?.display_name || '[deleted]',
   username: row.author?.username || 'deleted',
+  is_admin: row.author?.username === ADMIN_AUTHOR.username,
 })
 
 // Vote milik pengunjung untuk sekumpulan target: { id → +1 / -1 }

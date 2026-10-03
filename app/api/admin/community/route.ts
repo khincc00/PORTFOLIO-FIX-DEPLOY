@@ -1,18 +1,34 @@
 /**
  * app/api/admin/community/route.ts → GET /api/admin/community
- * Daftar laporan komunitas (terbaru di atas) beserta cuplikan isinya, untuk menu Admin → Komunitas.
+ * Data komunitas untuk menu Admin/Studio → Komunitas. Pilih lewat ?scope=
+ *   (kosong)          laporan dari anggota, terbaru di atas, dengan cuplikan isinya
+ *   posts             100 kiriman terbaru
+ *   comments&post_id= semua komentar satu kiriman
  * Menghapus konten memakai DELETE /api/community/posts atau /comments (admin boleh menghapus semua).
  * DELETE ?id= di sini menutup (membuang) satu laporan tanpa menghapus kontennya.
  */
 import { NextResponse } from 'next/server'
 import { isAdminRequest, unauthorized } from '@/lib/admin-auth'
 import { supabaseAdmin, isAdminDbConfigured, adminDbMissingMessage } from '@/lib/supabase-admin'
+import { getCommunityViewer, listComments, listPosts } from '@/lib/community-server'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(req: Request) {
   if (!(await isAdminRequest())) return unauthorized()
   if (!isAdminDbConfigured) return NextResponse.json({ error: adminDbMissingMessage }, { status: 503 })
+
+  const params = new URL(req.url).searchParams
+  const scope = params.get('scope')
+  if (scope === 'posts' || scope === 'comments') {
+    try {
+      const viewer = await getCommunityViewer()
+      if (scope === 'posts') return NextResponse.json(await listPosts('new', viewer, 100))
+      return NextResponse.json(await listComments(Number(params.get('post_id')), viewer))
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message || 'Gagal memuat' }, { status: 500 })
+    }
+  }
 
   const { data: reports, error } = await supabaseAdmin
     .from('community_reports')

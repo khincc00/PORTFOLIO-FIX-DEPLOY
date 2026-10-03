@@ -30,7 +30,7 @@ function PostRow({ post, loggedIn }: { post: PublicPost; loggedIn: boolean }) {
     <article className="cm-post">
       <Vote type="post" id={post.id} score={post.score} myVote={post.my_vote} loggedIn={loggedIn} />
       <div className="cm-post-main">
-        <div className="cm-meta"><T k="cm.by" /> <strong>{post.author.display_name}</strong> · <TimeAgo iso={post.created_at} /></div>
+        <div className="cm-meta"><T k="cm.by" /> <strong>{post.author.display_name}</strong>{post.author.is_admin && <b className="cm-admin">Admin</b>} · <TimeAgo iso={post.created_at} /></div>
         <h3><Link href={`/komunitas/${post.id}`}>{post.title}</Link></h3>
         {post.body && <p className="cm-snippet">{post.body}</p>}
         <div className="cm-foot">
@@ -81,7 +81,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: Pr
             )}
           </div>
           <aside className="cm-side">
-            <AuthBox user={viewer.user} />
+            <AuthBox user={viewer.user} asAdmin={viewer.asAdmin} />
             {viewer.user && <Composer />}
           </aside>
         </div>

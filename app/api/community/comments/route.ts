@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       comment: {
         ...data,
-        author: { display_name: viewer.user.display_name, username: viewer.user.username },
+        author: { display_name: viewer.user.display_name, username: viewer.user.username, is_admin: !!viewer.asAdmin },
         my_vote: 0,
         can_delete: true,
       },
