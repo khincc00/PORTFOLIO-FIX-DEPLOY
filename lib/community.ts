@@ -24,9 +24,14 @@ export const COMMUNITY_LIMITS = {
 export type VoteValue = -1 | 0 | 1
 export type VoteTarget = 'post' | 'comment'
 
+// Akun penulis resmi untuk kiriman/komentar yang dibuat admin (dibuat otomatis saat pertama dipakai).
+// Nama ini ada di RESERVED_NAMES, jadi pengunjung tidak bisa mendaftar dengan nama yang sama
+export const ADMIN_AUTHOR = { username: 'khincc', display_name: 'Khincc' } as const
+
 export interface CommunityAuthor {
   display_name: string
   username: string
+  is_admin: boolean // true = akun resmi admin (ditampilkan dengan lencana "Admin")
 }
 
 // Satu kiriman yang dikirim ke browser (tanpa IP, user_id, dan data sensitif lain)
@@ -59,6 +64,7 @@ export interface PublicCommunityComment {
 export interface CommunityViewer {
   user: { id: number; username: string; display_name: string } | null
   isAdmin: boolean
+  asAdmin?: boolean // true = `user` adalah akun resmi admin (admin login tanpa akun anggota)
 }
 
 export type CommunitySort = 'new' | 'top'

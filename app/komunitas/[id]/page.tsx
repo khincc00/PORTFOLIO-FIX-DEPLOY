@@ -46,7 +46,7 @@ export default async function PostPage({ params }: Props) {
         <div className="cm-post cm-post-full">
           <Vote type="post" id={post.id} score={post.score} myVote={post.my_vote} loggedIn={!!viewer.user} />
           <div className="cm-post-main">
-            <div className="cm-meta"><T k="cm.by" /> <strong>{post.author.display_name}</strong> <em>@{post.author.username}</em> · <TimeAgo iso={post.created_at} /></div>
+            <div className="cm-meta"><T k="cm.by" /> <strong>{post.author.display_name}</strong>{post.author.is_admin ? <b className="cm-admin">Admin</b> : <em>@{post.author.username}</em>} · <TimeAgo iso={post.created_at} /></div>
             <h1>{post.title}</h1>
             {post.body && <p className="cm-body">{post.body}</p>}
             {post.images.length > 0 && (

@@ -89,7 +89,7 @@ export default function Comments({ postId, initial, loggedIn }: { postId: number
   const render = (c: PublicCommunityComment, depth: number) => (
     <li key={c.id} className="cm-comment">
       <div className="cm-comment-head">
-        <strong>{c.author.display_name}</strong> <em>@{c.author.username}</em> · <TimeAgo iso={c.created_at} />
+        <strong>{c.author.display_name}</strong>{c.author.is_admin ? <b className="cm-admin">Admin</b> : <em>@{c.author.username}</em>} · <TimeAgo iso={c.created_at} />
       </div>
       <p className="cm-body">{c.body}</p>
       <div className="cm-comment-foot">

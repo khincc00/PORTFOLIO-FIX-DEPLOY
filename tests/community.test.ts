@@ -113,6 +113,23 @@ describe("Komunitas: API kiriman", () => {
   });
 });
 
+describe("Komunitas: admin sebagai penulis", () => {
+  it("admin tanpa akun anggota bisa membuat kiriman atas nama akun Khincc", async () => {
+    state.viewer = { user: null, isAdmin: true, visitor: { id: "v" } };
+    state.tables.site_users = { data: { id: 99, username: "khincc", display_name: "Khincc" }, error: null };
+    state.tables.community_posts = { data: { id: 5 }, error: null };
+    const res = await createPost(req({ title: "Pengumuman update", body: "Halo semua" }));
+    expect(res.status).toBe(200);
+    expect(state.inserted.find((i) => i.table === "community_posts").row.user_id).toBe(99);
+  });
+  it("anggota yang login memakai akunnya sendiri, bukan akun admin", async () => {
+    state.viewer = { user: { id: 7, username: "u", display_name: "U" }, isAdmin: true, visitor: { id: "v" } };
+    state.tables.community_posts = { data: { id: 6 }, error: null };
+    await createPost(req({ title: "Kiriman anggota" }));
+    expect(state.inserted.find((i) => i.table === "community_posts").row.user_id).toBe(7);
+  });
+});
+
 describe("Komunitas: vote", () => {
   it("wajib login dan hanya menerima nilai -1, 0, 1", async () => {
     expect((await vote(req({ type: "post", id: 1, value: 1 }))).status).toBe(401);
