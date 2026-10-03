@@ -1425,7 +1425,7 @@
     bottom: 0;
     inset-inline: 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     background: var(--s-surface);
     border-top: 1px solid var(--s-line);
     padding: 8px 8px calc(9px + env(safe-area-inset-bottom));
