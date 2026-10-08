@@ -13,13 +13,14 @@
  * Komentar di file ini otomatis dibuang saat build, jadi tidak ikut terkirim ke pengunjung.
  */
 
+/* Font harus @import paling atas: browser mengabaikan @import yang muncul setelah aturan lain */
+/* Font dari Google Fonts: DM Sans (teks utama) dan Instrument Serif (aksen) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
+
 /* Tailwind: kumpulan class siap pakai (dipakai halaman admin) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Font dari Google Fonts: DM Sans (teks utama) dan Instrument Serif (aksen) */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 /* ===== DASAR: variabel warna & font, lalu gaya dasar semua halaman ===== */
 /* --paper = latar, --ink = teks utama, --muted = teks abu, --line = garis, --accent = oranye */
