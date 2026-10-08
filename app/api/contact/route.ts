@@ -1,11 +1,12 @@
 /**
  * app/api/contact/route.ts → POST /api/contact
  * Menerima isi form kontak di beranda dan menyimpannya ke tabel `contacts`.
- * Pesan bisa dibaca di Dashboard admin. Catatan: belum ada notifikasi email.
+ * Pesan bisa dibaca di Dashboard admin, dan admin juga dikirimi notifikasi email (lib/notify-email.ts).
  */
 import { NextResponse } from 'next/server'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { supabaseAdmin, isAdminDbConfigured } from '@/lib/supabase-admin'
+import { sendContactNotification } from '@/lib/notify-email'
 
 // Selalu dijalankan ulang di setiap permintaan (tidak disimpan di cache)
 export const dynamic = 'force-dynamic'
@@ -56,6 +57,13 @@ export async function POST(req: Request) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // Kegagalan email tidak boleh menggagalkan form, karena pesan sudah tersimpan
+    try {
+      await sendContactNotification(data)
+    } catch (e) {
+      console.error('Gagal kirim notifikasi email:', e)
     }
 
     return NextResponse.json({ ok: true, data })
