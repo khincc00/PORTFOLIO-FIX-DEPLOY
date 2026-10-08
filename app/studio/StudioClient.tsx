@@ -6,6 +6,7 @@ import NewsList from "@/app/admin/NewsList";
 import PortfolioManager from "@/app/admin/PortfolioManager";
 import CommentsList from "@/app/admin/CommentsList";
 import InvoiceBuilder from "./InvoiceBuilder";
+import ProductManager from "./ProductManager";
 import CommunityModeration from "@/app/admin/CommunityModeration";
 import { Icon, StudioLogo } from "@/components/StudioIcon";
 import { adminFetch } from "@/lib/admin-fetch";
@@ -24,6 +25,7 @@ type View =
   | "editor"
   | "comments"
   | "invoice"
+  | "toko"
   | "community";
 const nav: { key: View; label: string; icon: string }[] = [
   { key: "home", label: "Ringkasan", icon: "home" },
@@ -31,6 +33,7 @@ const nav: { key: View; label: string; icon: string }[] = [
   { key: "work", label: "Portofolio", icon: "work" },
   { key: "inbox", label: "Inbox", icon: "inbox" },
   { key: "invoice", label: "Invoice", icon: "invoice" },
+  { key: "toko", label: "Toko", icon: "store" },
   { key: "community", label: "Komunitas", icon: "community" },
   { key: "settings", label: "Pengaturan", icon: "settings" },
 ];
@@ -750,6 +753,11 @@ export default function StudioClient({
               {view === "community" && (
                 <div className="s-legacy admin-root">
                   <CommunityModeration />
+                </div>
+              )}
+              {view === "toko" && (
+                <div className="s-legacy admin-root">
+                  <ProductManager />
                 </div>
               )}
               {view === "invoice" && (

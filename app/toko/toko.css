@@ -1,0 +1,143 @@
+/* Halaman toko publik (/toko). Memakai variabel warna dari app/globals.css (--paper, --ink, --muted, --line, --accent). */
+.shop-head {
+  padding-top: 72px;
+  padding-bottom: 36px;
+}
+.shop-head h1 {
+  font-size: clamp(48px, 7vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+  margin: 18px 0 0;
+}
+.shop-head h1 span {
+  color: var(--accent);
+}
+.shop-head p:not(.eyebrow) {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 460px;
+  margin-top: 18px;
+}
+.shop-grid {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0 8vw 96px;
+  max-width: 1500px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 28px 22px;
+}
+.shop-card a {
+  display: block;
+}
+.shop-thumb {
+  aspect-ratio: 1 / 1;
+  background: #e3e2de;
+  overflow: hidden;
+}
+.shop-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.shop-card a:hover .shop-thumb img {
+  transform: scale(1.03);
+}
+.shop-card h2 {
+  font-size: 18px;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  margin: 14px 0 4px;
+}
+.shop-card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.shop-empty {
+  padding: 0 8vw 96px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.shop-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 8vw 110px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 56px;
+  align-items: start;
+}
+.shop-detail-image {
+  aspect-ratio: 1 / 1;
+  background: #e3e2de;
+  overflow: hidden;
+}
+.shop-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.shop-back {
+  font-size: 12px;
+  color: var(--muted);
+}
+.shop-back:hover {
+  color: var(--accent);
+}
+.shop-detail h1 {
+  font-size: clamp(38px, 5vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  margin: 22px 0 0;
+}
+.shop-price {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-style: italic;
+  margin-top: 14px;
+}
+.shop-description {
+  white-space: pre-line;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #575c58;
+  margin-top: 24px;
+}
+.shop-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 34px;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 30px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+.shop-order:hover {
+  background: var(--accent);
+}
+.shop-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .shop-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 28px;
+  }
+}

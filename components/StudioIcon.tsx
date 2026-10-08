@@ -6,6 +6,7 @@ const paths: Record<string, string> = {
   work: "M3 5h7l2 3h9v12H3ZM3 12h18",
   inbox: "M3 5h18v14H3ZM3 6l9 7 9-7",
   invoice: "M6 2h12v20l-3-2-3 2-3-2-3 2ZM9 7h6M9 11h6M9 15h4",
+  store: "M3 9l2-5h14l2 5M3 9h18v3a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0ZM5 12v9h14v-9M10 21v-5h4v5",
   settings:
     "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2",
   arrow: "M5 12h14M13 6l6 6-6 6",
