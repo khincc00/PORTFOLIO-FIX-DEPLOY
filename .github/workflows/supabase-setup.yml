@@ -13,6 +13,10 @@ on:
         description: 'Isi contoh komunitas (5 akun contoh, 10 kiriman, komentar)'
         type: boolean
         default: false
+      seed_store_sample:
+        description: 'Isi 1 contoh produk di /toko (Desain Logo, bisa diubah di Studio)'
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -29,6 +33,7 @@ jobs:
           DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           BASE_SCHEMA: ${{ inputs.base_schema }}
           SEED_DEMO: ${{ inputs.seed_demo }}
+          SEED_STORE: ${{ inputs.seed_store_sample }}
         run: |
           if [ -z "$DB_URL" ]; then
             echo "Secret SUPABASE_DB_URL belum diatur. Lihat README bagian 'Menjalankan SQL otomatis'."
@@ -41,7 +46,9 @@ jobs:
           if [ "$BASE_SCHEMA" = "true" ]; then run_sql supabase/schema.sql; fi
           run_sql supabase/migrations/20261003_studio_sync.sql
           run_sql supabase/migrations/20261004_community.sql
+          run_sql supabase/migrations/20261008_products.sql
           if [ "$SEED_DEMO" = "true" ]; then run_sql supabase/seed/community_demo.sql; fi
+          if [ "$SEED_STORE" = "true" ]; then run_sql supabase/seed/products_sample.sql; fi
           echo "Selesai."
       - name: Periksa tabel komunitas
         env:
