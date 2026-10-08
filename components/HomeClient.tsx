@@ -121,7 +121,7 @@ export default function HomeClient({ items, totals }: { items: PortfolioItem[]; 
           <h1><span className="hero-line-light">{t('hero.line1')}</span><br/><span>{t('hero.line2')}</span></h1>
           <p className="hero-intro">{t('hero.intro')}</p>
           <div className="hero-stats"><span>{t('hero.stat1')}</span><span>{t('hero.stat2')}</span><span>{t('hero.stat3')}</span></div>
-          <div className="hero-actions"><a className="button button-dark" href="#campaign">{t('hero.cta')}</a><a className="text-link" href={cvUrl} download>{t('hero.cv')} ↓</a><a className="text-link" href="/toko">{t('hero.shop')} <span>→</span></a></div>
+          <div className="hero-actions"><a className="button button-dark" href="#campaign">{t('hero.cta')}</a><a className="text-link" href={cvUrl} download>{t('hero.cv')} ↓</a><Link className="text-link" href="/toko">{t('hero.shop')} <span>→</span></Link></div>
         </div>
       </section>
 
