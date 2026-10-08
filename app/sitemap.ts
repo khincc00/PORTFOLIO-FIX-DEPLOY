@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: siteConfig.url, lastModified: latest, changeFrequency: 'weekly', priority: 1 },
     { url: `${siteConfig.url}/work`, lastModified: latest, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${siteConfig.url}/berita`, lastModified: latest, changeFrequency: 'daily', priority: 0.8 },
+    { url: `${siteConfig.url}/komunitas`, lastModified: latest, changeFrequency: 'daily', priority: 0.6 },
     // Satu entri untuk setiap berita yang sudah terbit
     ...news.map((post) => ({
       url: `${siteConfig.url}/berita/${post.slug}`,

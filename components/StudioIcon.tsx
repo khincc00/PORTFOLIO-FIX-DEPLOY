@@ -17,6 +17,8 @@ const paths: Record<string, string> = {
   moon: "M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z",
   sun: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 1v3M12 20v3M1 12h3M20 12h3M4 4l2 2M18 18l2 2M4 20l2-2M18 6l2-2",
   chat: "M3 3h18v14H8l-5 4Z",
+  community:
+    "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",
   logout: "M9 3H3v18h6M9 12h12M16 7l5 5-5 5",
   search: "M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM15 15l6 6",
   close: "m6 6 12 12M6 18 18 6",

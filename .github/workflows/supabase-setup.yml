@@ -1,0 +1,51 @@
+name: Supabase setup (jalankan SQL)
+# Menjalankan file SQL di folder supabase/ ke database Supabase, hanya saat dipicu manual:
+# GitHub → tab Actions → "Supabase setup" → Run workflow.
+# Butuh secret repository SUPABASE_DB_URL (connection string Postgres). Nilainya tidak pernah dicetak.
+on:
+  workflow_dispatch:
+    inputs:
+      base_schema:
+        description: 'Jalankan juga supabase/schema.sql (struktur dasar; aman diulang)'
+        type: boolean
+        default: false
+      seed_demo:
+        description: 'Isi contoh komunitas (5 akun contoh, 10 kiriman, komentar)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: supabase-setup
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Jalankan SQL
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BASE_SCHEMA: ${{ inputs.base_schema }}
+          SEED_DEMO: ${{ inputs.seed_demo }}
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "Secret SUPABASE_DB_URL belum diatur. Lihat README bagian 'Menjalankan SQL otomatis'."
+            exit 1
+          fi
+          run_sql() {
+            echo "→ $1"
+            psql "$DB_URL" --set ON_ERROR_STOP=1 --single-transaction --quiet --file "$1"
+          }
+          if [ "$BASE_SCHEMA" = "true" ]; then run_sql supabase/schema.sql; fi
+          run_sql supabase/migrations/20261003_studio_sync.sql
+          run_sql supabase/migrations/20261004_community.sql
+          if [ "$SEED_DEMO" = "true" ]; then run_sql supabase/seed/community_demo.sql; fi
+          echo "Selesai."
+      - name: Periksa tabel komunitas
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          psql "$DB_URL" --tuples-only --no-align --command \
+            "select 'posts=' || (select count(*) from public.community_posts) || ' comments=' || (select count(*) from public.community_comments) || ' users=' || (select count(*) from public.site_users)"

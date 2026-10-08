@@ -6,6 +6,7 @@ import NewsList from "@/app/admin/NewsList";
 import PortfolioManager from "@/app/admin/PortfolioManager";
 import CommentsList from "@/app/admin/CommentsList";
 import InvoiceBuilder from "./InvoiceBuilder";
+import CommunityModeration from "@/app/admin/CommunityModeration";
 import { Icon, StudioLogo } from "@/components/StudioIcon";
 import { adminFetch } from "@/lib/admin-fetch";
 import type { NewsPost } from "@/lib/news";
@@ -22,13 +23,15 @@ type View =
   | "settings"
   | "editor"
   | "comments"
-  | "invoice";
+  | "invoice"
+  | "community";
 const nav: { key: View; label: string; icon: string }[] = [
   { key: "home", label: "Ringkasan", icon: "home" },
   { key: "news", label: "Berita", icon: "news" },
   { key: "work", label: "Portofolio", icon: "work" },
   { key: "inbox", label: "Inbox", icon: "inbox" },
   { key: "invoice", label: "Invoice", icon: "invoice" },
+  { key: "community", label: "Komunitas", icon: "community" },
   { key: "settings", label: "Pengaturan", icon: "settings" },
 ];
 const initialSync: SyncState = {
@@ -742,6 +745,11 @@ export default function StudioClient({
               {view === "comments" && (
                 <div className="s-legacy admin-root">
                   <CommentsList />
+                </div>
+              )}
+              {view === "community" && (
+                <div className="s-legacy admin-root">
+                  <CommunityModeration />
                 </div>
               )}
               {view === "invoice" && (

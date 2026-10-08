@@ -7,6 +7,7 @@ Website portfolio modern untuk multimedia creator, remote designer, dan video ed
 - **Client Inquiry Form**: Formulir kontak interaktif terintegrasi langsung dengan database Supabase (`contacts`).
 - **Admin Dashboard**: Halaman manajemen di `/admin` (alias `/admin.php`) untuk memonitor portfolio dan pesan kontak yang masuk.
 - **Berita / Kabar Terbaru**: Tulis, jadwalkan, dan terbitkan berita ala WordPress dari `/admin` (editor visual, gambar unggulan, kategori, tag, draft). Tampil di `/berita` dan di beranda.
+- **Komunitas (`/komunitas`)**: ruang berbagi ala Reddit. Anggota yang login bisa membuat kiriman (teks + sampai 4 gambar), berkomentar bersarang, vote ▲▼, dan melaporkan. Admin memoderasi di menu **Komunitas**. Jalankan `supabase/migrations/20261004_community.sql` sekali di Supabase SQL Editor; isi contoh opsional di `supabase/seed/community_demo.sql`.
 - **Graceful Local Fallback**: Tetap berjalan mulus dengan data seed lokal jika koneksi Supabase belum dikonfigurasi.
 
 ## 🛠️ Stack Teknologi
@@ -27,6 +28,14 @@ Website portfolio modern untuk multimedia creator, remote designer, dan video ed
      - `SUPABASE_SERVICE_ROLE_KEY` (rahasia — dari Supabase > Project Settings > API)
      - `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`
 3. Deploy akan berjalan otomatis setiap push ke branch `main`.
+
+## 🗄️ Menjalankan SQL otomatis (opsional)
+Daripada menempel SQL satu per satu di Supabase, jalankan lewat GitHub Actions:
+1. Supabase → **Project Settings → Database → Connection string** → pilih **Session pooler** (GitHub tidak mendukung koneksi langsung IPv6) → salin URI dan ganti `[YOUR-PASSWORD]` dengan password database.
+2. GitHub repo → **Settings → Secrets and variables → Actions → New repository secret** → nama `SUPABASE_DB_URL`, isi URI tadi.
+3. Tab **Actions → Supabase setup → Run workflow**. Centang *seed_demo* kalau ingin isi contoh komunitas.
+
+Workflow hanya jalan saat dipicu manual, memakai file di `supabase/`, dan tidak pernah mencetak connection string.
 
 ## 🗺️ Peta Struktur Kode (untuk belajar)
 Setiap file kode diawali komentar berbahasa Indonesia yang menjelaskan fungsinya. Komentar ini hanya ada di kode dan otomatis dibuang saat build, jadi tidak terlihat di website.
