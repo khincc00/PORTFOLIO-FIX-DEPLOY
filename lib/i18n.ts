@@ -56,6 +56,8 @@ const en = {
   'hero.cta': 'View selected work ↗',
   'hero.talk': 'Start a conversation',
   'hero.cv': 'Download CV',
+  'hero.shop': 'Shop',
+  'nav.shop': 'Shop',
 
   // Berita: sorotan di beranda & halaman /berita
   'news.live': 'Latest from the Journal',
@@ -290,6 +292,8 @@ const id: Record<DictKey, string> = {
   'hero.cta': 'Lihat karya pilihan ↗',
   'hero.talk': 'Mulai obrolan',
   'hero.cv': 'Unduh CV',
+  'hero.shop': 'Toko',
+  'nav.shop': 'Toko',
 
   'news.live': 'Terbaru dari Jurnal',
   'news.viewAll': 'Buka jurnal ↗',
