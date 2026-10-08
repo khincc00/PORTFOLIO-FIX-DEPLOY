@@ -5,11 +5,13 @@ import NewsEditor from "@/app/admin/NewsEditor";
 import NewsList from "@/app/admin/NewsList";
 import PortfolioManager from "@/app/admin/PortfolioManager";
 import CommentsList from "@/app/admin/CommentsList";
+import InvoiceBuilder from "./InvoiceBuilder";
 import { Icon, StudioLogo } from "@/components/StudioIcon";
 import { adminFetch } from "@/lib/admin-fetch";
 import type { NewsPost } from "@/lib/news";
 import { coverOf, type PortfolioItem } from "@/lib/portfolio-items";
 import type { Contact, SyncState } from "@/lib/studio-types";
+import { createInvoice, type Invoice } from "@/lib/invoice";
 import "./studio.css";
 
 type View =
@@ -19,12 +21,14 @@ type View =
   | "inbox"
   | "settings"
   | "editor"
-  | "comments";
+  | "comments"
+  | "invoice";
 const nav: { key: View; label: string; icon: string }[] = [
   { key: "home", label: "Ringkasan", icon: "home" },
   { key: "news", label: "Berita", icon: "news" },
   { key: "work", label: "Portofolio", icon: "work" },
   { key: "inbox", label: "Inbox", icon: "inbox" },
+  { key: "invoice", label: "Invoice", icon: "invoice" },
   { key: "settings", label: "Pengaturan", icon: "settings" },
 ];
 const initialSync: SyncState = {
@@ -60,6 +64,8 @@ export default function StudioClient({
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState("");
   const [dbReady, setDbReady] = useState(false);
+  // Disimpan di level ini agar draft invoice tidak hilang saat berpindah menu
+  const [invoice, setInvoice] = useState<Invoice>(createInvoice);
 
   const refreshSync = useCallback(async () => {
     try {
@@ -647,6 +653,16 @@ export default function StudioClient({
                         </span>
                         <Icon name="plus" size={18} />
                       </button>
+                      <button onClick={() => navigate("invoice")}>
+                        <span className="s-icon-box">
+                          <Icon name="invoice" />
+                        </span>
+                        <span>
+                          <strong>Buat invoice</strong>
+                          <small>Isi detail dan unduh PDF.</small>
+                        </span>
+                        <Icon name="plus" size={18} />
+                      </button>
                       <button onClick={() => navigate("comments")}>
                         <span className="s-icon-box">
                           <Icon name="chat" />
@@ -727,6 +743,9 @@ export default function StudioClient({
                 <div className="s-legacy admin-root">
                   <CommentsList />
                 </div>
+              )}
+              {view === "invoice" && (
+                <InvoiceBuilder invoice={invoice} setInvoice={setInvoice} />
               )}
               {view === "inbox" && (
                 <>
