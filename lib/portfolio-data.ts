@@ -143,26 +143,26 @@ export const webProjects = [
 // Lokasi file CV (ada di folder public/cv), dipakai tombol "Download CV"
 export const cvUrl = "/cv/Taufiq-Sholikhin-CV.pdf"
 
-// Riwayat kerja untuk bagian Experience, diambil dari CV (Taufiq_Sholikhin_CV_Designer_FrontEnd.pdf)
+// Riwayat kerja untuk bagian Experience, disamakan dengan CV terbaru (CV_Taufiq_Sholikhin.pdf)
 export const experience = [
   {
-    period:{ en:"Aug 2021 – Aug 2026", id:"Agu 2021 – Agu 2026" },
-    role:{ en:"Graphic Designer & Video Creator", id:"Desainer Grafis & Video Creator" },
-    org:{ en:"Pangkalan TNI AL Sangatta (Indonesian Navy Base) · Sangatta", id:"Pangkalan TNI AL Sangatta · Sangatta" },
+    period:{ en:"Sep 2021 – Jul 2026", id:"Sep 2021 – Jul 2026" },
+    role:{ en:"Social Media Manager & Content Designer", id:"Social Media Manager & Content Designer" },
+    org:{ en:"Pangkalan TNI AL Sangatta (Lanal Sangatta) · Sangatta", id:"Pangkalan TNI AL Sangatta (Lanal Sangatta) · Sangatta" },
     points:[
-      { en:"Produced 50+ graphic and video assets for official communications and events of the naval base command.", id:"Memproduksi 50+ aset grafis dan video untuk komunikasi resmi dan acara komando pangkalan." },
-      { en:"Designed public-information poster campaigns on online loan scams, social media fraud, and responsible conduct — built to be understood at a glance on mobile.", id:"Mendesain kampanye poster informasi publik tentang penipuan pinjol, penipuan media sosial, dan perilaku bertanggung jawab — dibuat agar langsung dipahami di layar HP." },
-      { en:"Owned the full pipeline, from concept and shooting to design, editing, and delivery.", id:"Menangani seluruh alur kerja, dari konsep dan pengambilan gambar hingga desain, editing, dan pengiriman." },
+      { en:"Produced nearly all Instagram feed content for @lanal_sangatta, covering photo and video editing, copywriting, and layout design.", id:"Membuat hampir seluruh konten feed Instagram @lanal_sangatta, mencakup editing foto dan video, penulisan caption, dan desain tata letak." },
+      { en:"Grew the account to roughly 2,500 followers over five years, with average per-video engagement in the thousands.", id:"Mengembangkan akun hingga sekitar 2.500 pengikut selama lima tahun, dengan rata-rata engagement per video di angka ribuan." },
+      { en:"Adapted centralized campaign materials from higher command into Instagram-ready formats and layouts.", id:"Menyesuaikan materi kampanye pusat dari komando atas menjadi format dan tata letak yang siap untuk Instagram." },
     ],
   },
   {
     period:{ en:"2019 – Present", id:"2019 – Sekarang" },
-    role:{ en:"Freelance Graphic Designer, Video Editor & Web Designer", id:"Freelance Desainer Grafis, Video Editor & Web Designer" },
-    org:{ en:"KHINCC Studio · Remote", id:"KHINCC Studio · Remote" },
+    role:{ en:"Freelance Graphic Designer & Video Editor", id:"Freelance Graphic Designer & Video Editor" },
+    org:{ en:"Self-employed · Remote", id:"Wiraswasta · Remote" },
     points:[
-      { en:"Logos, posters, and marketing materials for small businesses, including the Fluent English poster series and an A3 infographic and A5 flyer for Down Under Brew.", id:"Logo, poster, dan materi pemasaran untuk usaha kecil, termasuk seri poster Fluent English serta infografis A3 dan flyer A5 untuk Down Under Brew." },
-      { en:"Designed and built Meridian Residences, a multilingual property website template with booking and live chat.", id:"Mendesain dan membangun Meridian Residences, template website properti multibahasa dengan booking dan live chat." },
-      { en:"Edited 14+ short-form product videos for Fantech, Secondwave, KZ, and Photoolex, plus documentaries and event films for PT KPC and SMK Negeri 2 Sangatta.", id:"Mengedit 14+ video produk format pendek untuk Fantech, Secondwave, KZ, dan Photoolex, serta dokumenter dan film acara untuk PT KPC dan SMK Negeri 2 Sangatta." },
+      { en:"Maintained a steady freelance workload, averaging at least 2 projects per month since 2019: branding, video editing, and digital design for independent clients.", id:"Menjaga beban kerja freelance yang stabil, rata-rata minimal 2 proyek per bulan sejak 2019: branding, editing video, dan desain digital untuk klien independen." },
+      { en:"Designed and delivered the SwiftLink Web Template, a multi-page property website with booking and live chat, for a client.", id:"Mendesain dan menyerahkan SwiftLink Web Template, website properti multi-halaman dengan booking dan live chat, untuk klien." },
+      { en:"Produced branded marketing materials (A3 infographic and A5 flyer) for an Australian coffee shop client, using custom SVG illustration.", id:"Membuat materi pemasaran brand (infografis A3 dan flyer A5) untuk klien kedai kopi Australia, dengan ilustrasi SVG kustom." },
     ],
   },
   {
@@ -170,13 +170,7 @@ export const experience = [
     role:{ en:"Book Cover Designer", id:"Desainer Sampul Buku" },
     org:{ en:"Prabu21 Book Publisher · Malang", id:"Penerbit Prabu21 · Malang" },
     points:[
-      { en:"Designed cover artwork for published titles, working directly with authors and editors on concepts and revisions.", id:"Mendesain sampul untuk buku terbitan, bekerja langsung dengan penulis dan editor dari konsep hingga revisi." },
+      { en:"Designed book covers for publisher releases.", id:"Mendesain sampul buku untuk terbitan penerbit." },
     ],
-  },
-  {
-    period:{ en:"2020", id:"2020" },
-    role:{ en:"Speaker — “Designing for the Future”", id:"Pembicara — “Designing for the Future”" },
-    org:{ en:"PMII Student Association · Unitri Malang", id:"PMII · Unitri Malang" },
-    points:[],
   },
 ]
