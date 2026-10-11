@@ -1426,7 +1426,10 @@
     inset-inline: 0;
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
+    /* Menu sudah ada 9; di layar sempit bisa digeser ke samping supaya tiap label tetap terbaca */
+    grid-auto-columns: minmax(64px, 1fr);
+    overflow-x: auto;
+    scrollbar-width: none;
     background: var(--s-surface);
     border-top: 1px solid var(--s-line);
     padding: 8px 8px calc(9px + env(safe-area-inset-bottom));
@@ -1437,6 +1440,7 @@
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    white-space: nowrap;
     background: none;
     border: 0;
     color: var(--s-muted);

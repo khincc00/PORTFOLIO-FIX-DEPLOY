@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import NewsEditor from "@/app/admin/NewsEditor";
 import NewsList from "@/app/admin/NewsList";
 import PortfolioManager from "@/app/admin/PortfolioManager";
+import GameManager from "@/app/admin/GameManager";
 import CommentsList from "@/app/admin/CommentsList";
 import InvoiceBuilder from "./InvoiceBuilder";
 import ProductManager from "./ProductManager";
@@ -20,6 +21,7 @@ type View =
   | "home"
   | "news"
   | "work"
+  | "games"
   | "inbox"
   | "settings"
   | "editor"
@@ -31,6 +33,7 @@ const nav: { key: View; label: string; icon: string }[] = [
   { key: "home", label: "Ringkasan", icon: "home" },
   { key: "news", label: "Berita", icon: "news" },
   { key: "work", label: "Portofolio", icon: "work" },
+  { key: "games", label: "Games", icon: "game" },
   { key: "inbox", label: "Inbox", icon: "inbox" },
   { key: "invoice", label: "Invoice", icon: "invoice" },
   { key: "toko", label: "Toko", icon: "store" },
@@ -743,6 +746,11 @@ export default function StudioClient({
               {view === "work" && (
                 <div className="s-legacy admin-root">
                   <PortfolioManager />
+                </div>
+              )}
+              {view === "games" && (
+                <div className="s-legacy admin-root">
+                  <GameManager />
                 </div>
               )}
               {view === "comments" && (

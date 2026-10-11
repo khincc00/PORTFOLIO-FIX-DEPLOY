@@ -3,13 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import { Icon, StudioLogo } from "@/components/StudioIcon";
 import { coverOf, type PortfolioItem } from "@/lib/portfolio-items";
 import type { NewsSummary } from "@/lib/news";
+import type { PublicGame } from "@/lib/games";
 import "@/app/studio/studio.css";
 import "./pocket.css";
 
 export default function PublicApp({ preview = false }: { preview?: boolean }) {
-  const [tab, setTab] = useState<"all" | "news" | "work">("all");
+  const [tab, setTab] = useState<"all" | "news" | "work" | "games">("all");
   const [news, setNews] = useState<NewsSummary[]>([]);
   const [works, setWorks] = useState<PortfolioItem[]>([]);
+  const [games, setGames] = useState<PublicGame[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [dark, setDark] = useState(false);
@@ -23,6 +25,7 @@ export default function PublicApp({ preview = false }: { preview?: boolean }) {
       const d = await r.json();
       setNews(d.news);
       setWorks(d.portfolio);
+      setGames(d.games ?? []);
     } catch {
       setError(
         "Belum dapat memuat pembaruan. Periksa internet lalu coba lagi.",
@@ -109,6 +112,7 @@ export default function PublicApp({ preview = false }: { preview?: boolean }) {
               ["all", "Semua"],
               ["news", "Berita"],
               ["work", "Portofolio"],
+              ["games", "Games"],
             ] as const
           ).map(([key, label]) => (
             <button
@@ -127,7 +131,7 @@ export default function PublicApp({ preview = false }: { preview?: boolean }) {
             <button onClick={refresh}>Coba lagi</button>
           </div>
         )}
-        {tab !== "work" && (
+        {tab !== "work" && tab !== "games" && (
           <section className="p-section">
             <div className="s-panel-heading">
               <h2>Cerita terbaru</h2>
@@ -168,7 +172,7 @@ export default function PublicApp({ preview = false }: { preview?: boolean }) {
             )}
           </section>
         )}
-        {tab !== "news" && (
+        {tab !== "news" && tab !== "games" && (
           <section className="p-section">
             <div className="s-panel-heading">
               <h2>Dari meja kreatif</h2>
@@ -208,6 +212,41 @@ export default function PublicApp({ preview = false }: { preview?: boolean }) {
                 </a>
               ))}
             </div>
+          </section>
+        )}
+        {(tab === "all" || tab === "games") && (
+          <section className="p-section">
+            <div className="s-panel-heading">
+              <h2>Main di browser</h2>
+              <span className="s-pill">{games.length} game</span>
+            </div>
+            <div className="p-works">
+              {games.map((g) => (
+                <a
+                  key={g.id}
+                  href={`${preview ? "https://khincreator.com" : ""}/games?game=${encodeURIComponent(g.id)}`}
+                  className="s-work-card"
+                >
+                  {g.image ? (
+                    <img src={g.image} alt={g.alt} loading="lazy" />
+                  ) : (
+                    <div className="p-no-image">
+                      <Icon name="game" size={32} />
+                    </div>
+                  )}
+                  <div>
+                    <span>{g.stack || "Game"}</span>
+                    <strong>{g.title}</strong>
+                    <Icon name="external" size={17} />
+                  </div>
+                </a>
+              ))}
+            </div>
+            {!games.length && (
+              <div className="s-empty">
+                {loading ? "Memuat game…" : "Game baru akan hadir di sini."}
+              </div>
+            )}
           </section>
         )}
         <section className="p-contact">

@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { getPublishedNews } from "@/lib/news-public";
 import { getPublishedPortfolio } from "@/lib/portfolio-server";
+import { getPublishedGames } from "@/lib/games-server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const [news, portfolio] = await Promise.all([
+    const [news, portfolio, games] = await Promise.all([
       getPublishedNews(30),
       getPublishedPortfolio(),
+      getPublishedGames(),
     ]);
     return NextResponse.json(
-      { news, portfolio },
+      { news, portfolio, games },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {
