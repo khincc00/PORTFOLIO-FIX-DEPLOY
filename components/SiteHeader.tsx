@@ -15,6 +15,7 @@ const links: { key: DictKey; href: string }[] = [
   { key: 'nav.campaign', href: '/work#design' },
   { key: 'nav.works', href: '/work#video' },
   { key: 'nav.web', href: '/work#web' },
+  { key: 'nav.games', href: '/games' },
   { key: 'nav.news', href: '/berita' },
   { key: 'nav.community', href: '/komunitas' },
   { key: 'nav.shop', href: '/toko' },

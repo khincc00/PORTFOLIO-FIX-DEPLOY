@@ -17,6 +17,10 @@ module.exports = {
   // sanitize-html memakai htmlparser2 v12 yang formatnya ESM saja. Kalau dimuat langsung oleh Node di server,
   // hasilnya error 500 di Node < 22.12 (dulu terjadi di Vercel). Karena itu paket ini SENGAJA ikut digabung
   // (di-bundle) ke hasil build, bukan dimuat terpisah, sehingga tidak bergantung pada versi Node.
+  // Halaman /games adalah HTML statis (public/games/index.html). Alamat /games ditampilkan dari file itu
+  async rewrites() {
+    return [{ source: '/games', destination: '/games/index.html' }]
+  },
   // Pengalihan alamat otomatis
   async redirects() {
     return [
