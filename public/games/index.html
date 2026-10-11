@@ -38,26 +38,14 @@ button{font:inherit}
 .wordmark span{color:var(--muted);font-weight:500}
 .nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;color:var(--muted)}
 .nav a{transition:color .2s ease;padding:4px 0}
+.nav a:hover,.nav a[aria-current="page"]{color:var(--ink)}
+.nav a[aria-current="page"]{font-weight:600;border-bottom:2px solid var(--accent)}
 .nav a:hover{color:var(--accent)}
-.nav a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom:2px solid var(--accent)}
 
 /* Judul halaman */
 .page-head{padding:clamp(56px,8vw,104px) 0 clamp(32px,4vw,48px)}
 .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:600;margin:0}
 h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-weight:500;margin:14px 0 0}
-.lead{max-width:640px;color:var(--muted);margin:18px 0 0}
-
-/* Pencarian dan filter */
-.tools{display:grid;gap:14px;margin-top:28px}
-.find{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:0 18px;min-height:48px}
-.find input{flex:1;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:15px}
-.filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
-.group{display:flex;flex-wrap:wrap;gap:6px}
-.pill{min-height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;font-weight:500;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
-.pill:hover{border-color:var(--ink)}
-.pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.pill em{font-style:normal;opacity:.65;margin-left:4px}
-.count{font-size:13px;color:var(--muted);margin:0}
 
 /* Pemutar game */
 .player{display:none;padding-bottom:56px;scroll-margin-top:84px}
@@ -77,7 +65,7 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 
 /* Daftar game */
 .games{padding-bottom:120px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px;margin-top:36px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
 .card{min-width:0}
 .cover{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--line);border:1px solid var(--line)}
 .cover img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s ease}
@@ -85,10 +73,8 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 .copy{padding-top:18px}
 .copy h3{font-size:24px;letter-spacing:-.03em;font-weight:500;margin:10px 0 8px}
 .copy p{font-size:14px;line-height:1.7;color:var(--muted);margin:0;max-width:520px}
-.tags{font-size:12px;color:var(--muted);margin-top:8px}
 .card-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:16px}
 .card-actions .btn{min-height:40px;padding:0 18px}
-.empty{color:var(--muted);padding:40px 0;margin:0}
 
 /* Kaki halaman */
 .foot{border-top:1px solid var(--line);padding:22px 0;font-size:12px;color:var(--muted)}
@@ -125,32 +111,6 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
   <section class="wrap page-head">
     <p class="eyebrow">Browser games</p>
     <h1>Play in your browser.</h1>
-    <p class="lead">Game PC dan konsol yang di-port ke browser. Tidak perlu unduh, tidak perlu instal: pilih game lalu tekan Play.</p>
-
-    <div class="tools">
-      <label class="find">
-        <span class="sr">Search games</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-        <input id="q" type="search" placeholder="Search games: GTA, Halo, Minecraft..." autocomplete="off">
-      </label>
-      <div class="filters">
-        <div class="group" role="group" aria-label="Device" id="dev-filter">
-          <button class="pill" data-dev="all" aria-pressed="true">All <em id="n-dev-all"></em></button>
-          <button class="pill" data-dev="computer" aria-pressed="false">Computer <em id="n-dev-computer"></em></button>
-          <button class="pill" data-dev="phone" aria-pressed="false">Phone <em id="n-dev-phone"></em></button>
-        </div>
-        <div class="group" role="group" aria-label="Category" id="cat-filter">
-          <button class="pill" data-cat="all" aria-pressed="true">All games</button>
-          <button class="pill" data-cat="mp" aria-pressed="false">Multiplayer <em id="n-cat-mp"></em></button>
-        </div>
-        <div class="group" role="group" aria-label="Sort" id="sort">
-          <button class="pill" data-sort="played" aria-pressed="true">Most played</button>
-          <button class="pill" data-sort="new" aria-pressed="false">Newest</button>
-          <button class="pill" data-sort="az" aria-pressed="false">A–Z</button>
-        </div>
-      </div>
-      <p class="count" id="count"></p>
-    </div>
   </section>
 
   <section class="wrap" aria-label="Game player">
@@ -174,7 +134,6 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 
   <section class="wrap games" aria-label="Games">
     <div class="grid" id="grid"></div>
-    <p class="empty" id="empty" hidden>No games match your search.</p>
   </section>
 </main>
 
@@ -186,13 +145,8 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 </footer>
 
 <script>
-/*
-  DATA GAME
-  Field utama: id, title, desc, image, stack (teks kecil di atas judul), play (alamat pemutar),
-  official (situs resmi), officialLabel.
-  Katalog di bawah memakai alamat sementara (GANTI-*). Ganti dengan URL aslinya.
-  Field tambahan untuk katalog: plays, mode ("here" | "tab" | "sites"), sites, flags, dev, tags.
-*/
+// Daftar game buatan sendiri. play = alamat yang dibuka di pemutar (harus mengizinkan embed).
+// official = situs resmi pembuat. Untuk game baru, tambahkan satu objek di sini.
 var games = [
   {
     id: 'codequest',
@@ -203,171 +157,66 @@ var games = [
     desc: 'A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built, with no quizzes.',
     play: 'https://main.codequest.gamer.free/',
     officialLabel: 'itch.io',
-    official: 'https://khincc.itch.io/codequest-small-studio',
-    dev: 'computer', tags: [], flags: ['new']
-  },
-  { id: 'binding-of-isaac', title: 'The Binding of Isaac: Repentance+', desc: 'Isaac and the full Repentance+ run in a browser tab, on PC or phone.', image: '/assets/games/binding-of-isaac.jpg', plays: '2.1k', mode: 'here', tags: ['Roguelite'], flags: ['new', 'nolo'], dev: 'phone' },
-  { id: 'fortnite-og', title: 'Fortnite OG', desc: 'The 2017 Fortnite map in a browser tab, rebuilt by a fan. Public test.', image: '/assets/games/fortnite-og.jpg', plays: '12k', mode: 'tab', tags: ['Battle royale'], flags: ['new', 'nolo'], dev: 'computer' },
-  { id: 'gta-v', title: 'GTA V', desc: 'The browser port of Grand Theft Auto V that went viral, kept alive through the Internet Archive.', image: '/assets/games/gta-v.jpg', plays: '84k', mode: 'sites', sites: 5, tags: ['Open world'], flags: ['upd', 'nolo'], dev: 'computer' },
-  { id: 'black-ops-2', title: 'Black Ops II (Vibe Slops II)', desc: 'A browser reconstruction of Black Ops II, made with AI.', image: '/assets/games/black-ops-2.jpg', plays: '14k', mode: 'here', tags: ['FPS'], flags: [], dev: 'computer' },
-  { id: 'skate-3', title: 'skate. 3', desc: 'A skate. 3 fan remake that runs in the browser on any device, with multiplayer.', image: '/assets/games/skate-3.jpg', plays: '13k', mode: 'here', tags: ['Skateboarding', 'Multiplayer'], flags: [], dev: 'phone' },
-  { id: 'bo1-zombies', title: 'Black Ops Zombies', desc: 'All ten Black Ops 1 zombies maps in your browser, from Kino der Toten to Moon.', image: '/assets/games/bo1-zombies.jpg', plays: '12k', mode: 'tab', tags: ['Zombies', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'modern-warfare-2', title: 'Modern Warfare 2', desc: 'Modern Warfare 2 rebuilt for the browser.', image: '/assets/games/modern-warfare-2.jpg', plays: '12k', mode: 'tab', tags: ['FPS', 'Multiplayer'], flags: [], dev: 'computer' },
-  { id: 'gta-vice-city', title: 'GTA Vice City', desc: 'The full 2002 Vice City running in your browser: Tommy Vercetti, 1986 Miami and the radio.', image: '/assets/games/gta-vice-city.jpg', plays: '8.7k', mode: 'sites', sites: 2, tags: ['Open world', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'counter-strike', title: 'Counter-Strike 1.6', desc: 'Live CS 1.6 servers in your browser: Dust2, Inferno, Office, surf and zombie mod.', image: '/assets/games/counter-strike.jpg', plays: '6.1k', mode: 'sites', sites: 3, tags: ['Multiplayer', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'gta-3', title: 'GTA III', desc: 'The original 3D Liberty City from 2001, running in your browser.', image: '/assets/games/gta-3.jpg', plays: '4.7k', mode: 'sites', sites: 3, tags: ['Open world', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'minecraft', title: 'Minecraft 1.8.8', desc: 'Minecraft Java 1.8.8 in your browser (EaglercraftX), with worlds saved on your device.', image: '/assets/games/minecraft.jpg', plays: '3.3k', mode: 'tab', tags: ['Sandbox', 'Survival'], flags: [], dev: 'computer' },
-  { id: 'cuphead', title: 'Cuphead', desc: 'The 1930s-cartoon run and gun, ported to the browser.', image: '/assets/games/cuphead.jpg', plays: '2.7k', mode: 'here', tags: ['Run and gun', 'Bosses'], flags: [], dev: 'computer' },
-  { id: 'cheese-cube', title: 'Cheese Cube (Zombies)', desc: 'The cult Black Ops 3 custom zombies map Cheese Cube, playable in a browser tab.', image: '/assets/games/cheese-cube.jpg', plays: '2.6k', mode: 'here', tags: ['Zombies', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'kino-der-toten', title: 'Kino der Toten', desc: 'The Kino der Toten theater map from Black Ops zombies, solo or with friends.', image: '/assets/games/kino-der-toten.jpg', plays: '2.6k', mode: 'here', tags: ['Zombies', 'FPS', 'Multiplayer'], flags: [], dev: 'computer' },
-  { id: 'pokemon-redstone', title: 'Pokémon Redstone', desc: "Play Pokémon as Minecraft's Steve: mine, craft, go to the Nether and catch the Ender Dragon.", image: '/assets/games/pokemon-redstone.webp', plays: '2.5k', mode: 'here', tags: ['Mashup', 'Saves'], flags: [], dev: 'computer' },
-  { id: 'clustertruck', title: 'Clustertruck', desc: 'Jump across a stampede of trucks. The floor is lava.', image: '/assets/games/clustertruck.jpg', plays: '2.4k', mode: 'here', tags: ['Platformer', 'Physics'], flags: [], dev: 'computer' },
-  { id: 'super-mario-zombies', title: 'Super Mario Zombies', desc: 'Every Black Ops 1 zombies map in your browser, with the zombies swapped for 20+ Mario characters.', image: '/assets/games/super-mario-zombies.jpg', plays: '2.2k', mode: 'here', tags: ['Zombies', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'simpsons-hit-and-run', title: 'The Simpsons: Hit & Run', desc: 'Drive around Springfield across all seven levels, right in your browser.', image: '/assets/games/simpsons-hit-and-run.jpg', plays: '2.1k', mode: 'tab', tags: ['Open world', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'pes-6', title: 'PES 6', desc: 'Pro Evolution Soccer 6 recompiled for the browser, with online matches.', image: '/assets/games/pes-6.jpg', plays: '2k', mode: 'here', tags: ['Football', 'Online'], flags: [], dev: 'computer' },
-  { id: 'halo-ce', title: 'Halo: Combat Evolved', desc: 'Halo: Combat Evolved online in your browser: the original multiplayer maps, up to 16 players.', image: '/assets/games/halo-ce.jpg', plays: '2k', mode: 'sites', sites: 2, tags: ['FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'peak', title: 'PEAK', desc: 'The climbing game where one slip ends the run, in your browser.', image: '/assets/games/peak.jpg', plays: '2k', mode: 'here', tags: ['Climbing', 'Co-op'], flags: [], dev: 'computer' },
-  { id: 'taipei-rush', title: 'Taipei Rush', desc: 'An open-world Taipei: ride scooters, drive cars, take missions and outrun the police.', image: '/assets/games/taipei-rush.jpg', plays: '1.8k', mode: 'here', tags: ['Open world'], flags: [], dev: 'computer' },
-  { id: 'halo-ce-mobile', title: 'Halo CE Mobile', desc: 'Halo: Combat Evolved on any phone or PC, with matchmaking, custom games and online co-op.', image: '/assets/games/halo-ce-mobile.jpg', plays: '1.8k', mode: 'tab', tags: ['FPS', 'Multiplayer', 'Phone + PC'], flags: [], dev: 'phone' },
-  { id: 'how-to-fish', title: 'How to Fish', desc: 'A physics fishing game on a tiny island you crashed into.', image: '/assets/games/how-to-fish.jpg', plays: '1.7k', mode: 'here', tags: ['Fishing', 'Physics'], flags: [], dev: 'computer' },
-  { id: 'flash-games', title: 'Flash Games (878)', desc: '878 classic Flash games on the Ruffle emulator: Happy Wheels, Bloons TD 4, Age of War and more.', image: '/assets/games/flash-games.jpg', plays: '1.3k', mode: 'tab', tags: ['Collection', 'Flash'], flags: [], dev: 'computer' },
-  { id: 'tweetcraft', title: 'Tweetcraft', desc: 'Minecraft-style block building that runs inside a tweet, with working multiplayer.', image: '/assets/games/tweetcraft.jpg', plays: '1.3k', mode: 'tab', tags: ['Multiplayer', 'Sandbox'], flags: [], dev: 'computer' },
-  { id: 'nacht-der-untoten', title: 'Nacht der Untoten', desc: 'The original World at War zombies map, remade for the browser. Solo or 2 to 4 player co-op.', image: '/assets/games/nacht-der-untoten.jpg', plays: '1.2k', mode: 'tab', tags: ['Co-op', 'Zombies'], flags: [], dev: 'computer' },
-  { id: 'crash-bash', title: 'Crash Bash Online', desc: 'The PS1 party game online: 4-player rooms with friends, CPUs fill the empty seats.', image: '/assets/games/crash-bash.jpg', plays: '1.2k', mode: 'tab', tags: ['Party', 'Multiplayer'], flags: [], dev: 'computer' },
-  { id: 'half-life', title: 'Half-Life', desc: 'Half-Life on the Xash3D engine, compiled for the browser.', image: '/assets/games/half-life.jpg', plays: '1.1k', mode: 'sites', sites: 2, tags: ['FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'among-us', title: 'Among Us', desc: 'Crewmates and impostors, ported to the browser.', image: '/assets/games/among-us.jpg', plays: '1.1k', mode: 'here', tags: ['Party', 'Social deduction'], flags: [], dev: 'computer' },
-  { id: 'surfd', title: 'Surfd', desc: 'Classic Counter-Strike surf in your browser: fifteen maps, saved times, global leaderboards.', image: '/assets/games/surfd.jpg', plays: '981', mode: 'here', tags: ['Surf', 'Movement'], flags: [], dev: 'computer' },
-  { id: 'lethal-company', title: 'Lethal Company', desc: 'Scavenge abandoned moons for scrap to sell to the Company.', image: '/assets/games/lethal-company.jpg', plays: '951', mode: 'here', tags: ['Horror', 'Co-op'], flags: [], dev: 'computer' },
-  { id: 'redcoats', title: 'Redcoats', desc: 'Massive line-battle FPS: ride horses, fire cannons, sail warships and capture forts.', image: '/assets/games/redcoats.jpg', plays: '725', mode: 'here', tags: ['Multiplayer', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'doom', title: 'DOOM II Multiplayer', desc: 'Real DOOM II deathmatch in a browser tab: classic maps, no player limit, no install.', image: '/assets/games/doom.jpg', plays: '721', mode: 'here', tags: ['Multiplayer', 'FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'quake-3', title: 'Quake III Arena', desc: 'Quake III Arena multiplayer in your browser, with dozens of players online and mobile and gamepad support.', image: '/assets/games/quake-3.jpg', plays: '712', mode: 'here', tags: ['Multiplayer', 'FPS', 'Classic'], flags: [], dev: 'phone' },
-  { id: 'plague-inc', title: 'Plague Inc', desc: 'Evolve a pathogen and infect the whole world before it finds a cure.', image: '/assets/games/plague-inc.jpg', plays: '688', mode: 'here', tags: ['Strategy', 'Simulation'], flags: [], dev: 'computer' },
-  { id: 'salty-seas', title: 'Salty Seas', desc: 'Open-world pirate MMO: crew a warship, fire broadsides and board enemy ships.', image: '/assets/games/salty-seas.jpg', plays: '646', mode: 'here', tags: ['Multiplayer', 'Pirates'], flags: [], dev: 'computer' },
-  { id: 'stardew-valley', title: 'Stardew Valley', desc: "Take over grandpa's farm in Pelican Town, in a browser tab.", image: '/assets/games/stardew-valley.jpg', plays: '635', mode: 'here', tags: ['Farming', 'Cozy'], flags: [], dev: 'computer' },
-  { id: 'granny-3', title: 'Granny 3', desc: "Escape Granny and Grandpa's house. You have five days.", image: '/assets/games/granny-3.jpg', plays: '624', mode: 'here', tags: ['Horror', 'Escape'], flags: [], dev: 'computer' },
-  { id: 'moon-zombies', title: 'Moon (Zombies)', desc: 'The Black Ops Moon zombies map rebuilt for the browser: solo survival on the lunar base.', image: '/assets/games/moon-zombies.jpg', plays: '602', mode: 'here', tags: ['Zombies', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'lego-island', title: 'LEGO Island', desc: 'The 1997 PC classic, fully rebuilt to run in a modern browser.', image: '/assets/games/lego-island.jpg', plays: '539', mode: 'here', tags: ['Classic', '1997'], flags: [], dev: 'computer' },
-  { id: 'hill-climb-racing', title: 'Hill Climb Racing', desc: 'Drive as far as you can up the hills before you flip or run out of fuel.', image: '/assets/games/hill-climb-racing.jpg', plays: '511', mode: 'here', tags: ['Racing', 'Physics'], flags: [], dev: 'computer' },
-  { id: 'sandstorm', title: 'SandStorm', desc: 'A falling-sand shooter where every grain of the world is simulated and destructible.', image: '/assets/games/sandstorm.jpg', plays: '494', mode: 'here', tags: ['Shooter', 'Destructible'], flags: [], dev: 'computer' },
-  { id: 'ravenfield', title: 'Ravenfield', desc: 'Blue Eagles against red Ravens with tanks, helicopters and boats.', image: '/assets/games/ravenfield.jpg', plays: '466', mode: 'here', tags: ['FPS', 'Sandbox'], flags: [], dev: 'computer' },
-  { id: 'trombone-champ', title: 'Trombone Champ', desc: 'Honk your way through famous songs on a trombone.', image: '/assets/games/trombone-champ.jpg', plays: '451', mode: 'here', tags: ['Rhythm', 'Comedy'], flags: [], dev: 'computer' },
-  { id: 'urban-terror', title: 'Urban Terror', desc: 'The tactical free-for-all shooter Urban Terror, multiplayer in your browser.', image: '/assets/games/urban-terror.jpg', plays: '411', mode: 'here', tags: ['Multiplayer', 'FPS'], flags: [], dev: 'computer' },
-  { id: 'diablo', title: 'Diablo', desc: 'The 1996 Diablo in your browser. Press Play Shareware for the free version.', image: '/assets/games/diablo.jpg', plays: '349', mode: 'here', tags: ['RPG', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'ages-of-conflict', title: 'Ages of Conflict', desc: 'Make AI nations and watch them fight over the map.', image: '/assets/games/ages-of-conflict.jpg', plays: '339', mode: 'here', tags: ['Strategy', 'Simulation'], flags: [], dev: 'computer' },
-  { id: 'quake-2', title: 'Quake II', desc: 'Real Quake II deathmatch in a browser tab, up to 8 players, no install.', image: '/assets/games/quake-2.jpg', plays: '322', mode: 'here', tags: ['Multiplayer', 'FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'arcade-classics', title: 'Arcade Classics (227)', desc: '227 arcade games: Metal Slug, Street Fighter II, Golden Axe, Neo Geo and Capcom classics.', image: '/assets/games/arcade-classics.jpg', plays: '317', mode: 'tab', tags: ['Collection', 'Arcade'], flags: [], dev: 'computer' },
-  { id: 'runescape-classic', title: 'RuneScape Classic', desc: 'The RuneScape before OSRS: fatigue, three-round melee, Herblaw and the original party hats.', image: '/assets/games/runescape-classic.jpg', plays: '311', mode: 'here', tags: ['MMO', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'bendy', title: 'Bendy and the Ink Machine', desc: 'First-person horror in an old cartoon studio, ported to the browser.', image: '/assets/games/bendy.jpg', plays: '299', mode: 'here', tags: ['Horror', 'Puzzle'], flags: [], dev: 'computer' },
-  { id: 'scp-containment-breach', title: 'SCP: Containment Breach', desc: "Escape the SCP facility after a breach, and don't blink near SCP-173.", image: '/assets/games/scp-containment-breach.jpg', plays: '283', mode: 'here', tags: ['Horror'], flags: [], dev: 'computer' },
-  { id: 'rtcw', title: 'Return to Castle Wolfenstein', desc: 'Return to Castle Wolfenstein multiplayer on mp_beach, right in your browser.', image: '/assets/games/rtcw.jpg', plays: '280', mode: 'here', tags: ['Multiplayer', 'FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'miside', title: 'MiSide', desc: 'You get pulled inside the game you were playing. Ported to the browser.', image: '/assets/games/miside.jpg', plays: '272', mode: 'here', tags: ['Horror', 'Story'], flags: [], dev: 'computer' },
-  { id: 'cheese-rolling', title: 'Cheese Rolling', desc: 'Chase a cheese wheel down a steep hill as a ragdoll.', image: '/assets/games/cheese-rolling.jpg', plays: '246', mode: 'here', tags: ['Ragdoll', 'Comedy'], flags: [], dev: 'computer' },
-  { id: 'rimworld', title: 'RimWorld', desc: 'The story-generating sci-fi colony sim, ported to the browser.', image: '/assets/games/rimworld.jpg', plays: '245', mode: 'here', tags: ['Colony sim', 'Strategy'], flags: [], dev: 'computer' },
-  { id: 'helltaker', title: 'Helltaker', desc: 'A short puzzle game about sharply dressed demon girls.', image: '/assets/games/helltaker.jpg', plays: '195', mode: 'here', tags: ['Puzzle'], flags: [], dev: 'computer' },
-  { id: 'inscryption', title: 'Inscryption', desc: 'The inky black card-game horror, ported to the browser.', image: '/assets/games/inscryption.jpg', plays: '184', mode: 'here', tags: ['Card game', 'Horror'], flags: [], dev: 'computer' },
-  { id: 'baldis-birthday-bash', title: "Baldi's Basics Birthday Bash", desc: "Baldi's one-year anniversary party, in your browser.", image: '/assets/games/baldis-birthday-bash.jpg', plays: '184', mode: 'here', tags: ['Horror', 'Comedy'], flags: [], dev: 'computer' },
-  { id: 'man-from-the-window-2', title: 'The Man From The Window 2', desc: 'He is back at the window. Survive the night.', image: '/assets/games/man-from-the-window-2.jpg', plays: '183', mode: 'here', tags: ['Horror'], flags: [], dev: 'computer' },
-  { id: 'quakeworld', title: 'QuakeWorld', desc: "The original Quake's online mode in your browser, with low-latency netcode and up to 8 players.", image: '/assets/games/quakeworld.jpg', plays: '180', mode: 'here', tags: ['Multiplayer', 'FPS', 'Classic'], flags: [], dev: 'computer' },
-  { id: 'park-baron', title: 'Park Baron', desc: 'Theme park tycoon: build roller coasters piece by piece and keep thousands of guests happy.', image: '/assets/games/park-baron.jpg', plays: '178', mode: 'tab', tags: ['Tycoon'], flags: [], dev: 'computer' },
-  { id: 'seedbed', title: 'Seedbed', desc: 'A solarpunk governor game: build rail and clean energy for a century of self-governing towns.', image: '/assets/games/seedbed.jpg', plays: '133', mode: 'here', tags: ['Strategy'], flags: [], dev: 'computer' },
-  { id: 'boil-noodles-at-night', title: 'Boil Noodles at Night', desc: 'You just want to make noodles. It is late. Something is wrong.', image: '/assets/games/boil-noodles-at-night.jpg', plays: '123', mode: 'here', tags: ['Horror', 'Short'], flags: [], dev: 'computer' },
-  { id: 'dude-stop', title: 'Dude, Stop', desc: 'Simple puzzles, and a narrator begging you to solve them properly.', image: '/assets/games/dude-stop.jpg', plays: '110', mode: 'here', tags: ['Puzzle', 'Comedy'], flags: [], dev: 'computer' },
-  { id: 'toasterball', title: 'Toasterball', desc: 'A ball, two goals and toasters.', image: '/assets/games/toasterball.jpg', plays: '110', mode: 'here', tags: ['Sports', 'Physics'], flags: [], dev: 'computer' },
-  { id: 'brotato', title: "Brotato Paws n' Claws", desc: 'A potato with six guns against waves of aliens, in your browser.', image: '/assets/games/brotato.jpg', plays: '93', mode: 'tab', tags: ['Roguelite', 'Shooter'], flags: [], dev: 'computer' },
-  { id: 'happy-room', title: 'Happy Room', desc: 'Test weapons and traps on a very durable ragdoll clone.', image: '/assets/games/happy-room.jpg', plays: '85', mode: 'here', tags: ['Sandbox', 'Physics'], flags: [], dev: 'computer' },
-  { id: 'message-from-deep-space', title: 'The Message From Deep Space', desc: 'Translate an alien message using maths and science.', image: '/assets/games/message-from-deep-space.jpg', plays: '80', mode: 'here', tags: ['Puzzle'], flags: [], dev: 'computer' },
-  { id: 'dice-a-million', title: 'Dice A Million', desc: 'Build the right bag of dice and try to roll a million.', image: '/assets/games/dice-a-million.jpg', plays: '75', mode: 'here', tags: ['Roguelite', 'Dice'], flags: [], dev: 'computer' },
-  { id: 'beatblock', title: 'Beatblock', desc: 'Spin your paddle and block the beats coming at you.', image: '/assets/games/beatblock.jpg', plays: '67', mode: 'here', tags: ['Rhythm'], flags: [], dev: 'computer' },
-  { id: 'while-true-learn', title: 'while True: learn()', desc: 'Your cat is a better programmer than you. Solve machine-learning puzzles.', image: '/assets/games/while-true-learn.jpg', plays: '53', mode: 'here', tags: ['Puzzle', 'Programming'], flags: [], dev: 'computer' },
-  { id: 'lobotomy-corporation', title: 'Lobotomy Corporation', desc: 'Manage a facility of contained monsters and the staff who tend them.', image: '/assets/games/lobotomy-corporation.jpg', plays: '47', mode: 'here', tags: ['Management', 'Horror'], flags: [], dev: 'computer' },
-  { id: 'fez', title: 'FEZ', desc: 'Rotate a 2D world in 3D to find your way. Ported to the browser.', image: '/assets/games/fez.jpg', plays: '40', mode: 'here', tags: ['Platformer', 'Puzzle'], flags: [], dev: 'computer' },
-  { id: 'crashout-crew', title: 'Crashout Crew', desc: "Forklift chaos in the world's \u201Cmost efficient\u201D warehouse.", image: '/assets/games/crashout-crew.jpg', plays: '36', mode: 'here', tags: ['Co-op', 'Chaos'], flags: [], dev: 'computer' },
-  { id: 'oneshot', title: 'OneShot: World Machine Edition', desc: 'Guide Niko to bring the sun back to a dying world, in your browser.', image: '/assets/games/oneshot.jpg', plays: '34', mode: 'here', tags: [], flags: [], dev: 'computer' }
+    official: 'https://khincc.itch.io/codequest-small-studio'
+  }
 ];
-
-// Alamat sementara untuk katalog. GANTI dengan URL pemutar dan situs resmi yang sebenarnya.
-function playUrl(g) { return g.play || 'https://GANTI-URL-PEMUTAR/' + g.id + '/'; }
-function officialUrl(g) { return g.official || '/games/' + g.id; }
-function officialLabel(g) { return g.officialLabel || 'Situs resmi'; }
-
-// Lengkapi field turunan: stack, alt, plays, dan jumlah main
-games.forEach(function (g) {
-  if (!g.stack) g.stack = (g.tags && g.tags.length) ? g.tags.join(' · ') : 'Browser game';
-  if (!g.alt) g.alt = g.title + ' in the browser';
-  if (!g.flags) g.flags = [];
-  if (!g.tags) g.tags = [];
-  if (!g.dev) g.dev = 'computer';
-  if (!g.mode) g.mode = 'here';
-});
-
-var MP_TAGS = ['Multiplayer', 'Co-op', 'Online'];
-function isMp(g) { return g.tags.some(function (t) { return MP_TAGS.indexOf(t) !== -1; }); }
-function playsNum(p) {
-  if (!p) return 0;
-  var n = parseFloat(p);
-  return /k$/i.test(p) ? n * 1000 : n;
-}
-function modeLabel(g) {
-  if (g.mode === 'here') return 'Plays here';
-  if (g.mode === 'tab') return 'Opens in new tab';
-  return (g.sites || 2) + ' sites';
-}
 
 var player = document.getElementById('player');
 var frame = document.getElementById('frame');
-var titleEl = document.getElementById('player-title');
-var stackEl = document.getElementById('player-stack');
+var title = document.getElementById('player-title');
+var stack = document.getElementById('player-stack');
 var official = document.getElementById('player-official');
 var newtab = document.getElementById('player-newtab');
 var grid = document.getElementById('grid');
-var state = { dev: 'all', cat: 'all', sort: 'played', q: '', activeId: null };
 
-function el(tag, cls, text) {
-  var n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (text != null) n.textContent = text;
-  return n;
-}
-
-// Membuat satu kartu lewat DOM agar teks aman
+// Membuat satu kartu. Dibuat lewat DOM (bukan innerHTML) supaya teks aman
 function card(g) {
-  var article = el('article', 'card');
+  var article = document.createElement('article');
+  article.className = 'card';
 
-  var cover = el('a', 'cover');
-  cover.href = officialUrl(g);
+  var cover = document.createElement('a');
+  cover.className = 'cover';
+  cover.href = g.official;
   cover.target = '_blank';
   cover.rel = 'noopener noreferrer';
-  cover.setAttribute('aria-label', g.title + ' on ' + officialLabel(g) + ' (opens in a new tab)');
-  var img = el('img');
+  cover.setAttribute('aria-label', g.title + ' on ' + g.officialLabel + ' (opens in a new tab)');
+  var img = document.createElement('img');
   img.src = g.image;
   img.alt = g.alt;
   img.loading = 'lazy';
   cover.appendChild(img);
 
-  var copy = el('div', 'copy');
-  copy.appendChild(el('span', 'stack', g.stack));
-  copy.appendChild(el('h3', null, g.title));
-  copy.appendChild(el('p', null, g.desc));
+  var copy = document.createElement('div');
+  copy.className = 'copy';
+  var s = document.createElement('span');
+  s.className = 'stack';
+  s.textContent = g.stack;
+  var h = document.createElement('h3');
+  h.textContent = g.title;
+  var p = document.createElement('p');
+  p.textContent = g.desc;
 
-  var meta = [];
-  if (g.plays) meta.push(g.plays + ' plays');
-  meta.push(modeLabel(g));
-  if (g.flags.indexOf('nolo') !== -1) meta.push('May not load');
-  copy.appendChild(el('div', 'tags', meta.join(' · ')));
-
-  var actions = el('div', 'card-actions');
-  var play = el('button', 'btn', 'Play ▶');
+  var actions = document.createElement('div');
+  actions.className = 'card-actions';
+  var play = document.createElement('button');
   play.type = 'button';
+  play.className = 'btn';
+  play.textContent = 'Play ▶';
   play.setAttribute('aria-label', 'Play ' + g.title);
   play.addEventListener('click', function () { openGame(g.id, true); });
-  var off = el('a', 'text-link', 'Official site (' + officialLabel(g) + ') ↗');
-  off.href = officialUrl(g);
+  var off = document.createElement('a');
+  off.className = 'text-link';
+  off.href = g.official;
   off.target = '_blank';
   off.rel = 'noopener noreferrer';
+  off.textContent = 'Official site (' + g.officialLabel + ') ↗';
+
   actions.appendChild(play);
   actions.appendChild(off);
+  copy.appendChild(s);
+  copy.appendChild(h);
+  copy.appendChild(p);
   copy.appendChild(actions);
-
   article.appendChild(cover);
   article.appendChild(copy);
   return article;
@@ -378,101 +227,42 @@ function findGame(id) {
   return null;
 }
 
+// Membuka pemutar. Kalau fromClick, URL diberi ?game=id supaya bisa dibagikan
 function openGame(id, fromClick) {
   var g = findGame(id);
   if (!g) return;
-  titleEl.textContent = g.title;
-  stackEl.textContent = g.stack;
+  title.textContent = g.title;
+  stack.textContent = g.stack;
   frame.title = g.title;
-  frame.src = playUrl(g);
-  official.href = officialUrl(g);
-  official.textContent = 'Official site · ' + officialLabel(g) + ' ↗';
-  newtab.href = playUrl(g);
+  frame.src = g.play;
+  official.href = g.official;
+  official.textContent = 'Official site · ' + g.officialLabel + ' ↗';
+  newtab.href = g.play;
   player.classList.add('is-open');
-  state.activeId = id;
   if (fromClick) history.replaceState(null, '', '?game=' + encodeURIComponent(id));
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   player.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  titleEl.focus({ preventScroll: true });
-  render();
+  title.focus({ preventScroll: true });
 }
 
-// Menutup pemutar dan menghentikan game
+// Menutup pemutar dan menghentikan game (kosongkan iframe supaya suara ikut berhenti)
 function closeGame() {
   player.classList.remove('is-open');
   frame.src = 'about:blank';
   frame.title = '';
-  state.activeId = null;
   history.replaceState(null, '', location.pathname);
-  render();
-}
-
-// Filter, pencarian, dan urutan
-function filtered() {
-  var q = state.q.trim().toLowerCase();
-  var list = games.filter(function (g) {
-    if (state.dev !== 'all' && g.dev !== state.dev) return false;
-    if (state.cat === 'mp' && !isMp(g)) return false;
-    if (q && (g.title + ' ' + g.desc + ' ' + g.tags.join(' ')).toLowerCase().indexOf(q) === -1) return false;
-    return true;
-  });
-  if (state.sort === 'played') list.sort(function (a, b) { return playsNum(b.plays) - playsNum(a.plays); });
-  if (state.sort === 'new') list.sort(function (a, b) {
-    return (b.flags.indexOf('new') !== -1) - (a.flags.indexOf('new') !== -1) || playsNum(b.plays) - playsNum(a.plays);
-  });
-  if (state.sort === 'az') list.sort(function (a, b) { return a.title.localeCompare(b.title); });
-  return list;
-}
-
-function updateCounts() {
-  document.getElementById('n-dev-all').textContent = games.length;
-  document.getElementById('n-dev-computer').textContent = games.filter(function (g) { return g.dev === 'computer'; }).length;
-  document.getElementById('n-dev-phone').textContent = games.filter(function (g) { return g.dev === 'phone'; }).length;
-  document.getElementById('n-cat-mp').textContent = games.filter(isMp).length;
-}
-
-function setPressed(groupId, attr, value) {
-  document.querySelectorAll('#' + groupId + ' button').forEach(function (b) {
-    b.setAttribute('aria-pressed', String(b.getAttribute(attr) === value));
-  });
-}
-
-function render() {
-  var list = filtered();
-  grid.innerHTML = '';
-  list.forEach(function (g) {
-    var c = card(g);
-    if (g.id === state.activeId) c.classList.add('is-playing');
-    grid.appendChild(c);
-  });
-  document.getElementById('empty').hidden = list.length > 0;
-  document.getElementById('count').textContent = list.length + ' of ' + games.length + ' games';
-  updateCounts();
-  setPressed('dev-filter', 'data-dev', state.dev);
-  setPressed('cat-filter', 'data-cat', state.cat);
-  setPressed('sort', 'data-sort', state.sort);
 }
 
 document.getElementById('close').addEventListener('click', closeGame);
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && player.classList.contains('is-open')) closeGame();
 });
-document.getElementById('q').addEventListener('input', function (e) { state.q = e.target.value; render(); });
-document.getElementById('dev-filter').addEventListener('click', function (e) {
-  var b = e.target.closest('button'); if (b) { state.dev = b.getAttribute('data-dev'); render(); }
-});
-document.getElementById('cat-filter').addEventListener('click', function (e) {
-  var b = e.target.closest('button'); if (b) { state.cat = b.getAttribute('data-cat'); render(); }
-});
-document.getElementById('sort').addEventListener('click', function (e) {
-  var b = e.target.closest('button'); if (b) { state.sort = b.getAttribute('data-sort'); render(); }
-});
 
-render();
+games.forEach(function (g) { grid.appendChild(card(g)); });
 
 // Buka langsung game dari link seperti /games?game=codequest
 var params = new URLSearchParams(location.search);
-if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+if (params.get('game')) openGame(params.get('game'), false);
 </script>
 </body>
 </html>
