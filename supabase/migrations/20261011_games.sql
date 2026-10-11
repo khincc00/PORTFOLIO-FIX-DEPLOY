@@ -46,3 +46,18 @@ values (
   0
 )
 on conflict (slug) do nothing;
+
+insert into public.games (slug, title, stack, description, image, play_url, official_url, official_label, is_published, position)
+values (
+  'bo1-zombies',
+  'Black Ops Zombies',
+  'FPS · Zombies',
+  'All ten Black Ops 1 zombies maps in your browser, from Kino der Toten to Moon.',
+  '/assets/games/bo1-zombies.jpg',
+  'https://vel.gg/bo1z',
+  'https://vel.gg/bo1z',
+  'vel.gg',
+  true,
+  1
+)
+on conflict (slug) do nothing;
