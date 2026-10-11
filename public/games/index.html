@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Games | Khincc Studio</title>
+<meta name="description" content="Browser games by Khincc Studio, playable right on the page with no download.">
+<meta name="theme-color" content="#f8f8f6">
+<link rel="canonical" href="https://khincreator.com/games">
+<meta property="og:title" content="Games | Khincc Studio">
+<meta property="og:description" content="Browser games by Khincc Studio, playable right on the page with no download.">
+<meta property="og:url" content="https://khincreator.com/games">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* Warna dan font disamakan dengan website utama (app/globals.css) */
+:root{--paper:#f8f8f6;--ink:#171817;--muted:#5d625e;--line:#dedfda;--accent:#e65c3a;--card:#ffffff;--sans:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#111412;--ink:#ecebe6;--muted:#a3a8a3;--line:#2a302c;--accent:#f0714f;--card:#181c19}}
+:root[data-theme="dark"]{--paper:#111412;--ink:#ecebe6;--muted:#a3a8a3;--line:#2a302c;--accent:#f0714f;--card:#181c19}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--paper);padding:10px 14px;z-index:50;border-radius:6px}
+.skip:focus{top:12px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Header */
+.site-head{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:62px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.wordmark{font-weight:700;font-size:16px;letter-spacing:.02em;white-space:nowrap}
+.wordmark span{color:var(--muted);font-weight:500}
+.nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;color:var(--muted)}
+.nav a{transition:color .2s ease;padding:4px 0}
+.nav a:hover{color:var(--accent)}
+.nav a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom:2px solid var(--accent)}
+
+/* Judul halaman */
+.page-head{padding:clamp(56px,8vw,104px) 0 clamp(32px,4vw,48px)}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:600;margin:0}
+h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-weight:500;margin:14px 0 0}
+
+/* Pemutar game */
+.player{display:none;padding-bottom:56px;scroll-margin-top:84px}
+.player.is-open{display:block}
+.player-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px}
+.player h2{font-size:clamp(30px,4vw,52px);line-height:1;letter-spacing:-.045em;font-weight:500;margin:10px 0 0;outline:none}
+.stack{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 20px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;cursor:pointer;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.frame{position:relative;width:100%;aspect-ratio:16/9;background:#0d0f0e;border:1px solid var(--line);overflow:hidden}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.player-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:18px}
+.text-link{font-size:13px;font-weight:600;border-bottom:1px solid currentColor;padding-bottom:2px;transition:color .2s ease}
+.text-link:hover{color:var(--accent)}
+
+/* Daftar game */
+.games{padding-bottom:120px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px;margin-top:36px}
+.card{min-width:0}
+.cover{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--line);border:1px solid var(--line)}
+.cover img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s ease}
+.card:hover .cover img{transform:scale(1.03)}
+.copy{padding-top:18px}
+.copy h3{font-size:24px;letter-spacing:-.03em;font-weight:500;margin:10px 0 8px}
+.copy p{font-size:14px;line-height:1.7;color:var(--muted);margin:0;max-width:520px}
+.card-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:16px}
+.card-actions .btn{min-height:40px;padding:0 18px}
+
+/* Kaki halaman */
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:12px;color:var(--muted)}
+.foot .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important}}
+@media(max-width:760px){
+  .grid{grid-template-columns:1fr;gap:36px}
+  .player-head{flex-direction:column;align-items:flex-start}
+  .copy h3{font-size:21px}
+  .wrap{padding:0 18px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">KHINCC® <span>/ Studio</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="/work#design">Design</a>
+      <a href="/work#video">Video</a>
+      <a href="/work#web">Web</a>
+      <a href="/games" aria-current="page">Games</a>
+      <a href="/berita">Journal</a>
+      <a href="/toko">Shop</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap page-head">
+    <p class="eyebrow">Browser games</p>
+    <h1>Play in your browser.</h1>
+  </section>
+
+  <section class="wrap" aria-label="Game player">
+    <div id="player" class="player" aria-live="polite">
+      <div class="player-head">
+        <div>
+          <span class="stack" id="player-stack"></span>
+          <h2 id="player-title" tabindex="-1"></h2>
+        </div>
+        <button type="button" class="btn btn-ghost" id="close">Close ✕</button>
+      </div>
+      <div class="frame">
+        <iframe id="frame" title="" allow="fullscreen; gamepad" allowfullscreen></iframe>
+      </div>
+      <div class="player-actions">
+        <a class="btn" id="player-official" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a class="text-link" id="player-newtab" href="#" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap games" aria-label="Games">
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© Khincc Studio</span>
+    <a href="/">khincreator.com</a>
+  </div>
+</footer>
+
+<script>
+// Daftar game buatan sendiri. play = alamat yang dibuka di pemutar (harus mengizinkan embed).
+// official = situs resmi pembuat. Untuk game baru, tambahkan satu objek di sini.
+var games = [
+  {
+    id: 'codequest',
+    title: 'CodeQuest — Small Studio',
+    stack: 'HTML · CSS · JavaScript',
+    image: '/work/codequest.jpg',
+    alt: 'CodeQuest game scene: a cozy studio desk with a laptop showing code, a cat asleep by the lamp',
+    desc: 'A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built, with no quizzes.',
+    play: 'https://main.codequest.gamer.free/',
+    officialLabel: 'itch.io',
+    official: 'https://khincc.itch.io/codequest-small-studio'
+  }
+];
+
+var player = document.getElementById('player');
+var frame = document.getElementById('frame');
+var titleEl = document.getElementById('player-title');
+var stackEl = document.getElementById('player-stack');
+var official = document.getElementById('player-official');
+var newtab = document.getElementById('player-newtab');
+var grid = document.getElementById('grid');
+
+// Membuat satu kartu lewat DOM (bukan innerHTML) supaya teks aman
+function card(g) {
+  var article = document.createElement('article');
+  article.className = 'card';
+
+  var cover = document.createElement('a');
+  cover.className = 'cover';
+  cover.href = g.official;
+  cover.target = '_blank';
+  cover.rel = 'noopener noreferrer';
+  cover.setAttribute('aria-label', g.title + ' on ' + g.officialLabel + ' (opens in a new tab)');
+  var img = document.createElement('img');
+  img.src = g.image;
+  img.alt = g.alt;
+  img.loading = 'lazy';
+  cover.appendChild(img);
+
+  var copy = document.createElement('div');
+  copy.className = 'copy';
+  var s = document.createElement('span');
+  s.className = 'stack';
+  s.textContent = g.stack;
+  var h = document.createElement('h3');
+  h.textContent = g.title;
+  var p = document.createElement('p');
+  p.textContent = g.desc;
+
+  var actions = document.createElement('div');
+  actions.className = 'card-actions';
+  var play = document.createElement('button');
+  play.type = 'button';
+  play.className = 'btn';
+  play.textContent = 'Play ▶';
+  play.setAttribute('aria-label', 'Play ' + g.title);
+  play.addEventListener('click', function () { openGame(g.id, true); });
+  var off = document.createElement('a');
+  off.className = 'text-link';
+  off.href = g.official;
+  off.target = '_blank';
+  off.rel = 'noopener noreferrer';
+  off.textContent = 'Official site (' + g.officialLabel + ') ↗';
+
+  actions.appendChild(play);
+  actions.appendChild(off);
+  copy.appendChild(s);
+  copy.appendChild(h);
+  copy.appendChild(p);
+  copy.appendChild(actions);
+  article.appendChild(cover);
+  article.appendChild(copy);
+  return article;
+}
+
+function findGame(id) {
+  for (var i = 0; i < games.length; i++) if (games[i].id === id) return games[i];
+  return null;
+}
+
+// Membuka pemutar. Kalau fromClick, URL diberi ?game=id supaya bisa dibagikan
+function openGame(id, fromClick) {
+  var g = findGame(id);
+  if (!g) return;
+  titleEl.textContent = g.title;
+  stackEl.textContent = g.stack;
+  frame.title = g.title;
+  frame.src = g.play;
+  official.href = g.official;
+  official.textContent = 'Official site · ' + g.officialLabel + ' ↗';
+  newtab.href = g.play;
+  player.classList.add('is-open');
+  if (fromClick) history.replaceState(null, '', '?game=' + encodeURIComponent(id));
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  player.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  titleEl.focus({ preventScroll: true });
+}
+
+// Menutup pemutar dan menghentikan game (kosongkan iframe supaya suara ikut berhenti)
+function closeGame() {
+  player.classList.remove('is-open');
+  frame.src = 'about:blank';
+  frame.title = '';
+  history.replaceState(null, '', location.pathname);
+}
+
+document.getElementById('close').addEventListener('click', closeGame);
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && player.classList.contains('is-open')) closeGame();
+});
+
+games.forEach(function (g) { grid.appendChild(card(g)); });
+
+// Buka langsung game dari link seperti /games?game=codequest
+var params = new URLSearchParams(location.search);
+if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+</script>
+</body>
+</html>
