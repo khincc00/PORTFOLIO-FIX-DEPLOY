@@ -64,6 +64,8 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 
 /* Daftar game */
 .games{padding-bottom:120px}
+.status{font-size:14px;color:var(--muted);margin:36px 0 0}
+.status:empty{display:none}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px;margin-top:36px}
 .card{min-width:0}
 .cover{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--line);border:1px solid var(--line)}
@@ -132,6 +134,7 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
   </section>
 
   <section class="wrap games" aria-label="Games">
+    <p class="status" id="status" aria-live="polite"></p>
     <div class="grid" id="grid"></div>
   </section>
 </main>
@@ -144,22 +147,11 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 </footer>
 
 <script>
-// Daftar game buatan sendiri. play = alamat yang dibuka di pemutar (harus mengizinkan embed).
-// official = situs resmi pembuat. Untuk game baru, tambahkan satu objek di sini.
-var games = [
-  {
-    id: 'codequest',
-    title: 'CodeQuest — Small Studio',
-    stack: 'HTML · CSS · JavaScript',
-    image: '/work/codequest.jpg',
-    alt: 'CodeQuest game scene: a cozy studio desk with a laptop showing code, a cat asleep by the lamp',
-    desc: 'A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built, with no quizzes.',
-    play: 'https://main.codequest.gamer.free/',
-    officialLabel: 'itch.io',
-    official: 'https://khincc.itch.io/codequest-small-studio'
-  }
-];
+// Daftar game diambil dari /api/games (diatur dari Admin → Games). play = alamat yang dibuka di pemutar,
+// official = situs resmi pembuat. Isi di sini hanya terisi setelah daftar berhasil dimuat.
+var games = [];
 
+var statusEl = document.getElementById('status');
 var player = document.getElementById('player');
 var frame = document.getElementById('frame');
 var titleEl = document.getElementById('player-title');
@@ -257,11 +249,29 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && player.classList.contains('is-open')) closeGame();
 });
 
-games.forEach(function (g) { grid.appendChild(card(g)); });
+// Mengambil daftar game dari server, lalu menampilkannya
+function loadGames() {
+  statusEl.textContent = 'Memuat game…';
+  fetch('/api/games')
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function (list) {
+      games = list;
+      statusEl.textContent = games.length ? '' : 'Belum ada game.';
+      games.forEach(function (g) { grid.appendChild(card(g)); });
 
-// Buka langsung game dari link seperti /games?game=codequest
-var params = new URLSearchParams(location.search);
-if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+      // Buka langsung game dari link seperti /games?game=codequest
+      var params = new URLSearchParams(location.search);
+      if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+    })
+    .catch(function () {
+      statusEl.textContent = 'Katalog game belum bisa dimuat. Coba muat ulang halaman.';
+    });
+}
+
+loadGames();
 </script>
 </body>
 </html>

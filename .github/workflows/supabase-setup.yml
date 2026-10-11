@@ -47,6 +47,7 @@ jobs:
           run_sql supabase/migrations/20261003_studio_sync.sql
           run_sql supabase/migrations/20261004_community.sql
           run_sql supabase/migrations/20261008_products.sql
+          run_sql supabase/migrations/20261011_games.sql
           if [ "$SEED_DEMO" = "true" ]; then run_sql supabase/seed/community_demo.sql; fi
           if [ "$SEED_STORE" = "true" ]; then run_sql supabase/seed/products_sample.sql; fi
           echo "Selesai."

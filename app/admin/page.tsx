@@ -8,6 +8,7 @@
  * 3. Sudah login → tampilkan panel dengan menu:
  *      Dashboard  → pesan kontak & tabel reel lama
  *      Portfolio  → kelola karya Design/Video/Web (app/admin/PortfolioManager.tsx)
+ *      Games      → katalog game di halaman /games (app/admin/GameManager.tsx)
  *      Berita     → daftar berita (NewsList.tsx) dan form tulis/edit (NewsEditor.tsx)
  *      Komentar   → moderasi komentar (CommentsList.tsx)
  *      Komunitas  → laporan & moderasi komunitas (CommunityModeration.tsx)
@@ -22,6 +23,7 @@ import NewsEditor from './NewsEditor'
 import CommentsList from './CommentsList'
 import CommunityModeration from './CommunityModeration'
 import PortfolioManager from './PortfolioManager'
+import GameManager from './GameManager'
 
 // Bentuk data reel dari tabel LAMA `portfolio` (hanya untuk tabel di Dashboard)
 interface PortfolioItem {
@@ -48,7 +50,7 @@ interface ContactItem {
 }
 
 // Menu yang bisa dibuka. 'editor' = form tulis/edit berita
-type View = 'dashboard' | 'portfolio' | 'news' | 'editor' | 'comments' | 'community'
+type View = 'dashboard' | 'portfolio' | 'games' | 'news' | 'editor' | 'comments' | 'community'
 
 export default function AdminPage() {
   // --- Status login ---
@@ -287,6 +289,7 @@ export default function AdminPage() {
           {([
             ['dashboard', 'Dashboard'],
             ['portfolio', 'Portfolio'],
+            ['games', 'Games'],
             ['news', `Berita (${newsList.length})`],
             ['comments', 'Komentar'],
             ['community', 'Komunitas'],
@@ -334,6 +337,8 @@ export default function AdminPage() {
         {view === 'community' && <CommunityModeration />}
 
         {view === 'portfolio' && <PortfolioManager />}
+
+        {view === 'games' && <GameManager />}
 
         {view === 'editor' && (
           <NewsEditor
