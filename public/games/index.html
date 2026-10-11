@@ -38,9 +38,8 @@ button{font:inherit}
 .wordmark span{color:var(--muted);font-weight:500}
 .nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;color:var(--muted)}
 .nav a{transition:color .2s ease;padding:4px 0}
-.nav a:hover,.nav a[aria-current="page"]{color:var(--ink)}
-.nav a[aria-current="page"]{font-weight:600;border-bottom:2px solid var(--accent)}
 .nav a:hover{color:var(--accent)}
+.nav a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom:2px solid var(--accent)}
 
 /* Judul halaman */
 .page-head{padding:clamp(56px,8vw,104px) 0 clamp(32px,4vw,48px)}
@@ -158,7 +157,7 @@ var games = [
     play: 'https://main.codequest.gamer.free/',
     officialLabel: 'itch.io',
     official: 'https://khincc.itch.io/codequest-small-studio'
-  }
+  },
   {
     id: 'bo1-zombies',
     title: 'Black Ops Zombies',
@@ -174,13 +173,13 @@ var games = [
 
 var player = document.getElementById('player');
 var frame = document.getElementById('frame');
-var title = document.getElementById('player-title');
-var stack = document.getElementById('player-stack');
+var titleEl = document.getElementById('player-title');
+var stackEl = document.getElementById('player-stack');
 var official = document.getElementById('player-official');
 var newtab = document.getElementById('player-newtab');
 var grid = document.getElementById('grid');
 
-// Membuat satu kartu. Dibuat lewat DOM (bukan innerHTML) supaya teks aman
+// Membuat satu kartu lewat DOM agar teks aman
 function card(g) {
   var article = document.createElement('article');
   article.className = 'card';
@@ -242,8 +241,8 @@ function findGame(id) {
 function openGame(id, fromClick) {
   var g = findGame(id);
   if (!g) return;
-  title.textContent = g.title;
-  stack.textContent = g.stack;
+  titleEl.textContent = g.title;
+  stackEl.textContent = g.stack;
   frame.title = g.title;
   frame.src = g.play;
   official.href = g.official;
@@ -253,10 +252,10 @@ function openGame(id, fromClick) {
   if (fromClick) history.replaceState(null, '', '?game=' + encodeURIComponent(id));
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   player.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  title.focus({ preventScroll: true });
+  titleEl.focus({ preventScroll: true });
 }
 
-// Menutup pemutar dan menghentikan game (kosongkan iframe supaya suara ikut berhenti)
+// Menutup pemutar dan menghentikan game
 function closeGame() {
   player.classList.remove('is-open');
   frame.src = 'about:blank';
@@ -273,7 +272,7 @@ games.forEach(function (g) { grid.appendChild(card(g)); });
 
 // Buka langsung game dari link seperti /games?game=codequest
 var params = new URLSearchParams(location.search);
-if (params.get('game')) openGame(params.get('game'), false);
+if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
 </script>
 </body>
 </html>
