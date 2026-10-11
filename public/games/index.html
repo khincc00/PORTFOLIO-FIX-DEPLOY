@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* Warna dan font disamakan dengan website utama (app/globals.css) */
-:root{--paper:#f8f8f6;--ink:#171817;--muted:#5d625e;--line:#dedfda;--accent:#e65c3a;--card:#ffffff;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif}
+:root{--paper:#f8f8f6;--ink:#171817;--muted:#5d625e;--line:#dedfda;--accent:#e65c3a;--card:#ffffff;--sans:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#111412;--ink:#ecebe6;--muted:#a3a8a3;--line:#2a302c;--accent:#f0714f;--card:#181c19}}
 :root[data-theme="dark"]{--paper:#111412;--ink:#ecebe6;--muted:#a3a8a3;--line:#2a302c;--accent:#f0714f;--card:#181c19}
 *{box-sizing:border-box}
@@ -64,7 +64,9 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 
 /* Daftar game */
 .games{padding-bottom:120px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
+.status{font-size:14px;color:var(--muted);margin:36px 0 0}
+.status:empty{display:none}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px;margin-top:36px}
 .card{min-width:0}
 .cover{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--line);border:1px solid var(--line)}
 .cover img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s ease}
@@ -132,6 +134,7 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
   </section>
 
   <section class="wrap games" aria-label="Games">
+    <p class="status" id="status" aria-live="polite"></p>
     <div class="grid" id="grid"></div>
   </section>
 </main>
@@ -144,33 +147,11 @@ h1{font-size:clamp(52px,8vw,112px);line-height:.94;letter-spacing:-.06em;font-we
 </footer>
 
 <script>
-// Daftar game buatan sendiri. play = alamat yang dibuka di pemutar (harus mengizinkan embed).
-// official = situs resmi pembuat. Untuk game baru, tambahkan satu objek di sini.
-var games = [
-  {
-    id: 'codequest',
-    title: 'CodeQuest — Small Studio',
-    stack: 'HTML · CSS · JavaScript',
-    image: '/work/codequest.jpg',
-    alt: 'CodeQuest game scene: a cozy studio desk with a laptop showing code, a cat asleep by the lamp',
-    desc: 'A browser game that teaches HTML, CSS and JavaScript through real client briefs. It runs your code and checks the website you built, with no quizzes.',
-    play: 'https://main.codequest.gamer.free/',
-    officialLabel: 'itch.io',
-    official: 'https://khincc.itch.io/codequest-small-studio'
-  },
-  {
-    id: 'bo1-zombies',
-    title: 'Black Ops Zombies',
-    stack: 'FPS · Zombies',
-    image: '/assets/games/bo1-zombies.jpg',
-    alt: 'Black Ops Zombies in the browser',
-    desc: 'All ten Black Ops 1 zombies maps in your browser, from Kino der Toten to Moon.',
-    play: 'https://vel.gg/bo1z',
-    officialLabel: 'vel.gg',
-    official: 'https://vel.gg/bo1z'
-  }
-];
+// Daftar game diambil dari /api/games (diatur dari Admin → Games). play = alamat yang dibuka di pemutar,
+// official = situs resmi pembuat. Isi di sini hanya terisi setelah daftar berhasil dimuat.
+var games = [];
 
+var statusEl = document.getElementById('status');
 var player = document.getElementById('player');
 var frame = document.getElementById('frame');
 var titleEl = document.getElementById('player-title');
@@ -179,7 +160,7 @@ var official = document.getElementById('player-official');
 var newtab = document.getElementById('player-newtab');
 var grid = document.getElementById('grid');
 
-// Membuat satu kartu lewat DOM agar teks aman
+// Membuat satu kartu lewat DOM (bukan innerHTML) supaya teks aman
 function card(g) {
   var article = document.createElement('article');
   article.className = 'card';
@@ -255,7 +236,7 @@ function openGame(id, fromClick) {
   titleEl.focus({ preventScroll: true });
 }
 
-// Menutup pemutar dan menghentikan game
+// Menutup pemutar dan menghentikan game (kosongkan iframe supaya suara ikut berhenti)
 function closeGame() {
   player.classList.remove('is-open');
   frame.src = 'about:blank';
@@ -268,11 +249,29 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && player.classList.contains('is-open')) closeGame();
 });
 
-games.forEach(function (g) { grid.appendChild(card(g)); });
+// Mengambil daftar game dari server, lalu menampilkannya
+function loadGames() {
+  statusEl.textContent = 'Memuat game…';
+  fetch('/api/games')
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function (list) {
+      games = list;
+      statusEl.textContent = games.length ? '' : 'Belum ada game.';
+      games.forEach(function (g) { grid.appendChild(card(g)); });
 
-// Buka langsung game dari link seperti /games?game=codequest
-var params = new URLSearchParams(location.search);
-if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+      // Buka langsung game dari link seperti /games?game=codequest
+      var params = new URLSearchParams(location.search);
+      if (params.get('game') && findGame(params.get('game'))) openGame(params.get('game'), false);
+    })
+    .catch(function () {
+      statusEl.textContent = 'Katalog game belum bisa dimuat. Coba muat ulang halaman.';
+    });
+}
+
+loadGames();
 </script>
 </body>
 </html>
