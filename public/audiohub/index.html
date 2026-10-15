@@ -110,6 +110,8 @@ p{margin:0}
   font:inherit; font-size:17px; font-weight:600; padding:14px 26px; border-radius:999px; border:0;
   background:#2C2C2E; color:#8E8E93; cursor:not-allowed;
 }
+.btn-download{display:inline-block; text-decoration:none; background:var(--tosca-bright); color:#0B0B0D; cursor:pointer}
+.btn-download:hover{filter:brightness(1.08)}
 .note{font-size:15px; color:var(--dark-mute); max-width:60ch}
 .repo{font-size:15px; color:var(--tosca-bright); word-break:break-all}
 
@@ -207,7 +209,7 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
     <span class="eyebrow">Unduh</span>
     <h2 class="h2">Mencari penguji.</h2>
     <div class="download-box">
-      <button class="btn" type="button" disabled aria-disabled="true">Tautan unduh segera</button>
+      <a class="btn btn-download" href="https://github.com/khincc00/AudioHub/releases/download/v0.2.0/AudioHub-0.2.0.dmg" rel="noopener">Unduh AudioHub 0.2.0 (.dmg)</a>
       <p class="note">AudioHub membutuhkan EMEET Virtual Audio. Pasang driver itu secara terpisah, karena tidak ikut dalam DMG.</p>
       <a class="repo" href="https://github.com/khincc00/AudioHub.git" target="_blank" rel="noopener">github.com/khincc00/AudioHub</a>
     </div>
