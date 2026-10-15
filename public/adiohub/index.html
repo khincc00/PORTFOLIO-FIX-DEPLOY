@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AudioHub 0.2.0 | Routing dan DSP Mikrofon untuk macOS</title>
+<meta name="description" content="AudioHub mengatur routing audio dan DSP mikrofon di macOS dari satu jendela. Prototipe versi 0.2.0.">
+<meta name="theme-color" content="#0B0B0D">
+<link rel="canonical" href="https://adiohub.khincreator.com/">
+<meta property="og:title" content="AudioHub 0.2.0 | Routing dan DSP Mikrofon untuk macOS">
+<meta property="og:description" content="AudioHub mengatur routing audio dan DSP mikrofon di macOS dari satu jendela. Prototipe versi 0.2.0.">
+<meta property="og:url" content="https://adiohub.khincreator.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://adiohub.khincreator.com/adiohub/img/i-dark.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Layout: satu kolom berurutan. Hero gelap, tema terang, fitur gelap, status terang, unduh gelap.
+   Warna tosca dari UI aplikasi. Teks tosca di latar terang memakai varian lebih gelap agar kontras cukup. */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --fg:#1D1D1F; --mute:#6E6E73; --line:#D2D2D7;
+  --tosca:#1D7A68; --tosca-bright:#5BC8B5; --dark-bg:#0B0B0D; --dark-fg:#F5F5F7; --dark-mute:#A1A1A6; --dark-line:#2C2C2E;
+  --radius:20px;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0B0D; --surface:#1C1C1E; --fg:#F5F5F7; --mute:#A1A1A6; --line:#2C2C2E; --tosca:#5BC8B5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0B0D; --surface:#1C1C1E; --fg:#F5F5F7; --mute:#A1A1A6; --line:#2C2C2E; --tosca:#5BC8B5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:Inter, "SF Pro Display", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+img{display:block; max-width:100%; height:auto}
+a{color:inherit}
+h1,h2,h3{text-wrap:balance; letter-spacing:-0.03em; margin:0}
+p{margin:0}
+[hidden]:not([hidden=until-found i]){display:none!important}
+
+.band{padding-block:72px; padding-inline:max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-right,0px))}
+.band-dark{background:var(--dark-bg); color:var(--dark-fg)}
+.band-dark .mute{color:var(--dark-mute)}
+.wrap{max-width:1040px; margin:0 auto}
+.mute{color:var(--mute)}
+.eyebrow{font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--tosca)}
+.band-dark .eyebrow{color:var(--tosca-bright)}
+
+/* Hero */
+.hero{padding-block:72px 56px}
+.logo{width:min(260px, 62%); margin:0 0 40px}
+.hero h1{font-size:clamp(38px, 8vw, 64px); font-weight:700; line-height:1.04}
+.hero h1 .tos{color:var(--tosca-bright)}
+.hero .lede{margin-top:20px; font-size:clamp(17px, 2.4vw, 20px); font-weight:300; color:var(--dark-mute); max-width:36ch}
+.badge{display:inline-block; margin-top:28px; font-size:13px; padding:6px 14px; border:1px solid var(--dark-line); border-radius:999px; color:var(--dark-mute)}
+.shot{margin-top:56px; border-radius:var(--radius); box-shadow:0 30px 60px -20px rgba(0,0,0,.7); border:1px solid var(--dark-line)}
+
+/* Section headings */
+.h2{font-size:clamp(30px, 5vw, 44px); font-weight:700; line-height:1.1; margin-top:12px}
+.lead{margin-top:14px; font-size:17px; color:var(--mute); max-width:46ch}
+
+/* Tema */
+.theme-switch{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px}
+.theme-switch button{
+  font:inherit; font-size:15px; font-weight:600; cursor:pointer;
+  padding:10px 20px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--fg);
+}
+.theme-switch button[aria-pressed="true"]{border-color:var(--tosca); color:var(--tosca); box-shadow:0 0 0 3px rgba(91,200,181,.18)}
+.theme-switch button:focus-visible, .btn:focus-visible, a:focus-visible{outline:3px solid var(--tosca-bright); outline-offset:3px}
+.theme-stage{margin-top:32px; border-radius:var(--radius); border:1px solid var(--line); overflow:hidden; background:var(--surface)}
+.theme-stage img{width:100%}
+.theme-note{margin-top:16px; font-size:15px; color:var(--mute)}
+
+/* Fitur */
+.features{margin-top:48px; display:grid; gap:20px; grid-template-columns:1fr}
+@media (min-width:760px){ .features{grid-template-columns:1.1fr 1fr} }
+.card{background:#1C1C1E; border-radius:var(--radius); padding:28px; border:1px solid var(--dark-line); min-width:0}
+.card h3{font-size:24px; font-weight:700; line-height:1.15}
+.card p{margin-top:10px; color:var(--dark-mute); font-size:15px}
+.card > img{margin-top:24px; border-radius:14px}
+.dsp{margin-top:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; min-width:0}
+.dsp figure{margin:0; min-width:0}
+.dsp img{border-radius:12px; width:100%}
+.dsp figcaption{margin-top:8px; font-size:13px; color:var(--dark-mute); text-align:center}
+
+/* Status */
+.status-grid{margin-top:48px; display:grid; gap:20px; grid-template-columns:1fr}
+@media (min-width:760px){ .status-grid{grid-template-columns:1fr 1fr} }
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px; min-width:0}
+.panel h3{font-size:20px; font-weight:700}
+.panel ul{margin:16px 0 0; padding:0; list-style:none; display:grid; gap:12px}
+.panel li{position:relative; padding-left:24px; font-size:16px}
+.panel li::before{content:""; position:absolute; left:0; top:.6em; width:10px; height:10px; border-radius:50%; background:var(--tosca)}
+.panel li.no::before{background:transparent; border:2px solid var(--mute); width:8px; height:8px; top:.65em; left:1px}
+.panel li small{display:block; color:var(--mute); font-size:14px; margin-top:2px}
+
+/* Unduh */
+.download-box{margin-top:44px; display:grid; gap:18px; justify-items:start}
+.btn{
+  font:inherit; font-size:17px; font-weight:600; padding:14px 26px; border-radius:999px; border:0;
+  background:#2C2C2E; color:#8E8E93; cursor:not-allowed;
+}
+.note{font-size:15px; color:var(--dark-mute); max-width:60ch}
+.repo{font-size:15px; color:var(--tosca-bright); word-break:break-all}
+
+footer{padding-block:32px; padding-inline:max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-right,0px)); font-size:13px; color:var(--mute); background:var(--bg)}
+footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between}
+
+@media (prefers-reduced-motion: no-preference){
+  .hero .shot{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
+  @keyframes rise{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+}
+</style>
+</head>
+<body>
+
+<section class="band band-dark hero">
+  <div class="wrap">
+    <img class="logo" src="/adiohub/img/logo.png" width="1040" height="328" alt="Logo AudioHub">
+    <h1>Semua jalur suara.<br><span class="tos">Satu jendela.</span></h1>
+    <p class="lede">AudioHub mengatur routing audio dan DSP mikrofon di macOS, dari satu jendela.</p>
+    <span class="badge">Prototipe · Versi 0.2.0</span>
+    <img class="shot" src="/adiohub/img/i-dark.png" width="1128" height="748" alt="Jendela utama AudioHub dengan tema gelap">
+  </div>
+</section>
+
+<section class="band" id="tema">
+  <div class="wrap">
+    <span class="eyebrow">Baru di 0.2.0</span>
+    <h2 class="h2">Pilih tema sesukamu.</h2>
+    <p class="lead">Pilihan Sistem mengikuti macOS. Pilihan Terang dan Gelap tersimpan untuk penggunaan berikutnya.</p>
+
+    <div class="theme-switch" role="group" aria-label="Pilih tema tampilan">
+      <button type="button" aria-pressed="true" data-theme-pick="system">Sistem</button>
+      <button type="button" aria-pressed="false" data-theme-pick="light">Terang</button>
+      <button type="button" aria-pressed="false" data-theme-pick="dark">Gelap</button>
+    </div>
+
+    <div class="theme-stage">
+      <img id="theme-shot" src="/adiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub, tema gelap">
+    </div>
+    <p class="theme-note" id="theme-note" aria-live="polite">Tema Sistem: tampilan gelap dan terang mengikuti pengaturan macOS. Gambar ini memperlihatkan tema gelap.</p>
+  </div>
+</section>
+
+<section class="band band-dark" id="fitur">
+  <div class="wrap">
+    <span class="eyebrow">Fitur</span>
+    <h2 class="h2">Routing dan DSP di satu tempat.</h2>
+    <div class="features">
+      <article class="card">
+        <h3>Matriks routing</h3>
+        <p>Hubungkan input ke output dari satu matriks. Sel yang aktif menyala dengan warna tosca.</p>
+        <img src="/adiohub/img/i-matd.png" width="560" height="353" alt="Matriks routing AudioHub" loading="lazy">
+      </article>
+      <article class="card">
+        <h3>DSP per kanal</h3>
+        <p>Gate, EQ, dan kompresor untuk setiap kanal mikrofon.</p>
+        <div class="dsp">
+          <figure><img src="/adiohub/img/i-gate.png" width="383" height="406" alt="Panel gate" loading="lazy"><figcaption>Gate</figcaption></figure>
+          <figure><img src="/adiohub/img/i-eq.png" width="380" height="402" alt="Panel EQ" loading="lazy"><figcaption>EQ</figcaption></figure>
+          <figure><img src="/adiohub/img/i-comp.png" width="377" height="394" alt="Panel kompresor" loading="lazy"><figcaption>Kompresor</figcaption></figure>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="status">
+  <div class="wrap">
+    <span class="eyebrow">Status</span>
+    <h2 class="h2">Apa yang sudah, dan belum.</h2>
+    <div class="status-grid">
+      <div class="panel">
+        <h3>Sudah</h3>
+        <ul>
+          <li>Routing dan DSP mikrofon berjalan di macOS</li>
+          <li>Buffer 512 frame dengan EMEET Virtual Audio sebagai perangkat virtual</li>
+          <li>Tema Sistem, Terang, dan Gelap, dengan pilihan yang tersimpan</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Belum</h3>
+        <ul>
+          <li class="no">Belum dinotarisasi oleh Apple<small>macOS dapat menampilkan peringatan saat aplikasi dibuka di komputer lain.</small></li>
+          <li class="no">Belum diuji di komputer bersih<small>Instal dan copot aplikasi belum diuji ulang.</small></li>
+          <li class="no">Belum ada pan, solo, dan tampilan grafik</li>
+          <li class="no">Belum diuji dengan aplikasi musik dan aplikasi panggilan</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-dark" id="unduh">
+  <div class="wrap">
+    <span class="eyebrow">Unduh</span>
+    <h2 class="h2">Mencari penguji.</h2>
+    <div class="download-box">
+      <button class="btn" type="button" disabled aria-disabled="true">Tautan unduh segera</button>
+      <p class="note">AudioHub membutuhkan EMEET Virtual Audio. Pasang driver itu secara terpisah, karena tidak ikut dalam DMG.</p>
+      <a class="repo" href="https://github.com/khincc00/AudioHub.git" target="_blank" rel="noopener">github.com/khincc00/AudioHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>AudioHub 0.2.0 · Prototipe</span>
+    <span>Dibuat oleh khincc</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var shot = document.getElementById('theme-shot');
+  var note = document.getElementById('theme-note');
+  var dark = '/adiohub/img/i-dark.png', light = '/adiohub/img/i-light.png';
+  var buttons = document.querySelectorAll('[data-theme-pick]');
+  function pick(mode){
+    buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.themePick === mode)); });
+    if(mode === 'light'){ shot.src = light; shot.alt = 'Jendela AudioHub, tema terang'; note.textContent = 'Tema Terang: kartu dan garis pemisah ikut berubah, dan teks tetap terbaca.'; }
+    else if(mode === 'dark'){ shot.src = dark; shot.alt = 'Jendela AudioHub, tema gelap'; note.textContent = 'Tema Gelap: kartu dan garis pemisah mengikuti warna gelap.'; }
+    else { shot.src = dark; shot.alt = 'Jendela AudioHub, tema gelap'; note.textContent = 'Tema Sistem: tampilan gelap dan terang mengikuti pengaturan macOS. Gambar ini memperlihatkan tema gelap.'; }
+    try { localStorage.setItem('audiohub-demo-theme', mode); } catch(e) {}
+  }
+  buttons.forEach(function(b){ b.addEventListener('click', function(){ pick(b.dataset.themePick); }); });
+  var saved = null; try { saved = localStorage.getItem('audiohub-demo-theme'); } catch(e) {}
+  if(saved === 'light' || saved === 'dark' || saved === 'system') pick(saved);
+})();
+</script>
+
+</body>
+</html>
