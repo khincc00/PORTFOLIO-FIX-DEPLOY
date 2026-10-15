@@ -11,7 +11,7 @@
 <meta property="og:description" content="AudioHub mengatur routing audio dan DSP mikrofon di macOS dari satu jendela. Prototipe versi 0.2.0.">
 <meta property="og:url" content="https://audiohub.khincreator.com/">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://audiohub.khincreator.com/adiohub/img/i-dark.png">
+<meta property="og:image" content="https://audiohub.khincreator.com/audiohub/img/i-dark.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
 /* Layout: satu kolom berurutan. Hero gelap, tema terang, fitur gelap, status terang, unduh gelap.
@@ -126,11 +126,11 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
 
 <section class="band band-dark hero">
   <div class="wrap">
-    <img class="logo" src="/adiohub/img/logo.png" width="1040" height="328" alt="Logo AudioHub">
+    <img class="logo" src="/audiohub/img/logo.png" width="1040" height="328" alt="Logo AudioHub">
     <h1>Semua jalur suara.<br><span class="tos">Satu jendela.</span></h1>
     <p class="lede">AudioHub mengatur routing audio dan DSP mikrofon di macOS, dari satu jendela.</p>
     <span class="badge">Prototipe · Versi 0.2.0</span>
-    <img class="shot" src="/adiohub/img/i-dark.png" width="1128" height="748" alt="Jendela utama AudioHub dengan tema gelap">
+    <img class="shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela utama AudioHub dengan tema gelap">
   </div>
 </section>
 
@@ -147,7 +147,7 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
     </div>
 
     <div class="theme-stage">
-      <img id="theme-shot" src="/adiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub, tema gelap">
+      <img id="theme-shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub, tema gelap">
     </div>
     <p class="theme-note" id="theme-note" aria-live="polite">Tema Sistem: tampilan gelap dan terang mengikuti pengaturan macOS. Gambar ini memperlihatkan tema gelap.</p>
   </div>
@@ -161,15 +161,15 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
       <article class="card">
         <h3>Matriks routing</h3>
         <p>Hubungkan input ke output dari satu matriks. Sel yang aktif menyala dengan warna tosca.</p>
-        <img src="/adiohub/img/i-matd.png" width="560" height="353" alt="Matriks routing AudioHub" loading="lazy">
+        <img src="/audiohub/img/i-matd.png" width="560" height="353" alt="Matriks routing AudioHub" loading="lazy">
       </article>
       <article class="card">
         <h3>DSP per kanal</h3>
         <p>Gate, EQ, dan kompresor untuk setiap kanal mikrofon.</p>
         <div class="dsp">
-          <figure><img src="/adiohub/img/i-gate.png" width="383" height="406" alt="Panel gate" loading="lazy"><figcaption>Gate</figcaption></figure>
-          <figure><img src="/adiohub/img/i-eq.png" width="380" height="402" alt="Panel EQ" loading="lazy"><figcaption>EQ</figcaption></figure>
-          <figure><img src="/adiohub/img/i-comp.png" width="377" height="394" alt="Panel kompresor" loading="lazy"><figcaption>Kompresor</figcaption></figure>
+          <figure><img src="/audiohub/img/i-gate.png" width="383" height="406" alt="Panel gate" loading="lazy"><figcaption>Gate</figcaption></figure>
+          <figure><img src="/audiohub/img/i-eq.png" width="380" height="402" alt="Panel EQ" loading="lazy"><figcaption>EQ</figcaption></figure>
+          <figure><img src="/audiohub/img/i-comp.png" width="377" height="394" alt="Panel kompresor" loading="lazy"><figcaption>Kompresor</figcaption></figure>
         </div>
       </article>
     </div>
@@ -225,7 +225,7 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
 (function(){
   var shot = document.getElementById('theme-shot');
   var note = document.getElementById('theme-note');
-  var dark = '/adiohub/img/i-dark.png', light = '/adiohub/img/i-light.png';
+  var dark = '/audiohub/img/i-dark.png', light = '/audiohub/img/i-light.png';
   var buttons = document.querySelectorAll('[data-theme-pick]');
   function pick(mode){
     buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.themePick === mode)); });
