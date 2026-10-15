@@ -18,12 +18,12 @@ module.exports = {
   // hasilnya error 500 di Node < 22.12 (dulu terjadi di Vercel). Karena itu paket ini SENGAJA ikut digabung
   // (di-bundle) ke hasil build, bukan dimuat terpisah, sehingga tidak bergantung pada versi Node.
   // Halaman /games adalah HTML statis (public/games/index.html). Alamat /games ditampilkan dari file itu
-  // Subdomain audiohub.khincreator.com juga HTML statis (public/adiohub/index.html). Ditaruh di beforeFiles
+  // Subdomain audiohub.khincreator.com juga HTML statis (public/audiohub/index.html). Ditaruh di beforeFiles
   // supaya menang melawan app/page.tsx pada alamat "/" di host tersebut
   async rewrites() {
     return {
       beforeFiles: [
-        { source: '/', has: [{ type: 'host', value: 'audiohub.khincreator.com' }], destination: '/adiohub/index.html' },
+        { source: '/', has: [{ type: 'host', value: 'audiohub.khincreator.com' }], destination: '/audiohub/index.html' },
       ],
       afterFiles: [{ source: '/games', destination: '/games/index.html' }],
     }
@@ -33,6 +33,8 @@ module.exports = {
     return [
       // Alamat lama /admin.php diarahkan ke halaman admin
       { source: '/admin.php', destination: '/admin', permanent: false },
+      // Folder lama (salah eja) /adiohub/... diarahkan ke /audiohub/..., supaya tautan gambar lama tetap jalan
+      { source: '/adiohub/:path*', destination: '/audiohub/:path*', permanent: true },
       // www.khincreator.com dialihkan ke khincreator.com, supaya Google hanya mengenal satu alamat
       {
         source: '/:path*',
