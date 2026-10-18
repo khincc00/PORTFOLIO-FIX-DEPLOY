@@ -3,275 +3,625 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>AudioHub 0.2.0 | Routing dan DSP Mikrofon untuk macOS</title>
-<meta name="description" content="AudioHub mengatur routing audio dan DSP mikrofon di macOS dari satu jendela. Prototipe versi 0.2.0.">
+<title>AudioHub 0.3.0 | Routing Audio Profesional untuk macOS</title>
+<meta name="description" content="AudioHub adalah aplikasi routing audio untuk macOS: matriks routing per kanal, efek per input, dan driver perangkat virtual AVHub v2 yang ikut terpasang. Versi 0.3.0.">
 <meta name="theme-color" content="#0B0B0D">
 <link rel="canonical" href="https://audiohub.khincreator.com/">
-<meta property="og:title" content="AudioHub 0.2.0 | Routing dan DSP Mikrofon untuk macOS">
-<meta property="og:description" content="AudioHub mengatur routing audio dan DSP mikrofon di macOS dari satu jendela. Prototipe versi 0.2.0.">
+<meta property="og:title" content="AudioHub 0.3.0 | Routing Audio Profesional untuk macOS">
+<meta property="og:description" content="Routing audio per kanal, efek per input, dan perangkat virtual AVHub v2 untuk macOS.">
 <meta property="og:url" content="https://audiohub.khincreator.com/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://audiohub.khincreator.com/audiohub/img/i-dark.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-/* Layout: satu kolom berurutan. Hero gelap, tema terang, fitur gelap, status terang, unduh gelap.
-   Warna tosca dari UI aplikasi. Teks tosca di latar terang memakai varian lebih gelap agar kontras cukup. */
 :root{
   --bg:#F5F5F7; --surface:#FFFFFF; --fg:#1D1D1F; --mute:#6E6E73; --line:#D2D2D7;
-  --tosca:#1D7A68; --tosca-bright:#5BC8B5; --dark-bg:#0B0B0D; --dark-fg:#F5F5F7; --dark-mute:#A1A1A6; --dark-line:#2C2C2E;
-  --radius:20px;
+  --tosca:#1D7A68; --tosca-bright:#5BC8B5;
+  --dark-bg:#0B0B0D; --dark-surface:#1C1C1E; --dark-fg:#F5F5F7; --dark-mute:#A1A1A6; --dark-line:#2C2C2E;
+  --radius:18px;
   color-scheme:light;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0B0B0D; --surface:#1C1C1E; --fg:#F5F5F7; --mute:#A1A1A6; --line:#2C2C2E; --tosca:#5BC8B5;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0B0B0D; --surface:#1C1C1E; --fg:#F5F5F7; --mute:#A1A1A6; --line:#2C2C2E; --tosca:#5BC8B5;
-  color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-behavior:smooth; scroll-padding-top:72px}
 body{
   margin:0; background:var(--bg); color:var(--fg);
-  font-family:Inter, "SF Pro Display", system-ui, -apple-system, "Segoe UI", sans-serif;
-  line-height:1.55; -webkit-font-smoothing:antialiased;
+  font-family:Inter,"SF Pro Display",system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
 }
 img{display:block; max-width:100%; height:auto}
 a{color:inherit}
-h1,h2,h3{text-wrap:balance; letter-spacing:-0.03em; margin:0}
+h1,h2,h3{letter-spacing:-0.03em; margin:0; text-wrap:balance}
+h1{font-size:clamp(36px,6vw,64px); line-height:1.05}
+h2{font-size:clamp(28px,4vw,40px); line-height:1.15}
+h3{font-size:19px; letter-spacing:-0.01em}
 p{margin:0}
-[hidden]:not([hidden=until-found i]){display:none!important}
-
-.band{padding-block:72px; padding-inline:max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px; margin:0 auto; padding-inline:20px}
+.band{padding-block:88px}
 .band-dark{background:var(--dark-bg); color:var(--dark-fg)}
 .band-dark .mute{color:var(--dark-mute)}
-.wrap{max-width:1040px; margin:0 auto}
 .mute{color:var(--mute)}
-.eyebrow{font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--tosca)}
+.eyebrow{display:inline-block; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--tosca); margin-bottom:14px}
 .band-dark .eyebrow{color:var(--tosca-bright)}
+.lead{font-size:19px; max-width:640px; margin-top:18px}
+.section-head{max-width:700px; margin-bottom:44px}
+
+/* Navigasi */
+.nav{position:sticky; top:0; z-index:10; background:rgba(11,11,13,.86); backdrop-filter:saturate(180%) blur(14px); -webkit-backdrop-filter:saturate(180%) blur(14px); color:var(--dark-fg)}
+.nav .wrap{display:flex; align-items:center; justify-content:space-between; height:56px; gap:16px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:700; letter-spacing:-0.01em}
+.brand img{height:22px; width:auto}
+.nav-links{display:flex; gap:22px; font-size:14px}
+.nav-links a{text-decoration:none; color:var(--dark-mute)}
+.nav-links a:hover{color:var(--dark-fg)}
+@media (max-width:720px){ .nav-links a:not(.nav-cta){display:none} }
+.nav-cta{background:var(--tosca-bright); color:#06231D!important; padding:7px 14px; border-radius:999px; font-weight:600; text-decoration:none}
+
+/* Tombol */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:999px; font-weight:600; font-size:16px; text-decoration:none; border:1px solid transparent; transition:transform .15s ease, opacity .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--tosca-bright); color:#06231D}
+.btn-ghost{border-color:currentColor; color:inherit; background:transparent}
+.btn-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:32px}
 
 /* Hero */
-.hero{padding-block:72px 56px}
-.logo{width:min(260px, 62%); margin:0 0 40px}
-.hero h1{font-size:clamp(38px, 8vw, 64px); font-weight:700; line-height:1.04}
-.hero h1 .tos{color:var(--tosca-bright)}
-.hero .lede{margin-top:20px; font-size:clamp(17px, 2.4vw, 20px); font-weight:300; color:var(--dark-mute); max-width:36ch}
-.badge{display:inline-block; margin-top:28px; font-size:13px; padding:6px 14px; border:1px solid var(--dark-line); border-radius:999px; color:var(--dark-mute)}
-.shot{margin-top:56px; border-radius:var(--radius); box-shadow:0 30px 60px -20px rgba(0,0,0,.7); border:1px solid var(--dark-line)}
+.hero{background:var(--dark-bg); color:var(--dark-fg); padding-block:96px 72px; text-align:center}
+.hero .eyebrow{color:var(--tosca-bright)}
+.hero .lead{margin-inline:auto; color:var(--dark-mute)}
+.hero .btn-row{justify-content:center}
+.badges{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:28px}
+.badge{font-size:13px; padding:6px 12px; border:1px solid var(--dark-line); border-radius:999px; color:var(--dark-mute)}
+.hero-shot{margin:56px auto 0; max-width:960px; border-radius:var(--radius); border:1px solid var(--dark-line); box-shadow:0 30px 80px rgba(0,0,0,.45); overflow:hidden}
 
-/* Section headings */
-.h2{font-size:clamp(30px, 5vw, 44px); font-weight:700; line-height:1.1; margin-top:12px}
-.lead{margin-top:14px; font-size:17px; color:var(--mute); max-width:46ch}
+/* Kartu */
+.grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px}
+.band-dark .card{background:var(--dark-surface); border-color:var(--dark-line)}
+.card p{margin-top:10px; color:var(--mute); font-size:15px}
+.band-dark .card p{color:var(--dark-mute)}
+.card ul{margin:12px 0 0; padding-left:18px; color:var(--mute); font-size:15px}
+.band-dark .card ul{color:var(--dark-mute)}
+.card li+li{margin-top:6px}
 
-/* Tema */
-.theme-switch{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px}
-.theme-switch button{
-  font:inherit; font-size:15px; font-weight:600; cursor:pointer;
-  padding:10px 20px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--fg);
-}
-.theme-switch button[aria-pressed="true"]{border-color:var(--tosca); color:var(--tosca); box-shadow:0 0 0 3px rgba(91,200,181,.18)}
-.theme-switch button:focus-visible, .btn:focus-visible, a:focus-visible{outline:3px solid var(--tosca-bright); outline-offset:3px}
-.theme-stage{margin-top:32px; border-radius:var(--radius); border:1px solid var(--line); overflow:hidden; background:var(--surface)}
-.theme-stage img{width:100%}
-.theme-note{margin-top:16px; font-size:15px; color:var(--mute)}
+/* Dua kolom gambar */
+.pair{display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); margin-top:8px}
+.pair figure{margin:0}
+.pair img{border-radius:var(--radius); border:1px solid var(--line)}
+.pair figcaption{margin-top:12px; color:var(--mute); font-size:14px}
+.shot-small{border-radius:var(--radius); border:1px solid var(--line); background:var(--surface); padding:16px}
 
-/* Fitur */
-.features{margin-top:48px; display:grid; gap:20px; grid-template-columns:1fr}
-@media (min-width:760px){ .features{grid-template-columns:1.1fr 1fr} }
-.card{background:#1C1C1E; border-radius:var(--radius); padding:28px; border:1px solid var(--dark-line); min-width:0}
-.card h3{font-size:24px; font-weight:700; line-height:1.15}
-.card p{margin-top:10px; color:var(--dark-mute); font-size:15px}
-.card > img{margin-top:24px; border-radius:14px}
-.dsp{margin-top:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; min-width:0}
-.dsp figure{margin:0; min-width:0}
-.dsp img{border-radius:12px; width:100%}
-.dsp figcaption{margin-top:8px; font-size:13px; color:var(--dark-mute); text-align:center}
+/* Tabel persyaratan */
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface)}
+table{width:100%; border-collapse:collapse; font-size:15px; min-width:560px}
+th,td{text-align:left; padding:16px 18px; vertical-align:top; border-bottom:1px solid var(--line)}
+th{font-size:13px; letter-spacing:.04em; text-transform:uppercase; color:var(--mute); font-weight:600}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600; white-space:nowrap}
+
+/* Langkah pasang */
+.steps{counter-reset:step; display:grid; gap:14px; margin:0; padding:0; list-style:none}
+.steps li{counter-increment:step; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px 20px 70px; position:relative}
+.steps li::before{content:counter(step); position:absolute; left:20px; top:18px; width:34px; height:34px; border-radius:50%; background:var(--tosca); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700}
+.steps p{color:var(--mute); margin-top:4px; font-size:15px}
+pre.cmd{background:#0B0B0D; color:#E6E6E6; padding:14px 16px; border-radius:12px; overflow-x:auto; font-size:13px; margin-top:12px}
 
 /* Status */
-.status-grid{margin-top:48px; display:grid; gap:20px; grid-template-columns:1fr}
-@media (min-width:760px){ .status-grid{grid-template-columns:1fr 1fr} }
-.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px; min-width:0}
-.panel h3{font-size:20px; font-weight:700}
-.panel ul{margin:16px 0 0; padding:0; list-style:none; display:grid; gap:12px}
-.panel li{position:relative; padding-left:24px; font-size:16px}
-.panel li::before{content:""; position:absolute; left:0; top:.6em; width:10px; height:10px; border-radius:50%; background:var(--tosca)}
-.panel li.no::before{background:transparent; border:2px solid var(--mute); width:8px; height:8px; top:.65em; left:1px}
-.panel li small{display:block; color:var(--mute); font-size:14px; margin-top:2px}
+.status-grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.status-list{list-style:none; margin:0; padding:0}
+.status-list li{padding:12px 0; border-bottom:1px solid var(--line); color:var(--mute); font-size:15px}
+.status-list li:last-child{border-bottom:none}
+.status-list strong{color:var(--fg); display:block; font-weight:600}
+.tag{display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; margin-right:6px; vertical-align:middle}
+.tag-ok{background:rgba(29,122,104,.15); color:var(--tosca)}
+.tag-no{background:rgba(110,110,115,.15); color:var(--mute)}
 
 /* Unduh */
-.download-box{margin-top:44px; display:grid; gap:18px; justify-items:start}
-.btn{
-  font:inherit; font-size:17px; font-weight:600; padding:14px 26px; border-radius:999px; border:0;
-  background:#2C2C2E; color:#8E8E93; cursor:not-allowed;
-}
-.btn-download{display:inline-block; text-decoration:none; background:var(--tosca-bright); color:#0B0B0D; cursor:pointer}
-.btn-download:hover{filter:brightness(1.08)}
-.note{font-size:15px; color:var(--dark-mute); max-width:60ch}
-.repo{font-size:15px; color:var(--tosca-bright); word-break:break-all}
+.download-box{max-width:680px; margin-inline:auto; text-align:center}
+.download-box .meta{color:var(--dark-mute); font-size:14px; margin-top:14px}
+.hash{margin-top:24px; font-size:12px; color:var(--dark-mute); word-break:break-all; text-align:left; background:var(--dark-surface); border:1px solid var(--dark-line); padding:12px 14px; border-radius:12px}
 
-footer{padding-block:32px; padding-inline:max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-right,0px)); font-size:13px; color:var(--mute); background:var(--bg)}
-footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between}
+/* Lisensi */
+details.license{margin-top:28px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); padding:4px 22px}
+details.license summary{cursor:pointer; padding:18px 0; font-weight:600}
+details.license pre{white-space:pre-wrap; font-size:13px; line-height:1.6; margin:0 0 18px; color:var(--mute); font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
-@media (prefers-reduced-motion: no-preference){
-  .hero .shot{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
-  @keyframes rise{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
-}
+/* Footer */
+footer{padding-block:40px; color:var(--mute); font-size:14px; background:var(--bg)}
+footer .wrap{display:flex; flex-wrap:wrap; gap:10px 24px; justify-content:space-between}
+footer a{color:inherit}
 </style>
 </head>
 <body>
 
-<section class="band band-dark hero">
+<header class="nav" id="top">
   <div class="wrap">
-    <img class="logo" src="/audiohub/img/logo.png" width="1040" height="328" alt="Logo AudioHub">
-    <h1>Semua jalur suara.<br><span class="tos">Satu jendela.</span></h1>
-    <p class="lede">AudioHub mengatur routing audio dan DSP mikrofon di macOS, dari satu jendela.</p>
-    <span class="badge">Prototipe · Versi 0.2.0</span>
-    <img class="shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela utama AudioHub dengan tema gelap">
+    <a class="brand" href="#top"><img src="/audiohub/img/logo.png" alt="AudioHub"></a>
+    <nav class="nav-links" aria-label="Navigasi utama">
+      <a href="#fitur">Fitur</a>
+      <a href="#perangkat-virtual">Perangkat virtual</a>
+      <a href="#persyaratan">Persyaratan</a>
+      <a href="#pasang">Pasang</a>
+      <a href="#lisensi">Lisensi</a>
+      <a class="nav-cta" href="#unduh">Unduh</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Versi 0.3.0</span>
+    <h1>Routing audio profesional untuk macOS.</h1>
+    <p class="lead">Atur setiap kanal input dan output dari satu jendela. Dilengkapi efek per input, kontrol volume perangkat keras, dan driver perangkat virtual AVHub v2 yang ikut terpasang otomatis.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/downloads/AudioHub-0.3.0.dmg" download>Unduh untuk macOS (.dmg)</a>
+      <a class="btn btn-ghost" href="#fitur">Lihat fitur</a>
+    </div>
+    <div class="badges">
+      <span class="badge">macOS 13 atau lebih baru</span>
+      <span class="badge">Apple Silicon dan Intel</span>
+      <span class="badge">Installer dinotarisasi Apple</span>
+      <span class="badge">Driver hingga 768 kHz</span>
+    </div>
+    <img class="hero-shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub dengan tema gelap">
   </div>
 </section>
 
-<section class="band" id="tema">
+<section class="band" id="fitur">
   <div class="wrap">
-    <span class="eyebrow">Baru di 0.2.0</span>
-    <h2 class="h2">Pilih tema sesukamu.</h2>
-    <p class="lead">Pilihan Sistem mengikuti macOS. Pilihan Terang dan Gelap tersimpan untuk penggunaan berikutnya.</p>
-
-    <div class="theme-switch" role="group" aria-label="Pilih tema tampilan">
-      <button type="button" aria-pressed="true" data-theme-pick="system">Sistem</button>
-      <button type="button" aria-pressed="false" data-theme-pick="light">Terang</button>
-      <button type="button" aria-pressed="false" data-theme-pick="dark">Gelap</button>
+    <div class="section-head">
+      <span class="eyebrow">Fitur</span>
+      <h2>Semua jalur audio dalam satu tempat.</h2>
+      <p class="lead mute">Dari mikrofon dan audio interface sampai aplikasi streaming, rekaman, dan panggilan. Setiap jalur bisa diatur dengan jelas.</p>
     </div>
-
-    <div class="theme-stage">
-      <img id="theme-shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub, tema gelap">
+    <div class="grid">
+      <div class="card">
+        <h3>Matriks routing per kanal</h3>
+        <p>Hubungkan kanal input ke output mana pun. Tiap koneksi punya gain dan mute sendiri.</p>
+      </div>
+      <div class="card">
+        <h3>Efek per input</h3>
+        <p>Setiap input punya rantai pemrosesan dengan urutan yang jelas:</p>
+        <ul>
+          <li>Noise gate</li>
+          <li>EQ tiga pita</li>
+          <li>Kompresor</li>
+          <li>Delay</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Limiter per output</h3>
+        <p>Batasi level di setiap output supaya tidak clipping ke aplikasi atau perangkat tujuan.</p>
+      </div>
+      <div class="card">
+        <h3>Plugin Audio Unit per input</h3>
+        <p>Pasang satu plugin Audio Unit di setiap input, termasuk plugin bawaan Apple. Parameter plugin belum bisa diatur dari aplikasi.</p>
+      </div>
+      <div class="card">
+        <h3>Meter dan clip</h3>
+        <p>Meter level real-time dengan indikator clip. Atur gain mikrofon sebelum sinyal mencapai batas.</p>
+      </div>
+      <div class="card">
+        <h3>Preset dan scene</h3>
+        <p>Simpan konfigurasi sebagai preset, termasuk preset Reaper. Scene disimpan dalam format JSON versi 1.</p>
+      </div>
     </div>
-    <p class="theme-note" id="theme-note" aria-live="polite">Tema Sistem: tampilan gelap dan terang mengikuti pengaturan macOS. Gambar ini memperlihatkan tema gelap.</p>
   </div>
 </section>
 
-<section class="band band-dark" id="fitur">
+<section class="band" id="perangkat-virtual">
   <div class="wrap">
-    <span class="eyebrow">Fitur</span>
-    <h2 class="h2">Routing dan DSP di satu tempat.</h2>
-    <div class="features">
-      <article class="card">
-        <h3>Matriks routing</h3>
-        <p>Hubungkan input ke output dari satu matriks. Sel yang aktif menyala dengan warna tosca.</p>
-        <img src="/audiohub/img/i-matd.png" width="560" height="353" alt="Matriks routing AudioHub" loading="lazy">
-      </article>
-      <article class="card">
-        <h3>DSP per kanal</h3>
-        <p>Gate, EQ, dan kompresor untuk setiap kanal mikrofon.</p>
-        <div class="dsp">
-          <figure><img src="/audiohub/img/i-gate.png" width="383" height="406" alt="Panel gate" loading="lazy"><figcaption>Gate</figcaption></figure>
-          <figure><img src="/audiohub/img/i-eq.png" width="380" height="402" alt="Panel EQ" loading="lazy"><figcaption>EQ</figcaption></figure>
-          <figure><img src="/audiohub/img/i-comp.png" width="377" height="394" alt="Panel kompresor" loading="lazy"><figcaption>Kompresor</figcaption></figure>
-        </div>
-      </article>
+    <div class="section-head">
+      <span class="eyebrow">Perangkat virtual</span>
+      <h2>Driver AVHub v2 ikut terpasang.</h2>
+      <p class="lead mute">Tidak perlu mencari driver pihak ketiga. Installer memasang aplikasi dan driver sekaligus, dengan dua perangkat virtual stereo.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>avhub_virtual1 dan avhub_virtual2</h3>
+        <p>Dua perangkat loopback stereo. Audio yang dikirim ke output salah satu perangkat bisa dibaca kembali dari input perangkat yang sama.</p>
+      </div>
+      <div class="card">
+        <h3>Dipakai di aplikasi lain</h3>
+        <p>Pilih avhub_virtual sebagai input mikrofon atau sumber audio di aplikasi seperti OBS, dan AudioHub menjadi jalur routing-nya.</p>
+      </div>
+      <div class="card">
+        <h3>Spesifikasi driver</h3>
+        <ul>
+          <li>13 sample rate, 8 kHz sampai 768 kHz</li>
+          <li>Buffer default 512 frame, rentang 16 sampai 4096</li>
+          <li>Latensi yang dilaporkan 0 frame</li>
+          <li>Kontrol volume dan mute, koreksi pitch, dan clock source</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="band" id="status">
+<section class="band band-dark" id="baru">
   <div class="wrap">
-    <span class="eyebrow">Status</span>
-    <h2 class="h2">Apa yang sudah, dan belum.</h2>
+    <div class="section-head">
+      <span class="eyebrow">Baru di 0.3.0</span>
+      <h2>Apa yang berubah di versi ini.</h2>
+    </div>
     <div class="status-grid">
-      <div class="panel">
-        <h3>Sudah</h3>
+      <div class="card">
+        <h3>Routing dan perangkat</h3>
         <ul>
-          <li>Routing dan DSP mikrofon berjalan di macOS</li>
-          <li>Buffer 512 frame dengan driver perangkat virtual AVHub v2 (avhub_virtual1 dan avhub_virtual2)</li>
-          <li>Tema Sistem, Terang, dan Gelap, dengan pilihan yang tersimpan</li>
+          <li>Virtual 1 dan Virtual 2 bisa dipilih dari perangkat virtual apa pun yang terpasang</li>
+          <li>Driver AVHub v2 ikut terpasang otomatis</li>
+          <li>AudioHub terlihat sebagai aggregate di Core Audio</li>
+          <li>Sample rate dan buffer bisa dipilih di aplikasi, sesuai yang didukung perangkat</li>
         </ul>
       </div>
-      <div class="panel">
-        <h3>Belum</h3>
+      <div class="card">
+        <h3>Kontrol dan keamanan</h3>
         <ul>
-          <li class="no">Belum dinotarisasi oleh Apple<small>macOS dapat menampilkan peringatan saat aplikasi dibuka di komputer lain.</small></li>
-          <li class="no">Belum diuji di komputer bersih<small>Instal dan copot aplikasi belum diuji ulang.</small></li>
-          <li class="no">Belum ada pan, solo, dan tampilan grafik</li>
-          <li class="no">Belum diuji dengan aplikasi musik dan aplikasi panggilan</li>
+          <li>Latensi buffer, input, dan output ditampilkan dalam milidetik</li>
+          <li>Volume dan bisukan untuk output perangkat keras</li>
+          <li>Konfirmasi sebelum menghapus atau menimpa preset</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<section class="band band-dark" id="unduh">
+<section class="band" id="tampilan">
   <div class="wrap">
-    <span class="eyebrow">Unduh</span>
-    <h2 class="h2">Mencari penguji.</h2>
+    <div class="section-head">
+      <span class="eyebrow">Tampilan</span>
+      <h2>Tema terang dan gelap.</h2>
+      <p class="lead mute">Pilih tema Sistem, Terang, atau Gelap di menu pengaturan. Pilihan tersimpan untuk pemakaian berikutnya.</p>
+    </div>
+    <div class="pair">
+      <figure>
+        <img src="/audiohub/img/i-light.png" width="1127" height="753" loading="lazy" alt="Jendela AudioHub dengan tema terang">
+        <figcaption>Tema terang</figcaption>
+      </figure>
+      <figure>
+        <img src="/audiohub/img/i-dark.png" width="1128" height="748" loading="lazy" alt="Jendela AudioHub dengan tema gelap">
+        <figcaption>Tema gelap</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="band band-dark" id="persyaratan">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Persyaratan sistem</span>
+      <h2>Minimum dan rekomendasi.</h2>
+      <p class="lead mute">Pengujian dilakukan di Darwin 27 (macOS 27) dengan Apple Silicon.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Komponen</th><th>Minimum</th><th>Rekomendasi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sistem operasi</td><td>macOS 13.0 untuk aplikasi. Driver membutuhkan macOS 11.0.</td><td>macOS terbaru.</td></tr>
+          <tr><td>Arsitektur</td><td>Intel (x86_64) atau Apple Silicon (arm64). Biner bersifat universal.</td><td>Apple Silicon. Dukungan Intel ada di biner, belum diuji langsung.</td></tr>
+          <tr><td>Perangkat audio</td><td>Perangkat input dan output yang dikenali Core Audio.</td><td>Audio interface USB. Diuji dengan Maono ProStudio 2x2 (PS22).</td></tr>
+          <tr><td>Buffer</td><td>512 frame (default). Driver mendukung 16 sampai 4096 frame.</td><td>512 frame, sekitar 10,7 ms per tahap. Buffer 128 frame pernah menghasilkan satu dropout dalam uji tiga detik.</td></tr>
+          <tr><td>Sample rate</td><td>48 kHz</td><td>48 kHz</td></tr>
+          <tr><td>Memori dan CPU</td><td>Belum diukur</td><td>Belum diukur</td></tr>
+          <tr><td>Hak administrator</td><td>Diperlukan untuk memasang atau mencopot driver.</td><td>Sama.</td></tr>
+          <tr><td>Izin sistem</td><td>Akses mikrofon, jika macOS memintanya saat input dipakai.</td><td>Sama.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="pasang">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Pasang</span>
+      <h2>Tiga langkah, lalu siap dipakai.</h2>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Unduh dan buka DMG</h3>
+        <p>Buka <code>AudioHub-0.3.0.dmg</code> dari tombol unduh di halaman ini.</p>
+      </li>
+      <li>
+        <h3>Jalankan installer</h3>
+        <p>Dua kali klik <code>Install AudioHub.pkg</code>, lalu masukkan kata sandi administrator. Installer memasang aplikasi ke <code>/Applications</code> dan driver ke <code>/Library/Audio/Plug-Ins/HAL</code>.</p>
+      </li>
+      <li>
+        <h3>Pastikan perangkat virtual muncul</h3>
+        <p>Jalankan perintah berikut di Terminal. Hasilnya harus menampilkan <code>avhub_virtual1</code> dan <code>avhub_virtual2</code>. Kalau belum muncul, restart Mac.</p>
+        <pre class="cmd">system_profiler SPAudioDataType | grep avhub</pre>
+      </li>
+    </ol>
+    <p class="mute" style="margin-top:22px">Mencopot aplikasi: hapus <code>/Applications/AudioHub.app</code> dan <code>/Library/Audio/Plug-Ins/HAL/AVHubDriver.driver</code> dengan kata sandi administrator, lalu muat ulang layanan audio atau restart Mac.</p>
+  </div>
+</section>
+
+<section class="band band-dark" id="status">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Status</span>
+      <h2>Apa yang sudah diuji, dan apa yang belum.</h2>
+      <p class="lead mute">Kami menulis batasannya dengan jujur supaya kamu bisa memutuskan sendiri.</p>
+    </div>
+    <div class="status-grid">
+      <div class="card">
+        <h3>Sudah</h3>
+        <ul class="status-list">
+          <li><strong><span class="tag tag-ok">Sudah</span>Installer dinotarisasi Apple</strong>Gatekeeper menerima paket sebagai Notarized Developer ID.</li>
+          <li><strong><span class="tag tag-ok">Sudah</span>Routing ke perangkat virtual</strong>Tone yang diputar ke avhub_virtual2 terbaca di input avhub_virtual2, dan avhub_virtual1 tetap sunyi.</li>
+          <li><strong><span class="tag tag-ok">Sudah</span>Tes driver</strong>Tes logika dan tes pemuatan bundle lulus.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Belum</h3>
+        <ul class="status-list">
+          <li><strong><span class="tag tag-no">Belum</span>Pemasangan di mesin bersih</strong>Pemasangan dan pencopotan belum diuji di mesin yang belum pernah memasang AudioHub.</li>
+          <li><strong><span class="tag tag-no">Belum</span>Aplikasi musik dan panggilan</strong>Belum diuji langsung dengan aplikasi musik atau panggilan.</li>
+          <li><strong><span class="tag tag-no">Belum</span>Pan, solo, dan graph view</strong>Belum tersedia di versi ini.</li>
+          <li><strong><span class="tag tag-no">Belum</span>Latensi dan buffer 64 frame</strong>Belum diukur atau diuji secara menyeluruh.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="unduh">
+  <div class="wrap">
     <div class="download-box">
-      <a class="btn btn-download" href="https://github.com/khincc00/AudioHub/releases/download/v0.2.0/AudioHub-0.2.0.dmg" rel="noopener">Unduh AudioHub 0.2.0 (.dmg)</a>
-      <p class="note">Driver perangkat virtual AVHub v2 sudah ikut dalam DMG dan dipasang otomatis bersama AudioHub.</p>
-      <a class="repo" href="https://github.com/khincc00/AudioHub.git" target="_blank" rel="noopener">github.com/khincc00/AudioHub</a>
+      <span class="eyebrow">Unduh</span>
+      <h2>AudioHub 0.3.0 untuk macOS.</h2>
+      <p class="lead mute" style="margin-inline:auto">Satu installer untuk aplikasi dan driver perangkat virtual. Installer sudah dinotarisasi Apple.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary" href="/downloads/AudioHub-0.3.0.dmg" download>Unduh AudioHub 0.3.0 (.dmg)</a>
+      </div>
+      <p class="meta">Ukuran 1,7 MB · macOS 13 atau lebih baru</p>
+      <div class="hash">SHA-256: 319ba4a2a809765d31c237dc27b8b3d569f9c7e8f13315c37ffa54e7fcf0391c</div>
     </div>
   </div>
 </section>
 
 <section class="band" id="lisensi">
   <div class="wrap">
-    <span class="eyebrow">Lisensi</span>
-    <h2 class="h2">Hak cipta, seluruh hak dilindungi.</h2>
-    <div class="panel">
-      <p>Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi. Situs: khincreator.com</p>
-      <p>Lisensi ini berlaku untuk AudioHub (kode sumber, dokumentasi, dan aset) serta driver perangkat virtual AVHub v2. Teks lengkapnya:</p>
-      <pre style="white-space:pre-wrap; font-size:13px; line-height:1.6; margin:0">Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.
-Situs: khincreator.com
-
-Perangkat lunak AudioHub (termasuk kode sumber, dokumentasi, dan aset) serta driver perangkat virtual AVHub v2 (`virtual-device/AVHubDriver/`) adalah milik pembuatnya dan dilindungi undang-undang hak cipta. Tidak ada lisensi yang diberikan secara implisit.
-
-Anda boleh:
-- Menggunakan salinan AudioHub yang Anda peroleh secara sah, sesuai syarat penggunaan yang berlaku.
-
-Anda tidak boleh, kecuali diizinkan secara tertulis:
-- Menyalin, memodifikasi, mendistribusikan ulang, atau menjual AudioHub atau bagiannya.
-- Membongkar (reverse engineer), mendekompilasi, atau melewati mekanisme lisensi.
-- Menghapus atau mengubah pemberitahuan hak cipta dan merek.
-
-Paket instalasi AudioHub hanya memuat aplikasi AudioHub dan driver perangkat virtual AVHub v2 yang dibawanya. Tidak ada komponen pihak ketiga di dalamnya.
-
-Nama produk pihak lain (mis. OBS, TikTok) disebut hanya untuk menunjukkan kompatibilitas. Nama dan merek itu bukan milik pembuat AudioHub.
-
-PERANGKAT LUNAK INI DISEDIAKAN "APA ADANYA", TANPA JAMINAN APA PUN, TERSURAT MAUPUN TERSIRAT.</pre>
-      <p style="margin-top:16px"><a href="https://github.com/khincc00/AudioHub/blob/main/LICENSE" target="_blank" rel="noopener">Lihat LICENSE di GitHub</a></p>
+    <div class="section-head">
+      <span class="eyebrow">Lisensi</span>
+      <h2>Perjanjian lisensi pengguna akhir.</h2>
+      <p class="lead mute">Lisensi ini berlaku untuk aplikasi AudioHub dan driver AVHub v2. Baca sebelum memasang atau menggunakan perangkat lunak.</p>
     </div>
+    <details class="license">
+      <summary>Baca teks lengkap perjanjian (versi 1.0)</summary>
+      <pre>PERJANJIAN LISENSI PENGGUNA AKHIR
+AudioHub dan Driver Perangkat Virtual AVHub v2
+Versi Perangkat Lunak: 0.3.0
+Versi Dokumen Lisensi: 1.0
+Tanggal Berlaku: 18 Oktober 2026
+
+Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.
+
+Situs resmi: audiohub.khincreator.com
+
+Perjanjian Lisensi Pengguna Akhir ini (“Perjanjian”) mengatur penggunaan aplikasi AudioHub dan driver perangkat virtual AVHub v2.
+
+Perjanjian ini dibuat antara taufiq sholikhin sebagai pemberi lisensi (“Pembuat”) dan orang perseorangan atau badan hukum yang menerima lisensi (“Anda”).
+
+Baca Perjanjian ini sebelum menyetujui pemasangan atau penggunaan Perangkat Lunak. Jika Anda tidak menyetujui ketentuannya, jangan melanjutkan pemasangan atau penggunaan.
+
+1. DEFINISI
+
+1.1 “Perangkat Lunak” berarti aplikasi AudioHub, driver perangkat virtual AVHub v2 yang menyediakan perangkat avhub_virtual1 dan avhub_virtual2, serta installer, uninstaller apabila disediakan, dokumentasi, dan berkas pendukung yang disertakan Pembuat dalam Paket Resmi.
+
+1.2 “Paket Resmi” berarti paket distribusi Perangkat Lunak, termasuk berkas DMG atau installer, yang diterbitkan oleh Pembuat melalui Situs Resmi atau repositori GitHub resmi yang ditautkan dari Situs Resmi.
+
+1.3 “Situs Resmi” berarti audiohub.khincreator.com.
+
+1.4 “Komputer yang Anda Kuasai” berarti komputer Mac yang Anda miliki atau yang secara sah Anda berwenang gunakan dan kelola.
+
+1.5 “Komponen Pihak Ketiga” berarti perangkat lunak, pustaka, kode, aset, atau komponen lain yang haknya dimiliki pihak selain Pembuat dan yang, apabila ada, disertakan dalam Paket Resmi.
+
+2. PENERIMAAN PERJANJIAN
+
+2.1 Anda menerima Perjanjian ini dengan memilih tombol atau kotak persetujuan yang disediakan dalam installer atau aplikasi setelah memperoleh kesempatan untuk membaca Perjanjian ini.
+
+2.2 Jika Anda menerima Perjanjian atas nama badan hukum, Anda menyatakan memiliki kewenangan untuk mengikat badan hukum tersebut. Dalam keadaan itu, istilah “Anda” merujuk pada badan hukum tersebut.
+
+2.3 Jika Anda tidak setuju, batalkan pemasangan dan jangan gunakan Perangkat Lunak. Apabila Perangkat Lunak telah terpasang, hentikan penggunaannya dan lakukan pencopotan sesuai dokumentasi.
+
+2.4 Apabila Perangkat Lunak diperoleh melalui transaksi berbayar, ketidaksetujuan terhadap Perjanjian ini tidak dengan sendirinya menghapus hak pengembalian pembayaran atau hak lain yang diberikan oleh ketentuan transaksi dan hukum yang berlaku.
+
+3. PEMBERIAN DAN RUANG LINGKUP LISENSI
+
+3.1 Dengan tunduk pada Perjanjian ini, Pembuat memberikan kepada Anda lisensi terbatas, tidak eksklusif, tidak dapat dialihkan, dan tidak dapat disublisensikan untuk memasang dan menggunakan Perangkat Lunak pada Komputer yang Anda Kuasai.
+
+3.2 Penggunaan yang diizinkan mencakup:
+
+a. penggunaan pribadi; dan
+b. penggunaan untuk kegiatan operasional atau produksi usaha Anda sendiri, termasuk perekaman, penyiaran, siaran langsung, rapat, dan pembuatan konten, sepanjang Perangkat Lunak tidak didistribusikan atau dilisensikan kembali kepada pihak lain.
+
+3.3 Penggunaan Perangkat Lunak dalam kegiatan usaha sebagaimana dimaksud pada Pasal 3.2 tidak memberikan hak untuk menjual, menyewakan, mengemas ulang, atau menyediakan salinan Perangkat Lunak kepada pelanggan atau pihak lain.
+
+3.4 Anda boleh membuat salinan yang secara teknis diperlukan untuk pemasangan dan penggunaan yang diizinkan serta satu salinan cadangan Paket Resmi untuk keperluan Anda sendiri. Ketentuan ini tidak mengurangi hak penggandaan atau adaptasi yang diberikan oleh hukum yang berlaku.
+
+3.5 Lisensi berlaku sejak Perjanjian diterima sampai diakhiri sesuai Pasal 10.
+
+3.6 Seluruh hak yang tidak secara tegas diberikan dalam Perjanjian ini tetap berada pada Pembuat atau pemegang hak terkait.
+
+4. PEMBATASAN PENGGUNAAN
+
+4.1 Kecuali diizinkan dalam Perjanjian ini, memperoleh izin tertulis dari Pembuat, atau diperbolehkan oleh hukum yang berlaku, Anda tidak boleh:
+
+a. menggandakan, memodifikasi, menerjemahkan, atau membuat karya turunan dari Perangkat Lunak;
+
+b. menggabungkan atau menyematkan Perangkat Lunak, seluruh atau sebagian, ke dalam produk atau paket distribusi lain;
+
+c. mendistribusikan ulang, menjual, menyewakan, meminjamkan salinan, mengalihkan lisensi, atau mensublisensikan Perangkat Lunak kepada pihak lain;
+
+d. mengekstrak driver untuk didistribusikan secara terpisah dari Paket Resmi atau untuk dikemas bersama produk lain;
+
+e. melakukan rekayasa balik, dekompilasi, atau pembongkaran kode mesin (disassembly);
+
+f. menghapus, menyamarkan, atau mengubah pemberitahuan hak cipta, merek, atribusi, atau lisensi;
+
+g. menghindari, menonaktifkan, atau merusak mekanisme perlindungan lisensi atau pembatasan penggunaan, apabila tersedia; atau
+
+h. menggunakan Perangkat Lunak untuk kegiatan yang melanggar hukum atau hak pihak ketiga.
+
+4.2 Pembatasan pada Pasal 4.1 tidak berlaku sejauh bertentangan dengan hak atau pengecualian yang diberikan oleh hukum dan tidak dapat dikesampingkan melalui perjanjian.
+
+4.3 Penggunaan driver bersama aplikasi audio lain melalui antarmuka audio standar macOS tidak dengan sendirinya merupakan penggabungan atau distribusi ulang yang dilarang dalam Pasal ini.
+
+4.4 Pengaturan biasa melalui fitur aplikasi atau konfigurasi yang didokumentasikan Pembuat tidak dianggap sebagai modifikasi Perangkat Lunak yang dilarang.
+
+5. KEPEMILIKAN DAN HASIL PENGGUNAAN
+
+5.1 Hak atas Perangkat Lunak tetap berada pada Pembuat, kecuali hak atas Komponen Pihak Ketiga yang tetap berada pada pemiliknya masing-masing.
+
+5.2 Perangkat Lunak dilisensikan, bukan dijual. Perjanjian ini tidak mengalihkan kepemilikan hak cipta, merek, atau hak kekayaan intelektual lain kepada Anda.
+
+5.3 Perjanjian ini tidak memberikan hak kepada Anda untuk menggunakan nama, logo, atau merek Pembuat seolah-olah Anda merupakan pihak resmi, mitra, atau pihak yang memperoleh dukungan dari Pembuat.
+
+5.4 Pembuat tidak memperoleh hak kepemilikan atas rekaman, siaran, atau konten Anda semata-mata karena konten tersebut dibuat atau diproses menggunakan Perangkat Lunak.
+
+5.5 Anda tetap bertanggung jawab untuk memperoleh izin atas musik, rekaman, suara, dan materi lain yang digunakan melalui Perangkat Lunak.
+
+6. KOMPONEN PIHAK KETIGA DAN MEREK
+
+6.1 Apabila Paket Resmi menyertakan Komponen Pihak Ketiga, informasi mengenai komponen tersebut, pemberitahuan hak cipta, dan ketentuan lisensinya dicantumkan dalam dokumentasi atau berkas pemberitahuan yang menyertai Paket Resmi.
+
+6.2 Ketentuan lisensi Komponen Pihak Ketiga berlaku terhadap komponen terkait. Jika terdapat pertentangan dengan Perjanjian ini, ketentuan lisensi pihak ketiga berlaku sejauh mengenai komponen tersebut.
+
+6.3 Penggunaan teknologi, antarmuka, atau perangkat pengembangan Apple oleh Pembuat tidak memberikan kepada Anda hak atas SDK atau materi milik Apple selain hak yang secara sah Anda peroleh berdasarkan ketentuan Apple yang berlaku.
+
+6.4 Penyebutan Apple, macOS, OBS, TikTok, Maono, atau nama produk dan merek pihak lain hanya bertujuan untuk identifikasi atau penjelasan kompatibilitas. Penyebutan tersebut tidak menyatakan adanya afiliasi, dukungan, atau persetujuan dari pemilik merek.
+
+6.5 Perangkat keras, aplikasi, platform, dan layanan pihak ketiga yang digunakan bersama Perangkat Lunak tetap tunduk pada ketentuan masing-masing.
+
+7. PEMASANGAN, IZIN SISTEM, DAN PENCOPOTAN
+
+7.1 Sesuai paket dan versi yang dipasang, proses pemasangan dapat mencakup:
+
+a. penempatan aplikasi di direktori /Applications;
+b. penempatan driver di direktori /Library/Audio/Plug-Ins/HAL; dan
+c. pemuatan ulang layanan audio macOS, termasuk coreaudiod, apabila diperlukan.
+
+7.2 Tindakan yang memerlukan hak administrator harus dilakukan melalui mekanisme otorisasi sistem atau persetujuan pemasangan yang sesuai. Perjanjian ini tidak memberikan kewenangan kepada Pembuat untuk mengakses komputer Anda di luar tindakan yang diperlukan dan diotorisasi untuk pemasangan, penggunaan, pembaruan, atau pencopotan.
+
+7.3 Pemasangan, pembaruan, pencopotan, atau pengoperasian driver dapat memengaruhi layanan audio macOS dan aplikasi yang sedang menggunakannya, termasuk menyebabkan gangguan audio sementara atau perubahan perangkat audio yang tersedia.
+
+7.4 Sebelum pemasangan, pembaruan, atau pencopotan, Anda dianjurkan menyimpan pekerjaan, menghentikan sesi audio yang penting, dan membuat cadangan data yang relevan.
+
+7.5 Sebelum menggunakan Perangkat Lunak untuk siaran langsung, rekaman penting, atau panggilan, lakukan pengujian pada konfigurasi perangkat keras, aplikasi, dan versi macOS yang akan digunakan.
+
+7.6 Untuk mencopot Perangkat Lunak, ikuti dokumentasi pencopotan yang sesuai dengan versi terpasang atau gunakan uninstaller resmi apabila tersedia. Penghapusan manual harus dibatasi pada berkas milik Perangkat Lunak yang secara jelas diidentifikasi dalam dokumentasi.
+
+7.7 Peringatan dan anjuran dalam Pasal ini tidak menghapus kewajiban Pembuat atau hak Anda yang tetap berlaku berdasarkan hukum.
+
+8. DATA DAN PRIVASI
+
+8.1 Perjanjian ini mengatur lisensi penggunaan Perangkat Lunak dan bukan merupakan persetujuan umum atas pengumpulan, penggunaan, atau pengiriman data pribadi maupun isi audio Anda kepada Pembuat.
+
+8.2 Apabila Perangkat Lunak memproses data pribadi, mengirim laporan diagnostik, atau menggunakan layanan daring, informasi mengenai pemrosesan tersebut harus dijelaskan melalui pemberitahuan atau kebijakan privasi yang sesuai dengan fungsi sebenarnya.
+
+8.3 Persetujuan tambahan, apabila diwajibkan oleh hukum, harus diperoleh melalui mekanisme yang sesuai dan tidak dianggap telah diberikan hanya karena Anda menerima Perjanjian ini.
+
+9. PEMBARUAN, PERUBAHAN KETENTUAN, DAN DUKUNGAN
+
+9.1 Pembuat dapat menyediakan pembaruan, perbaikan, atau versi baru Perangkat Lunak.
+
+9.2 Kecuali telah dijanjikan secara tegas atau diwajibkan oleh hukum, lisensi ini tidak mencakup kewajiban untuk menyediakan dukungan teknis, pembaruan berkelanjutan, atau kompatibilitas dengan versi macOS dan produk pihak ketiga yang dirilis kemudian.
+
+9.3 Pembaruan tunduk pada Perjanjian ini, kecuali Pembuat menawarkan perjanjian pengganti yang disampaikan kepada Anda untuk memperoleh persetujuan sebelum pembaruan tersebut dipasang atau digunakan.
+
+9.4 Perubahan Perjanjian yang dipublikasikan di Situs Resmi tidak dengan sendirinya mengubah ketentuan yang berlaku atas salinan yang telah Anda peroleh berdasarkan versi Perjanjian sebelumnya.
+
+9.5 Penghentian penyediaan unduhan atau dukungan tidak dengan sendirinya mengakhiri lisensi Anda atas salinan yang telah diperoleh secara sah.
+
+10. PENGAKHIRAN LISENSI
+
+10.1 Anda dapat mengakhiri lisensi setiap saat dengan menghentikan penggunaan dan menghapus seluruh salinan Perangkat Lunak yang berada dalam penguasaan Anda.
+
+10.2 Pembuat dapat mengakhiri lisensi apabila Anda melakukan pelanggaran material terhadap Perjanjian ini.
+
+10.3 Untuk pelanggaran yang dapat diperbaiki, Pembuat terlebih dahulu memberikan pemberitahuan tertulis yang menjelaskan pelanggaran dan kesempatan selama 14 hari kalender sejak pemberitahuan diterima untuk memperbaikinya.
+
+10.4 Untuk pelanggaran material yang tidak dapat diperbaiki, atau apabila pelanggaran tidak diperbaiki dalam jangka waktu tersebut, Pembuat dapat mengakhiri lisensi melalui pemberitahuan tertulis.
+
+10.5 Setelah lisensi berakhir, Anda wajib menghentikan penggunaan dan menghapus salinan Perangkat Lunak, termasuk salinan cadangan, sejauh diwajibkan oleh hukum. Berkas rekaman atau konten Anda sendiri tidak wajib dihapus semata-mata karena lisensi berakhir.
+
+10.6 Pengakhiran tidak menghapus hak, kewajiban, atau tuntutan yang telah timbul sebelumnya. Ketentuan yang menurut sifatnya tetap diperlukan setelah pengakhiran, termasuk mengenai kepemilikan, pembatasan distribusi, tanggung jawab, dan penyelesaian sengketa, tetap berlaku sejauh relevan.
+
+11. JAMINAN DAN BATASAN TEKNIS
+
+11.1 Sejauh diperbolehkan oleh hukum, dan kecuali untuk jaminan yang secara tegas diberikan oleh Pembuat, Perangkat Lunak disediakan “apa adanya” dan “sebagaimana tersedia”.
+
+11.2 Pembuat tidak memberikan jaminan tambahan bahwa Perangkat Lunak:
+
+a. bebas dari seluruh kesalahan atau gangguan;
+b. selalu tersedia atau bekerja tanpa interupsi;
+c. kompatibel dengan setiap perangkat keras, aplikasi, layanan, atau versi macOS; atau
+d. memenuhi kebutuhan khusus yang tidak secara tegas disepakati.
+
+11.3 Informasi kompatibilitas harus dibaca sesuai versi Perangkat Lunak, konfigurasi, serta batas pengujian yang dijelaskan dalam dokumentasi terkait.
+
+11.4 Tidak ada ketentuan dalam Pasal ini yang menghapus jaminan, kewajiban, atau upaya pemulihan yang tidak dapat dikesampingkan berdasarkan hukum yang berlaku.
+
+12. TANGGUNG JAWAB
+
+12.1 Tanggung jawab masing-masing pihak ditentukan berdasarkan Perjanjian ini dan hukum yang berlaku.
+
+12.2 Sejauh sah menurut hukum, Pembuat tidak bertanggung jawab atas kerugian tidak langsung atau konsekuensial, termasuk kehilangan keuntungan atau kesempatan bisnis, yang timbul dari penggunaan atau ketidakmampuan menggunakan Perangkat Lunak.
+
+12.3 Pembatasan pada Pasal 12.2 tidak berlaku terhadap:
+
+a. penipuan atau perbuatan yang disengaja oleh Pembuat;
+b. pelanggaran kewajiban hukum yang tanggung jawabnya tidak dapat dibatasi melalui perjanjian; atau
+c. hak atas ganti rugi dan upaya pemulihan konsumen yang tidak dapat dikesampingkan.
+
+12.4 Pemberian Perangkat Lunak tanpa biaya tidak dengan sendirinya menghapus tanggung jawab yang diwajibkan oleh hukum.
+
+12.5 Tidak ada ketentuan dalam Perjanjian ini yang dimaksudkan untuk mengalihkan kepada Anda tanggung jawab hukum Pembuat yang tidak boleh dialihkan.
+
+13. HUKUM YANG BERLAKU DAN PENYELESAIAN SENGKETA
+
+13.1 Perjanjian ini diatur oleh hukum Republik Indonesia, tanpa mengurangi ketentuan hukum wajib lain yang berlaku dan tidak dapat dikesampingkan melalui perjanjian.
+
+13.2 Para pihak terlebih dahulu mengupayakan penyelesaian sengketa melalui musyawarah dengan itikad baik selama paling lama 30 hari kalender sejak pemberitahuan sengketa diterima oleh pihak lainnya.
+
+13.3 Apabila sengketa tidak terselesaikan, penyelesaian dilakukan melalui pengadilan atau mekanisme penyelesaian sengketa yang berwenang berdasarkan hukum yang berlaku.
+
+13.4 Pasal ini tidak membatasi hak konsumen untuk menggunakan mekanisme penyelesaian sengketa konsumen atau forum yang tersedia berdasarkan hukum.
+
+13.5 Upaya musyawarah tidak menghalangi tindakan hukum mendesak atau tindakan yang diperlukan untuk menjaga hak sebelum berakhirnya tenggat hukum.
+
+14. KETENTUAN UMUM
+
+14.1 Perjanjian ini, bersama ketentuan tambahan yang secara tegas disepakati, merupakan kesepakatan mengenai lisensi Perangkat Lunak. Perjanjian ini tidak menghapus hak berdasarkan informasi penawaran, jaminan, atau ketentuan transaksi yang mengikat menurut hukum.
+
+14.2 Jika suatu ketentuan dinyatakan tidak sah atau tidak dapat dilaksanakan, ketentuan tersebut tidak berlaku sejauh ketidakabsahannya, tanpa memengaruhi ketentuan lain yang masih dapat dilaksanakan.
+
+14.3 Keterlambatan atau kegagalan salah satu pihak untuk menegakkan suatu ketentuan tidak dengan sendirinya merupakan pelepasan hak.
+
+14.4 Ketentuan khusus mengenai dukungan, penggunaan tambahan, atau izin distribusi hanya berlaku apabila disepakati secara tertulis oleh pihak yang berwenang.
+
+14.5 Jika tersedia terjemahan, versi Bahasa Indonesia menjadi rujukan apabila terdapat perbedaan penafsiran, sejauh diperbolehkan oleh hukum yang berlaku.
+
+15. IDENTITAS DAN KONTAK
+
+Pemberi lisensi: taufiq sholikhin
+Situs resmi: audiohub.khincreator.com
+Email lisensi dan pengaduan: master@khincreator.com
+
+15.1 Pertanyaan lisensi, permohonan izin tambahan, pengaduan, dan pemberitahuan sengketa dapat disampaikan melalui kontak di atas.
+
+15.2 Pemberitahuan pelanggaran atau pengakhiran kepada Anda disampaikan melalui kontak yang secara sah tersedia bagi Pembuat atau mekanisme pemberitahuan lain yang dapat dibuktikan penerimaannya.</pre>
+    </details>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>AudioHub 0.2.0 · Prototipe</span>
-    <span>Dibuat oleh khincc</span>
-    <span>Hak Cipta © 2026 taufiq sholikhin · <a href="#lisensi">Lisensi</a> · khincreator.com</span>
+    <span>AudioHub 0.3.0 · Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.</span>
+    <span><a href="#lisensi">Lisensi</a> · <a href="https://khincreator.com">khincreator.com</a></span>
   </div>
 </footer>
-
-<script>
-(function(){
-  var shot = document.getElementById('theme-shot');
-  var note = document.getElementById('theme-note');
-  var dark = '/audiohub/img/i-dark.png', light = '/audiohub/img/i-light.png';
-  var buttons = document.querySelectorAll('[data-theme-pick]');
-  function pick(mode){
-    buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.themePick === mode)); });
-    if(mode === 'light'){ shot.src = light; shot.alt = 'Jendela AudioHub, tema terang'; note.textContent = 'Tema Terang: kartu dan garis pemisah ikut berubah, dan teks tetap terbaca.'; }
-    else if(mode === 'dark'){ shot.src = dark; shot.alt = 'Jendela AudioHub, tema gelap'; note.textContent = 'Tema Gelap: kartu dan garis pemisah mengikuti warna gelap.'; }
-    else { shot.src = dark; shot.alt = 'Jendela AudioHub, tema gelap'; note.textContent = 'Tema Sistem: tampilan gelap dan terang mengikuti pengaturan macOS. Gambar ini memperlihatkan tema gelap.'; }
-    try { localStorage.setItem('audiohub-demo-theme', mode); } catch(e) {}
-  }
-  buttons.forEach(function(b){ b.addEventListener('click', function(){ pick(b.dataset.themePick); }); });
-  var saved = null; try { saved = localStorage.getItem('audiohub-demo-theme'); } catch(e) {}
-  if(saved === 'light' || saved === 'dark' || saved === 'system') pick(saved);
-})();
-</script>
 
 </body>
 </html>
