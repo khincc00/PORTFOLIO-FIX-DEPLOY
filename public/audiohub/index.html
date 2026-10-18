@@ -187,7 +187,7 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
         <h3>Sudah</h3>
         <ul>
           <li>Routing dan DSP mikrofon berjalan di macOS</li>
-          <li>Buffer 512 frame dengan EMEET Virtual Audio sebagai perangkat virtual</li>
+          <li>Buffer 512 frame dengan driver perangkat virtual AVHub v2 (avhub_virtual1 dan avhub_virtual2)</li>
           <li>Tema Sistem, Terang, dan Gelap, dengan pilihan yang tersimpan</li>
         </ul>
       </div>
@@ -210,8 +210,38 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
     <h2 class="h2">Mencari penguji.</h2>
     <div class="download-box">
       <a class="btn btn-download" href="https://github.com/khincc00/AudioHub/releases/download/v0.2.0/AudioHub-0.2.0.dmg" rel="noopener">Unduh AudioHub 0.2.0 (.dmg)</a>
-      <p class="note">AudioHub membutuhkan EMEET Virtual Audio. Pasang driver itu secara terpisah, karena tidak ikut dalam DMG.</p>
+      <p class="note">Driver perangkat virtual AVHub v2 sudah ikut dalam DMG dan dipasang otomatis bersama AudioHub.</p>
       <a class="repo" href="https://github.com/khincc00/AudioHub.git" target="_blank" rel="noopener">github.com/khincc00/AudioHub</a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="lisensi">
+  <div class="wrap">
+    <span class="eyebrow">Lisensi</span>
+    <h2 class="h2">Hak cipta, seluruh hak dilindungi.</h2>
+    <div class="panel">
+      <p>Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi. Situs: khincreator.com</p>
+      <p>Lisensi ini berlaku untuk AudioHub (kode sumber, dokumentasi, dan aset) serta driver perangkat virtual AVHub v2. Teks lengkapnya:</p>
+      <pre style="white-space:pre-wrap; font-size:13px; line-height:1.6; margin:0">Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.
+Situs: khincreator.com
+
+Perangkat lunak AudioHub (termasuk kode sumber, dokumentasi, dan aset) serta driver perangkat virtual AVHub v2 (`virtual-device/AVHubDriver/`) adalah milik pembuatnya dan dilindungi undang-undang hak cipta. Tidak ada lisensi yang diberikan secara implisit.
+
+Anda boleh:
+- Menggunakan salinan AudioHub yang Anda peroleh secara sah, sesuai syarat penggunaan yang berlaku.
+
+Anda tidak boleh, kecuali diizinkan secara tertulis:
+- Menyalin, memodifikasi, mendistribusikan ulang, atau menjual AudioHub atau bagiannya.
+- Membongkar (reverse engineer), mendekompilasi, atau melewati mekanisme lisensi.
+- Menghapus atau mengubah pemberitahuan hak cipta dan merek.
+
+Paket instalasi AudioHub hanya memuat aplikasi AudioHub dan driver perangkat virtual AVHub v2 yang dibawanya. Tidak ada komponen pihak ketiga di dalamnya.
+
+Nama produk pihak lain (mis. OBS, TikTok) disebut hanya untuk menunjukkan kompatibilitas. Nama dan merek itu bukan milik pembuat AudioHub.
+
+PERANGKAT LUNAK INI DISEDIAKAN "APA ADANYA", TANPA JAMINAN APA PUN, TERSURAT MAUPUN TERSIRAT.</pre>
+      <p style="margin-top:16px"><a href="https://github.com/khincc00/AudioHub/blob/main/LICENSE" target="_blank" rel="noopener">Lihat LICENSE di GitHub</a></p>
     </div>
   </div>
 </section>
@@ -220,6 +250,7 @@ footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-b
   <div class="wrap">
     <span>AudioHub 0.2.0 · Prototipe</span>
     <span>Dibuat oleh khincc</span>
+    <span>Hak Cipta © 2026 taufiq sholikhin · <a href="#lisensi">Lisensi</a> · khincreator.com</span>
   </div>
 </footer>
 
