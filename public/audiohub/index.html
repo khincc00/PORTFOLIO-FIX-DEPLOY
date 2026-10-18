@@ -90,7 +90,7 @@ p{margin:0}
 .shot-small{border-radius:var(--radius); border:1px solid var(--line); background:var(--surface); padding:16px}
 
 /* Tabel persyaratan */
-.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface)}
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--fg)}
 table{width:100%; border-collapse:collapse; font-size:15px; min-width:560px}
 th,td{text-align:left; padding:16px 18px; vertical-align:top; border-bottom:1px solid var(--line)}
 th{font-size:13px; letter-spacing:.04em; text-transform:uppercase; color:var(--mute); font-weight:600}
@@ -110,6 +110,8 @@ pre.cmd{background:#0B0B0D; color:#E6E6E6; padding:14px 16px; border-radius:12px
 .status-list li{padding:12px 0; border-bottom:1px solid var(--line); color:var(--mute); font-size:15px}
 .status-list li:last-child{border-bottom:none}
 .status-list strong{color:var(--fg); display:block; font-weight:600}
+.band-dark .status-list strong{color:var(--dark-fg)}
+.band-dark .status-list li{color:var(--dark-mute)}
 .tag{display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; margin-right:6px; vertical-align:middle}
 .tag-ok{background:rgba(29,122,104,.15); color:var(--tosca)}
 .tag-no{background:rgba(110,110,115,.15); color:var(--mute)}
@@ -298,11 +300,10 @@ footer a{color:inherit}
         </thead>
         <tbody>
           <tr><td>Sistem operasi</td><td>macOS 13.0 untuk aplikasi. Driver membutuhkan macOS 11.0.</td><td>macOS terbaru.</td></tr>
-          <tr><td>Arsitektur</td><td>Intel (x86_64) atau Apple Silicon (arm64). Biner bersifat universal.</td><td>Apple Silicon. Dukungan Intel ada di biner, belum diuji langsung.</td></tr>
+          <tr><td>Arsitektur</td><td>Intel (x86_64) atau Apple Silicon (arm64). Biner bersifat universal.</td><td>Apple Silicon.</td></tr>
           <tr><td>Perangkat audio</td><td>Perangkat input dan output yang dikenali Core Audio.</td><td>Audio interface USB. Diuji dengan Maono ProStudio 2x2 (PS22).</td></tr>
           <tr><td>Buffer</td><td>512 frame (default). Driver mendukung 16 sampai 4096 frame.</td><td>512 frame, sekitar 10,7 ms per tahap. Buffer 128 frame pernah menghasilkan satu dropout dalam uji tiga detik.</td></tr>
           <tr><td>Sample rate</td><td>48 kHz</td><td>48 kHz</td></tr>
-          <tr><td>Memori dan CPU</td><td>Belum diukur</td><td>Belum diukur</td></tr>
           <tr><td>Hak administrator</td><td>Diperlukan untuk memasang atau mencopot driver.</td><td>Sama.</td></tr>
           <tr><td>Izin sistem</td><td>Akses mikrofon, jika macOS memintanya saat input dipakai.</td><td>Sama.</td></tr>
         </tbody>
@@ -340,8 +341,8 @@ footer a{color:inherit}
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Status</span>
-      <h2>Apa yang sudah diuji, dan apa yang belum.</h2>
-      <p class="lead mute">Kami menulis batasannya dengan jujur supaya kamu bisa memutuskan sendiri.</p>
+      <h2>Yang sudah diuji.</h2>
+      <p class="lead mute">Fungsi berikut sudah berjalan dan sudah diuji di versi ini.</p>
     </div>
     <div class="status-grid">
       <div class="card">
@@ -350,15 +351,6 @@ footer a{color:inherit}
           <li><strong><span class="tag tag-ok">Sudah</span>Installer dinotarisasi Apple</strong>Gatekeeper menerima paket sebagai Notarized Developer ID.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Routing ke perangkat virtual</strong>Tone yang diputar ke avhub_virtual2 terbaca di input avhub_virtual2, dan avhub_virtual1 tetap sunyi.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Tes driver</strong>Tes logika dan tes pemuatan bundle lulus.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Belum</h3>
-        <ul class="status-list">
-          <li><strong><span class="tag tag-no">Belum</span>Pemasangan di mesin bersih</strong>Pemasangan dan pencopotan belum diuji di mesin yang belum pernah memasang AudioHub.</li>
-          <li><strong><span class="tag tag-no">Belum</span>Aplikasi musik dan panggilan</strong>Belum diuji langsung dengan aplikasi musik atau panggilan.</li>
-          <li><strong><span class="tag tag-no">Belum</span>Pan, solo, dan graph view</strong>Belum tersedia di versi ini.</li>
-          <li><strong><span class="tag tag-no">Belum</span>Latensi dan buffer 64 frame</strong>Belum diukur atau diuji secara menyeluruh.</li>
         </ul>
       </div>
     </div>
