@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation'
 import SiteHeader from '@/components/SiteHeader'
 import { siteConfig } from '@/lib/site'
 import { formatRupiah } from '@/lib/invoice'
-import { WHATSAPP_NUMBER, whatsappOrderUrl } from '@/lib/products'
+import { WHATSAPP_NUMBER, productHref, whatsappOrderUrl } from '@/lib/products'
 import { getPublishedProductBySlug } from '@/lib/products-server'
 import '../toko.css'
 
@@ -32,7 +32,8 @@ export default async function ProductPage({ params }: Props) {
   const product = await getPublishedProductBySlug((await params).slug)
   if (!product) notFound()
 
-  // Kalau nomor WhatsApp belum diatur, pesanan dialihkan ke email
+  // Produk dengan link TikTok Shop dibeli di sana. Selain itu, pesanan lewat WhatsApp (atau email kalau nomor belum diatur)
+  const affiliate = productHref(product)
   const orderHref = WHATSAPP_NUMBER
     ? whatsappOrderUrl(WHATSAPP_NUMBER, product)
     : `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Pesan: ${product.title}`)}`
@@ -52,17 +53,29 @@ export default async function ProductPage({ params }: Props) {
           <Link className="shop-back" href="/toko">
             ← Kembali ke toko
           </Link>
+          {product.category && <p className="shop-category">{product.category}</p>}
           <h1>{product.title}</h1>
           <p className="shop-price">{formatRupiah(product.price)}</p>
           {product.description && <p className="shop-description">{product.description}</p>}
-          <a className="shop-order" href={orderHref} target="_blank" rel="noreferrer">
-            Pesan sekarang
-          </a>
-          <p className="shop-note">
-            {WHATSAPP_NUMBER
-              ? 'Pesanan dikonfirmasi lewat WhatsApp. Pembayaran dan pengiriman diatur bersama setelah pesanan dikonfirmasi.'
-              : 'Pesanan dikonfirmasi lewat email. Pembayaran dan pengiriman diatur bersama setelah pesanan dikonfirmasi.'}
-          </p>
+          {affiliate ? (
+            <>
+              <a className="shop-order" href={affiliate} target="_blank" rel="sponsored noopener noreferrer">
+                Beli di TikTok Shop
+              </a>
+              <p className="shop-note">Harga dan ketersediaan mengikuti TikTok Shop.</p>
+            </>
+          ) : (
+            <>
+              <a className="shop-order" href={orderHref} target="_blank" rel="noreferrer">
+                Pesan sekarang
+              </a>
+              <p className="shop-note">
+                {WHATSAPP_NUMBER
+                  ? 'Pesanan dikonfirmasi lewat WhatsApp. Pembayaran dan pengiriman diatur bersama setelah pesanan dikonfirmasi.'
+                  : 'Pesanan dikonfirmasi lewat email. Pembayaran dan pengiriman diatur bersama setelah pesanan dikonfirmasi.'}
+              </p>
+            </>
+          )}
         </div>
       </article>
     </main>

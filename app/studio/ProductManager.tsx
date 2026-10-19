@@ -15,6 +15,8 @@ type FormState = {
   image: string;
   image_alt: string;
   status: ProductStatus;
+  category: string;
+  affiliate_url: string;
 };
 
 const emptyForm: FormState = {
@@ -25,6 +27,8 @@ const emptyForm: FormState = {
   image: "",
   image_alt: "",
   status: "draft",
+  category: "",
+  affiliate_url: "",
 };
 
 const toForm = (p: Product): FormState => ({
@@ -35,6 +39,8 @@ const toForm = (p: Product): FormState => ({
   image: p.image ?? "",
   image_alt: p.image_alt ?? "",
   status: p.status,
+  category: p.category ?? "",
+  affiliate_url: p.affiliate_url ?? "",
 });
 
 export default function ProductManager() {
@@ -99,6 +105,8 @@ export default function ProductManager() {
       image: form.image,
       image_alt: form.image_alt,
       status: form.status,
+      category: form.category.trim() || null,
+      affiliate_url: form.affiliate_url.trim() || null,
     };
     setBusy(true);
     setFormError("");
@@ -186,6 +194,26 @@ export default function ProductManager() {
                   value={form.description}
                   onChange={(e) => set("description", e.target.value)}
                 />
+              </label>
+              <label>
+                Kategori
+                <input
+                  value={form.category}
+                  maxLength={60}
+                  placeholder="Contoh: Headset & Earphone"
+                  onChange={(e) => set("category", e.target.value)}
+                />
+              </label>
+              <label className="s-invoice-wide">
+                Link afiliasi TikTok Shop
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={form.affiliate_url}
+                  placeholder="https://shop.tiktok.com/view/product/..."
+                  onChange={(e) => set("affiliate_url", e.target.value)}
+                />
+                <small>Kalau diisi, tombol di halaman produk mengarah ke TikTok Shop, bukan WhatsApp.</small>
               </label>
               <label>
                 Status

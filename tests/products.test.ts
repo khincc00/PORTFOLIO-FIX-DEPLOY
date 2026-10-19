@@ -23,6 +23,8 @@ describe("parseProductInput", () => {
         image: "",
         image_alt: "",
         status: "published",
+        category: null,
+        affiliate_url: null,
       },
     });
   });

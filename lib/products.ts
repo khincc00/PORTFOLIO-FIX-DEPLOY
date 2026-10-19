@@ -17,6 +17,8 @@ export type Product = {
   image_alt: string | null
   status: ProductStatus
   position: number
+  category: string | null
+  affiliate_url: string | null
   created_at: string
   updated_at: string
 }
@@ -29,10 +31,15 @@ export type ProductInput = {
   image: string
   image_alt: string
   status: ProductStatus
+  category: string | null
+  affiliate_url: string | null
 }
 
 export const MAX_TITLE_LENGTH = 120
 export const MAX_DESCRIPTION_LENGTH = 2000
+export const MAX_CATEGORY_LENGTH = 60
+// Nama kelompok untuk produk yang belum punya kategori
+export const UNCATEGORIZED_LABEL = 'Lainnya'
 
 // Ubah judul menjadi slug untuk alamat halaman, contoh "Preset Foto Gelap" → "preset-foto-gelap"
 export function slugify(value: string): string {
@@ -71,12 +78,48 @@ export function parseProductInput(body: unknown): { ok: true; value: ProductInpu
   if (image && !(image.startsWith('/') || image.startsWith('https://')))
     return { ok: false, error: 'Alamat gambar harus diawali / atau https://.' }
 
+  const category = text('category')
+  if (category.length > MAX_CATEGORY_LENGTH)
+    return { ok: false, error: `Kategori maksimal ${MAX_CATEGORY_LENGTH} karakter.` }
+
+  // Link afiliasi opsional. Kalau diisi, harus alamat https:// yang lengkap
+  const affiliate_url = text('affiliate_url')
+  if (affiliate_url && !/^https:\/\/\S+$/.test(affiliate_url))
+    return { ok: false, error: 'Link afiliasi harus diawali https:// dan tidak boleh mengandung spasi.' }
+
   const status = raw.status === 'published' ? 'published' : 'draft'
 
   return {
     ok: true,
-    value: { slug, title, description, price, image, image_alt: text('image_alt'), status },
+    value: {
+      slug,
+      title,
+      description,
+      price,
+      image,
+      image_alt: text('image_alt'),
+      status,
+      category: category || null,
+      affiliate_url: affiliate_url || null,
+    },
   }
+}
+
+// Tautan tujuan utama sebuah produk: link TikTok Shop kalau ada, selain itu null (pakai WhatsApp)
+export function productHref(product: Pick<Product, 'affiliate_url'>): string | null {
+  return product.affiliate_url || null
+}
+
+// Kelompokkan produk per kategori. Urutan kelompok mengikuti kemunculan pertama dalam daftar (sudah urut position)
+export function groupProductsByCategory<T extends Pick<Product, 'category'>>(
+  products: T[],
+): { label: string; items: T[] }[] {
+  const groups = new Map<string, T[]>()
+  for (const product of products) {
+    const label = product.category?.trim() || UNCATEGORIZED_LABEL
+    groups.set(label, [...(groups.get(label) ?? []), product])
+  }
+  return [...groups].map(([label, items]) => ({ label, items }))
 }
 
 // Tautan WhatsApp dengan pesan pemesanan yang sudah terisi nama dan harga produk.
