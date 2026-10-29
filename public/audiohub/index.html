@@ -152,18 +152,18 @@ footer a{color:inherit}
   <div class="wrap">
     <span class="eyebrow">Versi 0.3.0</span>
     <h1>Routing audio profesional untuk macOS.</h1>
-    <p class="lead">Atur setiap kanal input dan output dari satu jendela. Dilengkapi efek per input, kontrol volume perangkat keras, dan driver perangkat virtual AVHub v2 yang ikut terpasang otomatis.</p>
+    <p class="lead">Atur setiap pasangan kanal input dan output dari satu jendela. Tangkap audio per aplikasi dengan opsi isolasi, efek per input, dan driver perangkat virtual AVHub v2 (tiga pasang) yang ikut terpasang otomatis.</p>
     <div class="btn-row">
       <a class="btn btn-primary" href="/downloads/AudioHub-0.3.0.dmg" download>Unduh untuk macOS (.dmg)</a>
       <a class="btn btn-ghost" href="#fitur">Lihat fitur</a>
     </div>
     <div class="badges">
-      <span class="badge">macOS 13 atau lebih baru</span>
+      <span class="badge">macOS 14.4 atau lebih baru</span>
       <span class="badge">Apple Silicon dan Intel</span>
-      <span class="badge">Installer dinotarisasi Apple</span>
+      <span class="badge">Installer ditandatangani Developer ID</span>
       <span class="badge">Driver hingga 768 kHz</span>
     </div>
-    <img class="hero-shot" src="/audiohub/img/i-dark.png" width="1128" height="748" alt="Jendela AudioHub dengan tema gelap">
+    <img class="hero-shot" src="/audiohub/img/i-dark.png" width="1240" height="800" alt="Jendela AudioHub dengan tema gelap">
   </div>
 </section>
 
@@ -176,8 +176,16 @@ footer a{color:inherit}
     </div>
     <div class="grid">
       <div class="card">
-        <h3>Matriks routing per kanal</h3>
-        <p>Hubungkan kanal input ke output mana pun. Tiap koneksi punya gain dan mute sendiri.</p>
+        <h3>Matriks routing per pasangan kanal</h3>
+        <p>Hubungkan kanal input ke output mana pun. Setiap sel mengatur pasangan stereo, lengkap dengan gain dan mute.</p>
+      </div>
+      <div class="card">
+        <h3>Tangkap audio per aplikasi</h3>
+        <p>Centang aplikasi yang sedang memutar audio, lalu jadikan audionya sumber input. Butuh macOS 14.4 ke atas dan izin Audio Capture dari macOS.</p>
+      </div>
+      <div class="card">
+        <h3>Isolasi aplikasi</h3>
+        <p>Dengan isolasi, audio aplikasi tidak lagi terdengar di output asli. Suaranya hanya keluar lewat AudioHub, sesuai routing yang Anda atur.</p>
       </div>
       <div class="card">
         <h3>Efek per input</h3>
@@ -214,12 +222,12 @@ footer a{color:inherit}
     <div class="section-head">
       <span class="eyebrow">Perangkat virtual</span>
       <h2>Driver AVHub v2 ikut terpasang.</h2>
-      <p class="lead mute">Tidak perlu mencari driver pihak ketiga. Installer memasang aplikasi dan driver sekaligus, dengan dua perangkat virtual stereo.</p>
+      <p class="lead mute">Tidak perlu mencari driver pihak ketiga. Installer memasang aplikasi dan driver sekaligus, dengan tiga perangkat virtual stereo.</p>
     </div>
     <div class="grid">
       <div class="card">
-        <h3>avhub_virtual1 dan avhub_virtual2</h3>
-        <p>Dua perangkat loopback stereo. Audio yang dikirim ke output salah satu perangkat bisa dibaca kembali dari input perangkat yang sama.</p>
+        <h3>avhub_virtual1, avhub_virtual2, dan avhub_loopback</h3>
+        <p>Tiga perangkat loopback stereo. Audio yang dikirim ke output salah satu perangkat bisa dibaca kembali dari input perangkat yang sama.</p>
       </div>
       <div class="card">
         <h3>Dipakai di aplikasi lain</h3>
@@ -248,10 +256,11 @@ footer a{color:inherit}
       <div class="card">
         <h3>Routing dan perangkat</h3>
         <ul>
-          <li>Virtual 1 dan Virtual 2 bisa dipilih dari perangkat virtual apa pun yang terpasang</li>
+          <li>VC 1/2, VC 3/4, dan Loopback 1/2 bisa dipilih dari perangkat virtual apa pun yang terpasang</li>
+          <li>Tangkap audio per aplikasi (macOS 14.4 ke atas), dengan opsi isolasi</li>
+          <li>Loopback 1/2 sebagai pasangan virtual ketiga</li>
+          <li>Agregat AudioHub Aggregate tetap terlihat untuk DAW saat perangkat dibuka</li>
           <li>Driver AVHub v2 ikut terpasang otomatis</li>
-          <li>AudioHub terlihat sebagai aggregate di Core Audio</li>
-          <li>Sample rate dan buffer bisa dipilih di aplikasi, sesuai yang didukung perangkat</li>
         </ul>
       </div>
       <div class="card">
@@ -260,6 +269,9 @@ footer a{color:inherit}
           <li>Latensi buffer, input, dan output ditampilkan dalam milidetik</li>
           <li>Volume dan bisukan untuk output perangkat keras</li>
           <li>Konfirmasi sebelum menghapus atau menimpa preset</li>
+          <li>Fader dB yang bisa diatur dengan presisi, atau diketik langsung</li>
+          <li>Bahasa Inggris (default) dan Bahasa Indonesia</li>
+          <li>Engine tidak berjalan otomatis saat aplikasi dibuka</li>
         </ul>
       </div>
     </div>
@@ -275,11 +287,11 @@ footer a{color:inherit}
     </div>
     <div class="pair">
       <figure>
-        <img src="/audiohub/img/i-light.png" width="1127" height="753" loading="lazy" alt="Jendela AudioHub dengan tema terang">
+        <img src="/audiohub/img/i-light.png" width="1240" height="800" loading="lazy" alt="Jendela AudioHub dengan tema terang">
         <figcaption>Tema terang</figcaption>
       </figure>
       <figure>
-        <img src="/audiohub/img/i-dark.png" width="1128" height="748" loading="lazy" alt="Jendela AudioHub dengan tema gelap">
+        <img src="/audiohub/img/i-dark.png" width="1240" height="800" loading="lazy" alt="Jendela AudioHub dengan tema gelap">
         <figcaption>Tema gelap</figcaption>
       </figure>
     </div>
@@ -299,7 +311,7 @@ footer a{color:inherit}
           <tr><th>Komponen</th><th>Minimum</th><th>Rekomendasi</th></tr>
         </thead>
         <tbody>
-          <tr><td>Sistem operasi</td><td>macOS 13.0 untuk aplikasi. Driver membutuhkan macOS 11.0.</td><td>macOS terbaru.</td></tr>
+          <tr><td>Sistem operasi</td><td>macOS 14.4 untuk aplikasi (diperlukan untuk tangkap audio per aplikasi). Driver membutuhkan macOS 11.0.</td><td>macOS terbaru.</td></tr>
           <tr><td>Arsitektur</td><td>Intel (x86_64) atau Apple Silicon (arm64). Biner bersifat universal.</td><td>Apple Silicon.</td></tr>
           <tr><td>Perangkat audio</td><td>Perangkat input dan output yang dikenali Core Audio.</td><td>Audio interface USB. Diuji dengan Maono ProStudio 2x2 (PS22).</td></tr>
           <tr><td>Buffer</td><td>512 frame (default). Driver mendukung 16 sampai 4096 frame.</td><td>512 frame, sekitar 10,7 ms per tahap. Buffer 128 frame pernah menghasilkan satu dropout dalam uji tiga detik.</td></tr>
@@ -329,7 +341,7 @@ footer a{color:inherit}
       </li>
       <li>
         <h3>Pastikan perangkat virtual muncul</h3>
-        <p>Jalankan perintah berikut di Terminal. Hasilnya harus menampilkan <code>avhub_virtual1</code> dan <code>avhub_virtual2</code>. Kalau belum muncul, restart Mac.</p>
+        <p>Jalankan perintah berikut di Terminal. Hasilnya harus menampilkan <code>avhub_virtual1</code>, <code>avhub_virtual2</code>, dan <code>avhub_loopback</code>. Kalau belum muncul, restart Mac.</p>
         <pre class="cmd">system_profiler SPAudioDataType | grep avhub</pre>
       </li>
     </ol>
@@ -348,7 +360,7 @@ footer a{color:inherit}
       <div class="card">
         <h3>Sudah</h3>
         <ul class="status-list">
-          <li><strong><span class="tag tag-ok">Sudah</span>Installer dinotarisasi Apple</strong>Gatekeeper menerima paket sebagai Notarized Developer ID.</li>
+          <li><strong><span class="tag tag-ok">Sudah</span>Installer ditandatangani Developer ID</strong>Paket dan aplikasi ditandatangani sertifikat Developer ID. Notarisasi Apple belum dilakukan.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Routing ke perangkat virtual</strong>Tone yang diputar ke avhub_virtual2 terbaca di input avhub_virtual2, dan avhub_virtual1 tetap sunyi.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Tes driver</strong>Tes logika dan tes pemuatan bundle lulus.</li>
         </ul>
@@ -362,12 +374,12 @@ footer a{color:inherit}
     <div class="download-box">
       <span class="eyebrow">Unduh</span>
       <h2>AudioHub 0.3.0 untuk macOS.</h2>
-      <p class="lead mute" style="margin-inline:auto">Satu installer untuk aplikasi dan driver perangkat virtual. Installer sudah dinotarisasi Apple.</p>
+      <p class="lead mute" style="margin-inline:auto">Satu installer untuk aplikasi dan driver perangkat virtual. Installer ditandatangani Developer ID. Notarisasi Apple belum dilakukan.</p>
       <div class="btn-row" style="justify-content:center">
         <a class="btn btn-primary" href="/downloads/AudioHub-0.3.0.dmg" download>Unduh AudioHub 0.3.0 (.dmg)</a>
       </div>
-      <p class="meta">Ukuran 1,7 MB · macOS 13 atau lebih baru</p>
-      <div class="hash">SHA-256: 319ba4a2a809765d31c237dc27b8b3d569f9c7e8f13315c37ffa54e7fcf0391c</div>
+      <p class="meta">Ukuran 1,7 MB · macOS 14.4 atau lebih baru</p>
+      <div class="hash">SHA-256: 33982473a36e60a51d742f0f2d03d592915d09de86c37787e2421e77ffd04802</div>
     </div>
   </div>
 </section>
@@ -399,7 +411,7 @@ Baca Perjanjian ini sebelum menyetujui pemasangan atau penggunaan Perangkat Luna
 
 1. DEFINISI
 
-1.1 “Perangkat Lunak” berarti aplikasi AudioHub, driver perangkat virtual AVHub v2 yang menyediakan perangkat avhub_virtual1 dan avhub_virtual2, serta installer, uninstaller apabila disediakan, dokumentasi, dan berkas pendukung yang disertakan Pembuat dalam Paket Resmi.
+1.1 “Perangkat Lunak” berarti aplikasi AudioHub, driver perangkat virtual AVHub v2 yang menyediakan perangkat avhub_virtual1, avhub_virtual2, dan avhub_loopback, serta installer, uninstaller apabila disediakan, dokumentasi, dan berkas pendukung yang disertakan Pembuat dalam Paket Resmi.
 
 1.2 “Paket Resmi” berarti paket distribusi Perangkat Lunak, termasuk berkas DMG atau installer, yang diterbitkan oleh Pembuat melalui Situs Resmi atau repositori GitHub resmi yang ditautkan dari Situs Resmi.
 
