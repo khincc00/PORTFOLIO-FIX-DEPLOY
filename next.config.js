@@ -24,6 +24,7 @@ module.exports = {
     return {
       beforeFiles: [
         { source: '/', has: [{ type: 'host', value: 'audiohub.khincreator.com' }], destination: '/audiohub/index.html' },
+        { source: '/', has: [{ type: 'host', value: 'webcamsetting.khincreator.com' }], destination: '/webcamsetting/index.html' },
       ],
       afterFiles: [{ source: '/games', destination: '/games/index.html' }],
     }
