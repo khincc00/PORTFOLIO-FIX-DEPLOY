@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Manual Webcam Stable 1.1.0 | Atur Webcam USB di macOS</title>
+<meta name="description" content="Manual Webcam Stable mengatur setelan webcam USB langsung di hardware kamera. Versi 1.1.0: profil gambar datar, seragamkan banyak webcam, dan preview hemat daya.">
+<meta name="theme-color" content="#0B0B0D">
+<link rel="canonical" href="https://webcamsetting.khincreator.com/">
+<meta property="og:title" content="Manual Webcam Stable 1.1.0">
+<meta property="og:description" content="Atur setelan webcam USB langsung di hardware kamera, untuk macOS.">
+<meta property="og:url" content="https://webcamsetting.khincreator.com/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<style>
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --fg:#1D1D1F; --mute:#6E6E73; --line:#D2D2D7;
+  --accent:#1D7A68; --ink:#1D1D1F;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0B0D; --surface:#1C1C1E; --fg:#F5F5F7; --mute:#A1A1A6; --line:#2C2C2E;
+    --accent:#5BC8B5; --ink:#F5F5F7; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--fg); font-family:Inter,"SF Pro Display",system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+h1,h2,h3{letter-spacing:-0.03em; margin:0; text-wrap:balance}
+h1{font-size:clamp(36px,6vw,62px); line-height:1.05}
+h2{font-size:clamp(26px,3.6vw,36px); line-height:1.15; margin-bottom:14px}
+h3{font-size:18px; margin-bottom:8px}
+p{margin:0 0 14px}
+.wrap{max-width:900px; margin:0 auto; padding:0 20px}
+section{padding:64px 0; border-top:1px solid var(--line)}
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--accent)}
+.lead{font-size:17px; color:var(--mute); max-width:640px}
+.btns{display:flex; flex-wrap:wrap; gap:12px; margin-top:26px}
+.btn{display:inline-flex; align-items:center; min-height:46px; padding:0 22px; border-radius:999px; font-size:14px; font-weight:600; text-decoration:none; border:1px solid var(--line)}
+.btn-primary{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.btn-ghost{color:var(--fg); background:var(--surface)}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:28px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px}
+.card p, .card li{font-size:15px; color:var(--mute)}
+.card ul{padding-left:18px; margin:0}
+ol.steps{padding-left:20px; margin:0}
+ol.steps li{margin-bottom:10px}
+.note{font-size:14px; color:var(--mute)}
+footer{padding:36px 0; border-top:1px solid var(--line); font-size:13px; color:var(--mute)}
+footer a{color:var(--mute)}
+@media (max-width:760px){ .grid{grid-template-columns:1fr} section{padding:48px 0} }
+</style>
+</head>
+<body>
+
+<section style="border-top:0; padding-top:72px">
+  <div class="wrap">
+    <span class="eyebrow">Versi 1.1.0</span>
+    <h1 style="margin-top:14px">Manual Webcam Stable</h1>
+    <p class="lead" style="margin-top:18px">Atur setelan webcam USB langsung di hardware kamera, bukan sekadar filter di layar. Perubahan yang Anda buat ikut terbawa ke OBS, Zoom, Google Meet, dan aplikasi lain.</p>
+    <div class="btns">
+      <a class="btn btn-primary" href="http://lynk.id/khincc/9175l7y8nl2y" target="_blank" rel="noopener">Unduh 1.1.0</a>
+      <a class="btn btn-ghost" href="http://lynk.id/khincc/9175l7y8nl2y" target="_blank" rel="noopener">Donasi</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Fitur 1.1.0</span>
+    <h2 style="margin-top:12px">Tiga hal yang baru.</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Profil gambar datar (Flat)</h3>
+        <p>Tombol <strong>Flat</strong> di panel Color menurunkan Contrast, Saturation, dan Sharpness dari default kamera, supaya lebih mudah diatur saat color grading di OBS.</p>
+        <ul>
+          <li>Contrast turun 50%</li>
+          <li>Saturation turun 35%</li>
+          <li>Sharpness turun 60%</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Seragamkan banyak webcam</h3>
+        <p><strong>Samakan ke Webcam Lain</strong> menyalin setelan ke kamera lain. <strong>Load ke Semua Webcam</strong> memasang satu preset ke semua kamera sekaligus.</p>
+        <p class="note">Matikan White Balance Auto sebelum menyeragamkan.</p>
+      </div>
+      <div class="card">
+        <h3>Preview off berarti streaming berhenti</h3>
+        <p>Mematikan preview benar-benar menghentikan sesi kamera. CPU dan bandwidth USB berkurang, dan LED kamera ikut mati.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:20px">Ini bukan LOG asli. Webcam tidak bisa merekam kurva LOG atau dynamic range yang lebih lebar. Yang berubah hanya kontras, saturasi, dan ketajaman.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Cara update</span>
+    <h2 style="margin-top:12px">Tiga langkah.</h2>
+    <ol class="steps">
+      <li>Tutup aplikasi yang sedang berjalan.</li>
+      <li>Pasang versi 1.1.0 ke folder Applications.</li>
+      <li>Buka aplikasi dan berikan izin kamera jika diminta.</li>
+    </ol>
+    <p class="note" style="margin-top:18px">Jika tombol Samakan atau Load ke Semua Webcam tidak muncul, pastikan lebih dari satu webcam USB sudah terhubung, lalu tekan tombol refresh.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Unduh</span>
+    <h2 style="margin-top:12px">Manual Webcam Stable 1.1.0 untuk macOS.</h2>
+    <div class="btns">
+      <a class="btn btn-primary" href="http://lynk.id/khincc/9175l7y8nl2y" target="_blank" rel="noopener">Unduh 1.1.0</a>
+      <a class="btn btn-ghost" href="http://lynk.id/khincc/9175l7y8nl2y" target="_blank" rel="noopener">Donasi</a>
+    </div>
+    <p class="note" style="margin-top:18px">Kode sumber: <a href="https://github.com/khincc00/WSRV-macOS" target="_blank" rel="noopener">github.com/khincc00/WSRV-macOS</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Manual Webcam Stable 1.1.0 · Dibuat oleh <a href="https://www.tiktok.com/@khinccofficial" target="_blank" rel="noopener">@khinccofficial</a> · <a href="https://khincreator.com">khincreator.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
