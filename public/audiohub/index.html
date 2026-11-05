@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>AudioHub 0.3.0 | Routing Audio Profesional untuk macOS</title>
-<meta name="description" content="AudioHub adalah aplikasi routing audio untuk macOS: matriks routing per kanal, efek per input, dan driver perangkat virtual AVHub v2 yang ikut terpasang. Versi 0.3.0.">
+<title>AudioHub 1.0.0 | Routing Audio Profesional untuk macOS</title>
+<meta name="description" content="AudioHub adalah aplikasi routing audio untuk macOS: matriks routing per kanal, efek per input, dan driver perangkat virtual AVHub v2 yang ikut terpasang. Versi 1.0.0.">
 <meta name="theme-color" content="#0B0B0D">
 <link rel="canonical" href="https://audiohub.khincreator.com/">
-<meta property="og:title" content="AudioHub 0.3.0 | Routing Audio Profesional untuk macOS">
+<meta property="og:title" content="AudioHub 1.0.0 | Routing Audio Profesional untuk macOS">
 <meta property="og:description" content="Routing audio per kanal, efek per input, dan perangkat virtual AVHub v2 untuk macOS.">
 <meta property="og:url" content="https://audiohub.khincreator.com/">
 <meta property="og:type" content="website">
@@ -150,12 +150,12 @@ footer a{color:inherit}
 
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">Versi 0.3.0</span>
+    <span class="eyebrow">Versi 1.0.0</span>
     <h1>Routing audio profesional untuk macOS.</h1>
     <p class="lead">Atur setiap pasangan kanal input dan output dari satu jendela. Tangkap audio per aplikasi dengan opsi isolasi, efek per input, dan driver perangkat virtual AVHub v2 (tiga pasang) yang ikut terpasang otomatis.</p>
     <div class="btn-row">
-      <a class="btn btn-primary" href="http://lynk.id/khincc/y856pq2k9w9p/checkout" target="_blank" rel="noopener">Beli versi lengkap</a>
-      <a class="btn btn-ghost" href="https://github.com/khincc00/AudioHub_DEMO/releases/latest/download/AudioHub-Demo-0.3.0.pkg" download>Unduh demo (.pkg)</a>
+      <a class="btn btn-primary" href="http://lynk.id/khincc/nnp7j85v3nrg" target="_blank" rel="noopener">Unduh 1.0.0</a>
+      <a class="btn btn-ghost" href="http://lynk.id/khincc/nnp7j85v3nrg" target="_blank" rel="noopener">Donasi</a>
       <a class="btn btn-ghost" href="#fitur">Lihat fitur</a>
     </div>
     <div class="badges">
@@ -250,8 +250,9 @@ footer a{color:inherit}
 <section class="band band-dark" id="baru">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow">Baru di 0.3.0</span>
-      <h2>Apa yang berubah di versi ini.</h2>
+      <span class="eyebrow">Rilis 1.0.0</span>
+      <h2>Penyamaan versi, fungsi sama.</h2>
+      <p class="lead mute">Dibanding 0.3.1, perubahannya hanya penyamaan nomor versi. Fungsi aplikasi tidak berubah. Nama DMG dan paket installer ikut mengikuti versi baru. Installer memaketkan aplikasi dan driver AVHub v2 1.0.0 (build 1) dalam satu paket.</p>
     </div>
     <div class="status-grid">
       <div class="card">
@@ -334,11 +335,11 @@ footer a{color:inherit}
     <ol class="steps">
       <li>
         <h3>Unduh dan buka installer</h3>
-        <p>Unduh <code>AudioHub-Demo-0.3.0.pkg</code> dari tombol unduh demo di halaman ini. Versi lengkap dibeli lewat tombol beli.</p>
+        <p>Unduh installer 1.0.0 lewat tombol unduh di halaman ini. Belum dinotarisasi Apple, jadi di Mac lain buka installer dengan klik kanan lalu pilih <strong>Open</strong>.</p>
       </li>
       <li>
         <h3>Jalankan installer</h3>
-        <p>Dua kali klik <code>AudioHub-Demo-0.3.0.pkg</code>, lalu masukkan kata sandi administrator. Installer memasang AudioHub Demo ke <code>/Applications</code> dan driver ke <code>/Library/Audio/Plug-Ins/HAL</code>.</p>
+        <p>Dua kali klik installer, lalu masukkan kata sandi administrator. Installer memasang AudioHub ke <code>/Applications</code> dan driver AVHub v2 ke <code>/Library/Audio/Plug-Ins/HAL</code>.</p>
       </li>
       <li>
         <h3>Pastikan perangkat virtual muncul</h3>
@@ -346,7 +347,7 @@ footer a{color:inherit}
         <pre class="cmd">system_profiler SPAudioDataType | grep avhub</pre>
       </li>
     </ol>
-    <p class="mute" style="margin-top:22px">Mencopot aplikasi: hapus <code>/Applications/AudioHub.app</code> dan <code>/Library/Audio/Plug-Ins/HAL/AVHubDriver.driver</code> dengan kata sandi administrator, lalu muat ulang layanan audio atau restart Mac.</p>
+    <p class="mute" style="margin-top:22px">Mencopot aplikasi: hapus <code>/Applications/AudioHub.app</code> dan <code>/Library/Audio/Plug-Ins/HAL/AVHubDriver.driver</code> dengan kata sandi administrator, lalu restart Mac.</p>
   </div>
 </section>
 
@@ -364,6 +365,13 @@ footer a{color:inherit}
           <li><strong><span class="tag tag-ok">Sudah</span>Installer ditandatangani Developer ID</strong>Paket dan aplikasi ditandatangani sertifikat Developer ID. Notarisasi Apple belum dilakukan.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Routing ke perangkat virtual</strong>Tone yang diputar ke avhub_virtual2 terbaca di input avhub_virtual2, dan avhub_virtual1 tetap sunyi.</li>
           <li><strong><span class="tag tag-ok">Sudah</span>Tes driver</strong>Tes logika dan tes pemuatan bundle lulus.</li>
+          <li><strong><span class="tag tag-ok">Sudah</span>Uji di macOS 27</strong>Dijalankan di Darwin 27 dengan Apple Silicon dan audio interface Maono ProStudio 2x2 (PS22). Buffer 128 frame pernah menghasilkan satu dropout dalam uji tiga detik.</li>
+          <li><strong><span class="tag tag-ok">Sudah</span>Tangkap audio per aplikasi</strong>Butuh macOS 14.4 ke atas dan izin Audio Capture dari macOS.</li>
+        </ul>
+        <ul class="status-list" style="margin-top:18px">
+          <li><strong><span class="tag tag-no">Belum</span>Notarisasi Apple</strong>Installer belum dinotarisasi. Di Mac lain, buka dengan klik kanan lalu pilih Open.</li>
+          <li><strong><span class="tag tag-no">Belum</span>Port Windows</strong>Port Windows belum siap. Repo juga memuat pekerjaan port Windows yang masih dikembangkan.</li>
+          <li><strong><span class="tag tag-no">Catatan</span>Kompatibilitas</strong>Tidak ada jaminan kompatibilitas penuh. Informasi kompatibilitas hanya berlaku untuk konfigurasi yang diuji.</li>
         </ul>
       </div>
     </div>
@@ -374,14 +382,13 @@ footer a{color:inherit}
   <div class="wrap">
     <div class="download-box">
       <span class="eyebrow">Unduh</span>
-      <h2>AudioHub 0.3.0 untuk macOS.</h2>
-      <p class="lead mute" style="margin-inline:auto">Coba dulu dengan edisi demo. Edisi lengkap dibeli terpisah. Setiap installer memasang aplikasi dan driver perangkat virtual, dan ditandatangani Developer ID.</p>
+      <h2>AudioHub 1.0.0 untuk macOS.</h2>
+      <p class="lead mute" style="margin-inline:auto">Installer 1.0.0 memasang aplikasi dan driver perangkat virtual AVHub v2 dalam satu paket, ditandatangani Developer ID.</p>
       <div class="btn-row" style="justify-content:center">
-        <a class="btn btn-primary" href="http://lynk.id/khincc/y856pq2k9w9p/checkout" target="_blank" rel="noopener">Beli versi lengkap</a>
-        <a class="btn btn-ghost" href="https://github.com/khincc00/AudioHub_DEMO/releases/latest/download/AudioHub-Demo-0.3.0.pkg" download>Unduh demo (.pkg)</a>
+        <a class="btn btn-primary" href="http://lynk.id/khincc/nnp7j85v3nrg" target="_blank" rel="noopener">Unduh 1.0.0</a>
+        <a class="btn btn-ghost" href="http://lynk.id/khincc/nnp7j85v3nrg" target="_blank" rel="noopener">Donasi</a>
       </div>
-      <p class="meta">Demo: 650 KB · macOS 13.0 atau lebih baru · Notarisasi Apple belum dilakukan</p>
-      <div class="hash">SHA-256 demo: b482752c80d3dede364994082ef2692cfdc7543acda148a3a36b31cb05d9a273</div>
+      <p class="meta">macOS 14.4 atau lebih baru untuk tangkap audio per aplikasi · Intel dan Apple Silicon · Notarisasi Apple belum dilakukan</p>
     </div>
   </div>
 </section>
@@ -397,7 +404,7 @@ footer a{color:inherit}
       <summary>Baca teks lengkap perjanjian (versi 1.0)</summary>
       <pre>PERJANJIAN LISENSI PENGGUNA AKHIR
 AudioHub dan Driver Perangkat Virtual AVHub v2
-Versi Perangkat Lunak: 0.3.0
+Versi Perangkat Lunak: 1.0.0
 Versi Dokumen Lisensi: 1.0
 Tanggal Berlaku: 18 Oktober 2026
 
@@ -624,7 +631,7 @@ Email lisensi dan pengaduan: master@khincreator.com
 
 <footer>
   <div class="wrap">
-    <span>AudioHub 0.3.0 · Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.</span>
+    <span>AudioHub 1.0.0 · Hak Cipta © 2026 taufiq sholikhin. Seluruh hak dilindungi.</span>
     <span><a href="#lisensi">Lisensi</a> · <a href="https://khincreator.com">khincreator.com</a></span>
   </div>
 </footer>
