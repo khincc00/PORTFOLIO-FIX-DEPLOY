@@ -159,12 +159,26 @@
     </aside>
   </main>
 
+  <dialog class="support-dialog" id="supportDialog" aria-labelledby="supportTitle">
+    <div class="support-body">
+      <button type="button" class="support-x" data-close aria-label="Tutup">✕</button>
+      <h2 id="supportTitle">Suka ProLuth?</h2>
+      <p>ProLuth gratis dipakai. Kalau berguna untuk pekerjaanmu, dukunganmu sangat menyemangati kreator untuk terus mengembangkannya.</p>
+      <p class="hint">Mendukung itu sepenuhnya opsional. Tanpa dukungan pun, semua fiturnya tetap bisa kamu pakai.</p>
+      <div class="support-actions">
+        <a class="btn primary lg block" href="https://sociabuzz.com/khinccproduction" target="_blank" rel="noopener" data-close>Dukung di Sociabuzz</a>
+        <button type="button" class="btn lg block" data-close>Lanjut tanpa mendukung</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="/proluth/js/lut-engine.js"></script>
   <script src="/proluth/js/match.js"></script>
   <script src="/proluth/js/presets.js"></script>
   <script src="/proluth/js/curve-editor.js"></script>
+  <script src="/proluth/js/support.js"></script>
   <script src="/proluth/js/app.js"></script>
 </body>
 </html>

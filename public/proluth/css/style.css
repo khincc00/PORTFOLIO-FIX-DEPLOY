@@ -439,6 +439,31 @@ input[type="range"]:focus-visible { outline-offset: 0; border-radius: 4px; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 .toast.error { border-color: #a14444; }
 
+/* ---------- Popup dukungan ---------- */
+.support-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+}
+.support-dialog::backdrop { background: rgba(0, 0, 0, .6); }
+.support-body { padding: 24px; }
+.support-body h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+.support-body p { margin: 0 0 10px; font-size: 14px; }
+.support-body .hint { font-size: 12px; }
+.support-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.btn.lg { height: 40px; font-size: 14px; }
+.support-x {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px; padding: 0;
+  border: 0; border-radius: 6px; background: none;
+  color: var(--muted); cursor: pointer; font-size: 14px;
+}
+.support-x:hover { background: var(--raised); color: var(--text); }
+
 /* ---------- Layar kecil ---------- */
 @media (max-width: 960px) {
   body { overflow: auto; height: auto; }
